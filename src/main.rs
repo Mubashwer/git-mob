@@ -1,7 +1,9 @@
-use std::process::Command;
+mod coauthor_repo;
+
 use std::str;
 
 use clap::{Parser, Subcommand};
+use coauthor_repo::{CoauthorRepo, GitConfigCoauthorRepo};
 use inquire::MultiSelect;
 
 #[derive(Parser)]
@@ -19,91 +21,43 @@ enum Commands {
 
 fn main() {
     let cli = Cli::parse();
+    let coauthor_repo: Box<dyn CoauthorRepo> = Box::new(GitConfigCoauthorRepo {});
 
     match &cli.command {
-        Commands::With { coauthor_keys } => {
-            Command::new("git")
-                .arg("config")
-                .arg("--global")
-                .arg("--remove-section")
-                .arg(format!("coauthors-active"))
-                .output()
-                .expect("failed to execute process");
+        Commands::With { coauthor_keys } => match coauthor_keys {
+            Some(keys) => {
+                coauthor_repo.deactivate_all();
 
-            match coauthor_keys {
-                Some(keys) => {
-                    let coauthors = keys
-                        .into_iter()
-                        .map(|key| {
-                            let output = Command::new("git")
-                                .arg("config")
-                                .arg("--global")
-                                .arg(format!("coauthors.{key}"))
-                                .output()
-                                .expect("failed to execute process");
+                let coauthors = keys
+                    .into_iter()
+                    .map(|key| {
+                        let coauthor = coauthor_repo.get(key);
+                        coauthor_repo.activate(&coauthor);
+                        return coauthor;
+                    })
+                    .collect::<Vec<String>>();
 
-                            assert!(output.status.success());
-                            let coauthor =
-                                String::from_utf8(output.stdout).unwrap().trim().to_string();
+                println!("Active co-author(s):\n{}", coauthors.join("\n"));
+            }
+            None => {
+                let coauthors = coauthor_repo.get_all();
+                let result = MultiSelect::new("Select active co-author(s):", coauthors).prompt();
 
-                            let status = Command::new("git")
-                                .arg("config")
-                                .arg("--global")
-                                .arg("--add")
-                                .arg("coauthors-active.entry")
-                                .arg(&coauthor)
-                                .status()
-                                .expect("failed to execute process");
+                match result {
+                    Ok(selected) => {
+                        coauthor_repo.deactivate_all();
 
-                            assert!(status.success());
-                            return coauthor;
-                        })
-                        .collect::<Vec<String>>();
+                        selected.clone().into_iter().for_each(|coauthor| {
+                            coauthor_repo.activate(&coauthor);
+                        });
 
-                    println!("Active co-author(s):\n{}", coauthors.join("\n"));
-                }
-                None => {
-                    println!("No co-author keys provided");
-
-                    let output = Command::new("git")
-                        .arg("config")
-                        .arg("--global")
-                        .arg("--get-regexp")
-                        .arg("^coauthors\\.")
-                        .output()
-                        .expect("failed to execute process");
-
-                    assert!(output.status.success());
-                    let options: Vec<&str> = str::from_utf8(&output.stdout)
-                        .unwrap()
-                        .lines()
-                        .map(|x| x.split_once(' ').unwrap().1)
-                        .collect();
-
-                    let result = MultiSelect::new("Select active co-author(s):", options).prompt();
-
-                    match result {
-                        Ok(selected) => {
-                            selected.clone().into_iter().for_each(|coauthor| {
-                                let status = Command::new("git")
-                                    .arg("config")
-                                    .arg("--global")
-                                    .arg("--add")
-                                    .arg("coauthors-active.entry")
-                                    .arg(coauthor)
-                                    .status()
-                                    .expect("failed to execute process");
-
-                                assert!(status.success());
-                            });
-                            if selected.is_empty() {
-                                println!("Going solo!")
-                            }
+                        if selected.is_empty() {
+                            println!("Going solo!")
                         }
-                        Err(_) => println!("failed to select co-author(s)"),
                     }
+                    Err(_) => println!("failed to select co-author(s)"),
                 }
             }
-        }
+        },
     }
 }
