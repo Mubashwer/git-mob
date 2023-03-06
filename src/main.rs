@@ -2,6 +2,7 @@ use std::process::Command;
 use std::str;
 
 use clap::{Parser, Subcommand};
+use inquire::MultiSelect;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -25,35 +26,83 @@ fn main() {
                 .arg("config")
                 .arg("--global")
                 .arg("--remove-section")
-                .arg(format!("co-authors.active"))
+                .arg(format!("coauthors-active"))
                 .output()
                 .expect("failed to execute process");
 
             match coauthor_keys {
                 Some(keys) => {
-                    for key in keys {
-                        let output = Command::new("git")
-                            .arg("config")
-                            .arg("--global")
-                            .arg(format!("chums.{key}"))
-                            .output()
-                            .expect("failed to execute process");
+                    let coauthors = keys
+                        .into_iter()
+                        .map(|key| {
+                            let output = Command::new("git")
+                                .arg("config")
+                                .arg("--global")
+                                .arg(format!("coauthors.{key}"))
+                                .output()
+                                .expect("failed to execute process");
 
-                        assert!(output.status.success());
+                            assert!(output.status.success());
+                            let coauthor =
+                                String::from_utf8(output.stdout).unwrap().trim().to_string();
 
-                        let status = Command::new("git")
-                            .arg("config")
-                            .arg("--global")
-                            .arg(format!("chums.active.{key}"))
-                            .arg(str::from_utf8(&output.stdout).unwrap().trim())
-                            .status()
-                            .expect("failed to execute process");
+                            let status = Command::new("git")
+                                .arg("config")
+                                .arg("--global")
+                                .arg("--add")
+                                .arg("coauthors-active.entry")
+                                .arg(&coauthor)
+                                .status()
+                                .expect("failed to execute process");
 
-                        assert!(status.success());
-                    }
-                    return;
+                            assert!(status.success());
+                            return coauthor;
+                        })
+                        .collect::<Vec<String>>();
+
+                    println!("Active co-author(s):\n{}", coauthors.join("\n"));
                 }
-                None => println!("No co-author keys provided"),
+                None => {
+                    println!("No co-author keys provided");
+
+                    let output = Command::new("git")
+                        .arg("config")
+                        .arg("--global")
+                        .arg("--get-regexp")
+                        .arg("^coauthors\\.")
+                        .output()
+                        .expect("failed to execute process");
+
+                    assert!(output.status.success());
+                    let options: Vec<&str> = str::from_utf8(&output.stdout)
+                        .unwrap()
+                        .lines()
+                        .map(|x| x.split_once(' ').unwrap().1)
+                        .collect();
+
+                    let result = MultiSelect::new("Select active co-author(s):", options).prompt();
+
+                    match result {
+                        Ok(selected) => {
+                            selected.clone().into_iter().for_each(|coauthor| {
+                                let status = Command::new("git")
+                                    .arg("config")
+                                    .arg("--global")
+                                    .arg("--add")
+                                    .arg("coauthors-active.entry")
+                                    .arg(coauthor)
+                                    .status()
+                                    .expect("failed to execute process");
+
+                                assert!(status.success());
+                            });
+                            if selected.is_empty() {
+                                println!("Going solo!")
+                            }
+                        }
+                        Err(_) => println!("failed to select co-author(s)"),
+                    }
+                }
             }
         }
     }
