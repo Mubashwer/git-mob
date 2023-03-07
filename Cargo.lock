@@ -116,7 +116,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "git-pair"
+name = "git-mob"
 version = "0.1.0"
 dependencies = [
  "clap",
