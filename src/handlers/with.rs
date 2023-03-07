@@ -2,7 +2,7 @@ use inquire::MultiSelect;
 
 use crate::coauthor_repo::CoauthorRepo;
 
-pub(crate) fn handle(coauthor_repo: Box<dyn CoauthorRepo>, coauthor_keys: &Option<Vec<String>>) {
+pub(crate) fn handle(coauthor_repo: &Box<dyn CoauthorRepo>, coauthor_keys: &Option<Vec<String>>) {
     match coauthor_keys {
         Some(keys) => {
             coauthor_repo.deactivate_all();

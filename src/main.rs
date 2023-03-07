@@ -25,7 +25,7 @@ and automatically add Co-authored-by trailers to the commit's message.
 #[command(propagate_version = true)]
 struct Cli {
     #[command(subcommand)]
-    command: Commands,
+    command: Option<Commands>,
 }
 
 #[derive(Subcommand)]
@@ -56,6 +56,7 @@ fn main() {
     let coauthor_repo: Box<dyn CoauthorRepo> = Box::new(GitConfigCoauthorRepo {});
 
     match &cli.command {
-        Commands::With { coauthor_keys } => with::handle(coauthor_repo, &coauthor_keys),
-    }
+        Some(Commands::With { coauthor_keys }) => with::handle(&coauthor_repo, &coauthor_keys),
+        None => {}
+    };
 }
