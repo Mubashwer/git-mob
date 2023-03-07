@@ -22,7 +22,7 @@ This CLI app will make it easy for you to manage pair/mob programming sessions
 and automatically add Co-authored-by trailers to the commit's message.
 "
 )]
-#[command(propagate_version = true)]
+#[command(propagate_version = true, arg_required_else_help = true)]
 struct Cli {
     #[command(subcommand)]
     command: Option<Commands>,
@@ -58,5 +58,5 @@ fn main() {
     match &cli.command {
         Some(Commands::With { coauthor_keys }) => with::handle(&coauthor_repo, &coauthor_keys),
         None => {}
-    };
+    }
 }
