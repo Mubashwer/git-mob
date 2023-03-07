@@ -1,7 +1,7 @@
 use std::process::Command;
 
 pub(crate) trait CoauthorRepo {
-    fn get_all(&self) -> Vec<String>;
+    fn list(&self) -> Vec<String>;
     fn get(&self, key: &str) -> String;
     fn activate(&self, coauthor: &str);
     fn deactivate_all(&self);
@@ -9,7 +9,7 @@ pub(crate) trait CoauthorRepo {
 
 pub(crate) struct GitConfigCoauthorRepo {}
 impl CoauthorRepo for GitConfigCoauthorRepo {
-    fn get_all(&self) -> Vec<String> {
+    fn list(&self) -> Vec<String> {
         let output = Command::new("git")
             .arg("config")
             .arg("--global")

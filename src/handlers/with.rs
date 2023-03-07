@@ -19,7 +19,7 @@ pub(crate) fn handle(coauthor_repo: &Box<dyn CoauthorRepo>, coauthor_keys: &Opti
             println!("Active co-author(s):\n{}", coauthors.join("\n"));
         }
         None => {
-            let coauthors = coauthor_repo.get_all();
+            let coauthors = coauthor_repo.list();
             let result = MultiSelect::new("Select active co-author(s):", coauthors).prompt();
 
             match result {
