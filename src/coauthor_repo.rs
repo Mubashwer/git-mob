@@ -1,13 +1,13 @@
 use std::process::Command;
 
-pub trait CoauthorRepo {
+pub(crate) trait CoauthorRepo {
     fn get_all(&self) -> Vec<String>;
     fn get(&self, key: &str) -> String;
     fn activate(&self, coauthor: &str);
     fn deactivate_all(&self);
 }
 
-pub struct GitConfigCoauthorRepo {}
+pub(crate) struct GitConfigCoauthorRepo {}
 impl CoauthorRepo for GitConfigCoauthorRepo {
     fn get_all(&self) -> Vec<String> {
         let output = Command::new("git")
@@ -58,7 +58,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .arg("--global")
             .arg("--remove-section")
             .arg("coauthors-active")
-            .status()
+            .output()
             .expect("failed to execute process");
     }
 }
