@@ -1,13 +1,13 @@
 use std::process::Command;
 
-pub(crate) trait CoauthorRepo {
+pub trait CoauthorRepo {
     fn list(&self) -> Vec<String>;
     fn get(&self, key: &str) -> String;
     fn activate(&self, coauthor: &str);
     fn deactivate_all(&self);
 }
 
-pub(crate) struct GitConfigCoauthorRepo {}
+pub struct GitConfigCoauthorRepo {}
 impl CoauthorRepo for GitConfigCoauthorRepo {
     fn list(&self) -> Vec<String> {
         let output = Command::new("git")

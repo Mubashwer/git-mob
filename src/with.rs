@@ -2,7 +2,7 @@ use inquire::MultiSelect;
 
 use crate::coauthor_repo::CoauthorRepo;
 
-pub(crate) fn handle(coauthor_repo: &Box<dyn CoauthorRepo>, coauthor_keys: &Vec<String>) {
+pub fn handle(coauthor_repo: &Box<dyn CoauthorRepo>, coauthor_keys: &Vec<String>) {
     match coauthor_keys.len() {
         0 => {
             let coauthors = coauthor_repo.list();
