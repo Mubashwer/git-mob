@@ -1,62 +1,44 @@
 mod coauthor_repo;
-mod handlers;
+mod with;
 
 use std::str;
 
 use clap::{Parser, Subcommand};
 use coauthor_repo::{CoauthorRepo, GitConfigCoauthorRepo};
-use handlers::with;
 
 #[derive(Parser)]
-#[command(
-    author = "Mubashwer Salman Khurshid",
-    version,
-    about = "A CLI app to help you automatically add co-author(s) to commits
-during pair/mob programming sessions.",
-    long_about = "
-You can attribute a git commit to more than one author by adding one or more
-Co-authored-by trailers to the commit's message. 
-Co-authored commits are visible on GitHub.
-
-This CLI app will make it easy for you to manage pair/mob programming sessions
-and automatically add Co-authored-by trailers to the commit's message.
-"
-)]
+#[command(author, version, about, long_about)]
 #[command(propagate_version = true, arg_required_else_help = true)]
+/// A CLI app which can help users automatically add co-author(s) to git commits
+/// for pair/mob programming.
+///
+/// A user can attribute a git commit to more than one author by adding one or more
+/// Co-authored-by trailers to the commit's message.
+/// Co-authored commits are visible on GitHub.
+///
+/// This app will do the above automatically and also help users store and manage
+/// co-authors for pair/mob programming sessions.
 struct Cli {
     #[command(subcommand)]
     command: Option<Commands>,
+    /// Sets active co-author(s) for mob programming
+    #[arg(short='w', long="with", num_args=0.., value_name="COAUTHOR_KEY")]
+    with: Option<Vec<String>>,
 }
 
 #[derive(Subcommand)]
-enum Commands {
-    #[command(
-        about = "Sets active co-author(s) for the pair/mob programming session",
-        long_about = "
-Sets active co-author(s) for the pair/mob programming session.
-This should be run after at least one co-author(s) has been added.
-
-If no COAUTHOR_KEY arg is provided, a multi-select prompt will be displayed to
-aid selection from available co-authors.
-
-If COAUTHOR_KEY(s) are provided, co-author(s) must exist with the given key(s).
-
-Example usage:
-$ git pair with lm cr
-"
-    )]
-    With {
-        #[arg(help = "Keys used to store co-authors (usually initials).")]
-        coauthor_keys: Option<Vec<String>>,
-    },
-}
+enum Commands {}
 
 fn main() {
     let cli = Cli::parse();
     let coauthor_repo: Box<dyn CoauthorRepo> = Box::new(GitConfigCoauthorRepo {});
 
     match &cli.command {
-        Some(Commands::With { coauthor_keys }) => with::handle(&coauthor_repo, &coauthor_keys),
-        None => {}
+        None => {
+            if cli.with.is_some() {
+                with::handle(&coauthor_repo, &cli.with.unwrap())
+            }
+        }
+        Some(_) => todo!(),
     }
 }
