@@ -14,7 +14,7 @@ pub struct Mob {
 }
 
 impl Mob {
-    pub fn handle(&self, coauthor_repo: &dyn CoauthorRepo) {
+    pub fn handle(&self, coauthor_repo: &impl CoauthorRepo) {
         if self.clear || self.with.is_some() {
             coauthor_repo.clear_mob();
         }

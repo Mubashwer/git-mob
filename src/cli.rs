@@ -24,7 +24,7 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {}
 
-pub fn run(coauthor_repo: &dyn CoauthorRepo) {
+pub fn run(coauthor_repo: &impl CoauthorRepo) {
     let cli = Cli::parse();
 
     match &cli.command {

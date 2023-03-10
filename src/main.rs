@@ -1,9 +1,6 @@
-use git_mob::{
-    cli,
-    coauthor_repo::{CoauthorRepo, GitConfigCoauthorRepo},
-};
+use git_mob::{cli, coauthor_repo::GitConfigCoauthorRepo};
 
 fn main() {
-    let coauthor_repo: Box<dyn CoauthorRepo> = Box::new(GitConfigCoauthorRepo {});
-    cli::run(&*coauthor_repo);
+    let coauthor_repo = GitConfigCoauthorRepo {};
+    cli::run(&coauthor_repo);
 }
