@@ -6,8 +6,8 @@ use mockall::{automock, predicate::*};
 pub trait CoauthorRepo {
     fn list(&self) -> Vec<String>;
     fn get(&self, key: &str) -> String;
-    fn activate(&self, coauthor: &str);
-    fn deactivate_all(&self);
+    fn add_to_mob(&self, coauthor: &str);
+    fn clear_mob(&self);
 }
 
 pub struct GitConfigCoauthorRepo {}
@@ -43,24 +43,24 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
         return String::from_utf8(output.stdout).unwrap().trim().to_string();
     }
 
-    fn activate(&self, coauthor: &str) {
+    fn add_to_mob(&self, coauthor: &str) {
         let status = Command::new("git")
             .arg("config")
             .arg("--global")
             .arg("--add")
-            .arg("coauthors-active.entry")
+            .arg("coauthors-mob.entry")
             .arg(&coauthor)
             .status()
             .expect("failed to execute process");
         assert!(status.success());
     }
 
-    fn deactivate_all(&self) {
+    fn clear_mob(&self) {
         Command::new("git")
             .arg("config")
             .arg("--global")
             .arg("--remove-section")
-            .arg("coauthors-active")
+            .arg("coauthors-mob")
             .output()
             .expect("failed to execute process");
     }

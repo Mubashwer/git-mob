@@ -5,7 +5,7 @@ use crate::coauthor_repo::CoauthorRepo;
 
 #[derive(Parser)]
 pub struct Mob {
-    /// Sets active co-author(s) for pair/mob programming
+    /// Sets active co-author(s) for pair/mob programming session
     #[arg(short='w', long="with", num_args=0.., value_name="COAUTHOR_KEY")]
     with: Option<Vec<String>>,
     /// Clears mob/pair programming session. Going solo!
@@ -15,8 +15,8 @@ pub struct Mob {
 
 impl Mob {
     pub fn handle(&self, coauthor_repo: &dyn CoauthorRepo) {
-        if self.clear {
-            coauthor_repo.deactivate_all();
+        if self.clear || self.with.is_some() {
+            coauthor_repo.clear_mob();
         }
 
         if self.with.is_none() {
@@ -32,10 +32,8 @@ impl Mob {
 
                 match result {
                     Ok(selected) => {
-                        coauthor_repo.deactivate_all();
-
                         selected.clone().into_iter().for_each(|coauthor| {
-                            coauthor_repo.activate(&coauthor);
+                            coauthor_repo.add_to_mob(&coauthor);
                         });
 
                         if selected.is_empty() {
@@ -46,13 +44,11 @@ impl Mob {
                 }
             }
             _ => {
-                coauthor_repo.deactivate_all();
-
                 let coauthors: Vec<String> = coauthor_keys
                     .into_iter()
                     .map(|key| {
                         let coauthor = coauthor_repo.get(&key);
-                        coauthor_repo.activate(&coauthor);
+                        coauthor_repo.add_to_mob(&coauthor);
                         return coauthor;
                     })
                     .collect();
@@ -69,10 +65,10 @@ mod tests {
     use crate::coauthor_repo::MockCoauthorRepo;
 
     #[test]
-    fn test_clear_deactivates_all_coauthors() {
+    fn test_clear_clears_mob() {
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
-            .expect_deactivate_all()
+            .expect_clear_mob()
             .once()
             .return_const({});
 
