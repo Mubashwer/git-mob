@@ -8,10 +8,21 @@ pub struct Mob {
     /// Sets active co-author(s) for pair/mob programming
     #[arg(short='w', long="with", num_args=0.., value_name="COAUTHOR_KEY")]
     with: Option<Vec<String>>,
+    /// Clears mob/pair programming session. Going solo!
+    #[arg(short = 'c', long = "clear")]
+    clear: bool,
 }
 
 impl Mob {
     pub fn handle(&self, coauthor_repo: &dyn CoauthorRepo) {
+        if self.clear {
+            coauthor_repo.deactivate_all();
+        }
+
+        if self.with.is_none() {
+            return;
+        }
+
         let coauthor_keys = self.with.as_ref().unwrap();
 
         match coauthor_keys.len() {
@@ -49,5 +60,27 @@ impl Mob {
                 println!("{}", coauthors.join("\n"));
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::coauthor_repo::MockCoauthorRepo;
+
+    #[test]
+    fn test_clear_deactivates_all_coauthors() {
+        let mut mock_coauthor_repo = MockCoauthorRepo::new();
+        mock_coauthor_repo
+            .expect_deactivate_all()
+            .once()
+            .return_const({});
+
+        let mob = Mob {
+            with: None,
+            clear: true,
+        };
+
+        mob.handle(&mock_coauthor_repo);
     }
 }

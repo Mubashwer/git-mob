@@ -10,3 +10,6 @@ description = "A CLI app which can help users automatically add co-author(s) to 
 [dependencies]
 clap = { version = "4.1.8", features = ["derive"] }
 inquire = "0.6.0"
+
+[dev-dependencies]
+mockall = "0.11.3"

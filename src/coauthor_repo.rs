@@ -1,5 +1,8 @@
 use std::process::Command;
 
+#[cfg(test)]
+use mockall::{automock, predicate::*};
+#[cfg_attr(test, automock)]
 pub trait CoauthorRepo {
     fn list(&self) -> Vec<String>;
     fn get(&self, key: &str) -> String;
