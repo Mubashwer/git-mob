@@ -1,5 +1,4 @@
-use crate::coauthor_repo::CoauthorRepo;
-use crate::handlers::With;
+use crate::{coauthor_repo::CoauthorRepo, commands::mob::Mob};
 use clap::{Parser, Subcommand};
 use std::str;
 
@@ -18,9 +17,8 @@ use std::str;
 struct Cli {
     #[command(subcommand)]
     command: Option<Commands>,
-    /// Sets active co-author(s) for pair/mob programming
-    #[arg(short='w', long="with", num_args=0.., value_name="COAUTHOR_KEY")]
-    with: Option<Vec<String>>,
+    #[command(flatten)]
+    mob: Mob,
 }
 
 #[derive(Subcommand)]
@@ -30,11 +28,7 @@ pub fn run(coauthor_repo: &dyn CoauthorRepo) {
     let cli = Cli::parse();
 
     match &cli.command {
-        None => {
-            if cli.with.is_some() {
-                With::handle(&*coauthor_repo, &cli.with.unwrap());
-            }
-        }
+        None => cli.mob.handle(coauthor_repo),
         Some(_) => todo!(),
     }
 }

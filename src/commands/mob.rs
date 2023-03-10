@@ -1,11 +1,19 @@
+use clap::{arg, Parser};
 use inquire::MultiSelect;
 
 use crate::coauthor_repo::CoauthorRepo;
 
-pub struct With {}
+#[derive(Parser)]
+pub struct Mob {
+    /// Sets active co-author(s) for pair/mob programming
+    #[arg(short='w', long="with", num_args=0.., value_name="COAUTHOR_KEY")]
+    with: Option<Vec<String>>,
+}
 
-impl With {
-    pub fn handle(coauthor_repo: &dyn CoauthorRepo, coauthor_keys: &Vec<String>) {
+impl Mob {
+    pub fn handle(&self, coauthor_repo: &dyn CoauthorRepo) {
+        let coauthor_keys = self.with.as_ref().unwrap();
+
         match coauthor_keys.len() {
             0 => {
                 let coauthors = coauthor_repo.list();
