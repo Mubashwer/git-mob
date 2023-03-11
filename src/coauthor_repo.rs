@@ -8,6 +8,7 @@ pub trait CoauthorRepo {
     fn list_mob(&self) -> Vec<String>;
     fn get(&self, key: &str) -> String;
     fn remove(&self, key: &str);
+    fn add(&self, key: &str, coauthor: &str);
     fn add_to_mob(&self, coauthor: &str);
     fn clear_mob(&self);
 }
@@ -73,6 +74,17 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .expect("failed to execute process");
 
         assert!(output.status.success());
+    }
+
+    fn add(&self, key: &str, coauthor: &str) {
+        let status = Command::new("git")
+            .arg("config")
+            .arg("--global")
+            .arg(format!("coauthors.{key}"))
+            .arg(&coauthor)
+            .status()
+            .expect("failed to execute process");
+        assert!(status.success());
     }
 
     fn add_to_mob(&self, coauthor: &str) {

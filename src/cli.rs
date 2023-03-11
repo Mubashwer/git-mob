@@ -12,7 +12,7 @@ use std::str;
     bin_name = "git mob",
     override_usage = "git mob [COMMAND] [OPTIONS]"
 )]
-#[command(propagate_version = true, arg_required_else_help = true)]
+#[command(propagate_version = true)]
 /// A CLI app which can help users automatically add co-author(s) to git commits
 /// for pair/mob programming.
 ///
