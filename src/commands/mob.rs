@@ -8,7 +8,7 @@ use crate::coauthor_repo::CoauthorRepo;
 pub(crate) struct Mob {
     /// Sets active co-author(s) for pair/mob programming session
     ///
-    /// Usage example: git mob pair --with lm
+    /// Usage example: git mob pair --with lm mj
     #[arg(short='w', long="with", num_args=0.., value_name="COAUTHOR_KEY")]
     with: Option<Vec<String>>,
     /// Clears mob/pair programming session. Going solo!
@@ -87,7 +87,29 @@ mod tests {
         let mob = Mob {
             clear: true,
             with: None,
-            list: false,
+            list: false
+        };
+
+        mob.handle(&mock_coauthor_repo);
+    }
+
+    #[test]
+    fn test_list_fetches_mob_coauthors() {
+        let coauthors = vec![
+            "Leo Messi <leo.messi@example.com>".to_owned(),
+            "Emi Martinez <emi.martinez@example.com>".to_owned(),
+        ];
+
+        let mut mock_coauthor_repo = MockCoauthorRepo::new();
+        mock_coauthor_repo
+            .expect_list_mob()
+            .once()
+            .return_const(coauthors);
+
+        let mob = Mob {
+            list: true,
+            clear: false,
+            with: None
         };
 
         mob.handle(&mock_coauthor_repo);
