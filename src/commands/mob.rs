@@ -27,11 +27,9 @@ impl Mob {
         if self.clear || self.with.is_some() {
             coauthor_repo.clear_mob();
         }
-
         if self.list {
             println!("{}", coauthor_repo.list_mob().join("\n"));
         }
-
         if self.with.is_none() {
             return;
         }

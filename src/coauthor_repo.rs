@@ -7,6 +7,7 @@ pub trait CoauthorRepo {
     fn list(&self) -> Vec<String>;
     fn list_mob(&self) -> Vec<String>;
     fn get(&self, key: &str) -> String;
+    fn remove(&self, key: &str);
     fn add_to_mob(&self, coauthor: &str);
     fn clear_mob(&self);
 }
@@ -60,6 +61,18 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
 
         assert!(output.status.success());
         return String::from_utf8(output.stdout).unwrap().trim().to_string();
+    }
+
+    fn remove(&self, key: &str) {
+        let output = Command::new("git")
+            .arg("config")
+            .arg("--global")
+            .arg("--unset-all")
+            .arg(format!("coauthors.{key}"))
+            .output()
+            .expect("failed to execute process");
+
+        assert!(output.status.success());
     }
 
     fn add_to_mob(&self, coauthor: &str) {
