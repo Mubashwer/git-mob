@@ -6,12 +6,18 @@ use crate::coauthor_repo::CoauthorRepo;
 #[derive(Parser)]
 pub struct Mob {
     /// Sets active co-author(s) for pair/mob programming session
+    ///
+    /// Usage example: git mob pair --with lm
     #[arg(short='w', long="with", num_args=0.., value_name="COAUTHOR_KEY")]
     with: Option<Vec<String>>,
-    /// Lists co-author(s) in current mob/pair programming session.
+    /// Lists co-author(s) in current mob/pair programming session
+    ///
+    /// Usage example: git mob --list
     #[arg(short = 'l', long = "list")]
     list: bool,
     /// Clears mob/pair programming session. Going solo!
+    ///
+    /// Usage example: git mob co-author --list
     #[arg(short = 'c', long = "clear")]
     clear: bool,
 }
