@@ -4,7 +4,7 @@ use crate::coauthor_repo::CoauthorRepo;
 
 #[derive(Parser)]
 #[command(arg_required_else_help = true)]
-pub struct Coauthor {
+pub(crate) struct Coauthor {
     /// Adds co-author to co-author repository
     ///
     /// Usage example: git mob co-author --add lm "Leo Messi" leo.messi@example.com
@@ -23,7 +23,7 @@ pub struct Coauthor {
 }
 
 impl Coauthor {
-    pub fn handle(&self, coauthor_repo: &impl CoauthorRepo) {
+    pub(crate) fn handle(&self, coauthor_repo: &impl CoauthorRepo) {
         if self.delete.is_some() {
             coauthor_repo.remove(self.delete.as_ref().unwrap());
         }

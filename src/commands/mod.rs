@@ -1,2 +1,2 @@
-pub mod coauthor;
-pub mod mob;
+pub(crate) mod coauthor;
+pub(crate) mod mob;

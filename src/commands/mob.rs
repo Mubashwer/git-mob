@@ -5,7 +5,7 @@ use crate::coauthor_repo::CoauthorRepo;
 
 #[derive(Parser)]
 #[command(arg_required_else_help = true)]
-pub struct Mob {
+pub(crate) struct Mob {
     /// Sets active co-author(s) for pair/mob programming session
     ///
     /// Usage example: git mob pair --with lm
@@ -24,7 +24,7 @@ pub struct Mob {
 }
 
 impl Mob {
-    pub fn handle(&self, coauthor_repo: &impl CoauthorRepo) {
+    pub(crate) fn handle(&self, coauthor_repo: &impl CoauthorRepo) {
         if self.clear || self.with.is_some() {
             coauthor_repo.clear_mob();
         }
