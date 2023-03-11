@@ -8,6 +8,9 @@ pub struct Mob {
     /// Sets active co-author(s) for pair/mob programming session
     #[arg(short='w', long="with", num_args=0.., value_name="COAUTHOR_KEY")]
     with: Option<Vec<String>>,
+    /// Lists co-author(s) in current mob/pair programming session.
+    #[arg(short = 'l', long = "list")]
+    list: bool,
     /// Clears mob/pair programming session. Going solo!
     #[arg(short = 'c', long = "clear")]
     clear: bool,
@@ -17,6 +20,10 @@ impl Mob {
     pub fn handle(&self, coauthor_repo: &impl CoauthorRepo) {
         if self.clear || self.with.is_some() {
             coauthor_repo.clear_mob();
+        }
+
+        if self.list {
+            println!("{}", coauthor_repo.list_mob().join("\n"));
         }
 
         if self.with.is_none() {
@@ -73,8 +80,9 @@ mod tests {
             .return_const({});
 
         let mob = Mob {
-            with: None,
             clear: true,
+            with: None,
+            list: false,
         };
 
         mob.handle(&mock_coauthor_repo);

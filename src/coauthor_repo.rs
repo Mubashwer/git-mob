@@ -5,6 +5,7 @@ use mockall::{automock, predicate::*};
 #[cfg_attr(test, automock)]
 pub trait CoauthorRepo {
     fn list(&self) -> Vec<String>;
+    fn list_mob(&self) -> Vec<String>;
     fn get(&self, key: &str) -> String;
     fn add_to_mob(&self, coauthor: &str);
     fn clear_mob(&self);
@@ -26,6 +27,24 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .unwrap()
             .lines()
             .map(|x| x.split_once(' ').unwrap().1.to_string())
+            .collect();
+
+        return options;
+    }
+
+    fn list_mob(&self) -> Vec<String> {
+        let output = Command::new("git")
+            .arg("config")
+            .arg("--global")
+            .arg("--get-all")
+            .arg("coauthors-mob.entry")
+            .output()
+            .expect("failed to execute process");
+
+        let options: Vec<String> = String::from_utf8(output.stdout)
+            .unwrap()
+            .lines()
+            .map(|x| x.to_string())
             .collect();
 
         return options;
