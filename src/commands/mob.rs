@@ -87,7 +87,7 @@ mod tests {
         let mob = Mob {
             clear: true,
             with: None,
-            list: false
+            list: false,
         };
 
         mob.handle(&mock_coauthor_repo);
@@ -109,7 +109,7 @@ mod tests {
         let mob = Mob {
             list: true,
             clear: false,
-            with: None
+            with: None,
         };
 
         mob.handle(&mock_coauthor_repo);

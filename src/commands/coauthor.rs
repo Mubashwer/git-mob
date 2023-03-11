@@ -88,4 +88,26 @@ mod tests {
 
         coauthor.handle(&mock_coauthor_repo);
     }
+
+    #[test]
+    fn test_list_fetches_all_coauthors() {
+        let coauthors = vec![
+            "Leo Messi <leo.messi@example.com>".to_owned(),
+            "Emi Martinez <emi.martinez@example.com>".to_owned(),
+        ];
+
+        let mut mock_coauthor_repo = MockCoauthorRepo::new();
+        mock_coauthor_repo
+            .expect_list()
+            .once()
+            .return_const(coauthors);
+
+        let mob = Coauthor {
+            list: true,
+            delete: None,
+            add: None,
+        };
+
+        mob.handle(&mock_coauthor_repo);
+    }
 }
