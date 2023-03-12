@@ -31,7 +31,6 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .output()
             .expect("failed to execute process");
 
-        assert!(output.status.success());
         let options: Vec<String> = String::from_utf8(output.stdout)
             .expect("failed to convert stdout to string")
             .lines()
@@ -92,7 +91,9 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .output()
             .expect("failed to execute process");
 
-        assert!(output.status.success());
+        if !output.status.success() {
+            eprintln!("No co-author found with key: {key}")
+        }
     }
 
     fn add(&self, key: &str, coauthor: &str) {

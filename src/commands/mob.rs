@@ -37,9 +37,14 @@ impl Mob {
 
         let coauthor_keys = self.with.as_ref().unwrap();
 
-        match coauthor_keys.len() {
-            0 => {
+        match coauthor_keys.is_empty() {
+            true => {
                 let coauthors = coauthor_repo.list();
+                if coauthors.is_empty() {
+                    eprintln!("No co-author(s) found. At least one co-author must be added");
+                    return;
+                }
+
                 let result = MultiSelect::new("Select active co-author(s):", coauthors).prompt();
 
                 match result {
@@ -52,10 +57,10 @@ impl Mob {
                             writeln!(writer, "Going solo!").expect("write failed");
                         }
                     }
-                    Err(_) => eprintln!("failed to select co-author(s)"),
+                    Err(_) => eprintln!("Failed to prompt selection of co-author(s)"),
                 }
             }
-            _ => {
+            false => {
                 let coauthors: Vec<String> = coauthor_keys
                     .into_iter()
                     .map(|key| {
