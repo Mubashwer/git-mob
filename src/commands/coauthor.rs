@@ -9,17 +9,17 @@ pub(crate) struct Coauthor {
     ///
     /// Usage example: git mob co-author --add lm "Leo Messi" leo.messi@example.com
     #[arg(short = 'a', long = "add", num_args=3, value_names=["COAUTHOR_KEY", "COAUTHOR_NAME", "COAUTHOR_EMAIL"])]
-    add: Option<Vec<String>>,
+    pub(crate) add: Option<Vec<String>>,
     /// Remove co-author from co-author repository
     ///
     /// Usage example: git mob co-author --delete lm
     #[arg(short = 'd', long = "delete", value_name = "COAUTHOR_KEY")]
-    delete: Option<String>,
+    pub(crate) delete: Option<String>,
     /// Lists co-author(s) from co-author repository
     ///
     /// Usage example: git mob co-author --list
     #[arg(short = 'l', long = "list")]
-    list: bool,
+    pub(crate) list: bool,
 }
 
 impl Coauthor {
@@ -52,11 +52,16 @@ mod tests {
 
     #[test]
     fn test_delete_removes_coauthor() {
+        let key = "lm";
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
-        mock_coauthor_repo.expect_remove().once().return_const({});
+        mock_coauthor_repo
+            .expect_remove()
+            .with(predicate::eq(key))
+            .once()
+            .return_const({});
 
         let coauthor = Coauthor {
-            delete: Some("lm".to_owned()),
+            delete: Some(key.to_owned()),
             add: None,
             list: false,
         };

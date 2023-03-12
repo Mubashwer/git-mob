@@ -10,17 +10,17 @@ pub(crate) struct Mob {
     ///
     /// Usage example: git mob pair --with lm mj
     #[arg(short='w', long="with", num_args=0.., value_name="COAUTHOR_KEY")]
-    with: Option<Vec<String>>,
+    pub(crate) with: Option<Vec<String>>,
     /// Clears mob/pair programming session. Going solo!
     ///
     /// Usage example: git mob co-author --list
     #[arg(short = 'c', long = "clear")]
-    clear: bool,
+    pub(crate) clear: bool,
     /// Lists co-author(s) in current mob/pair programming session
     ///
     /// Usage example: git mob --list
     #[arg(short = 'l', long = "list")]
-    list: bool,
+    pub(crate) list: bool,
 }
 
 impl Mob {

@@ -45,9 +45,65 @@ enum Commands {
 
 pub fn run(coauthor_repo: &impl CoauthorRepo) {
     let cli = Cli::parse();
+    run_inner(&cli, coauthor_repo);
+}
 
+fn run_inner(cli: &Cli, coauthor_repo: &impl CoauthorRepo) {
     match &cli.command {
         None => cli.mob.handle(coauthor_repo),
         Some(Commands::Coauthor(coauthor)) => coauthor.handle(coauthor_repo),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::coauthor_repo::MockCoauthorRepo;
+    use mockall::predicate;
+
+    #[test]
+    fn test_mob_clear_clears_mob() {
+        let mut mock_coauthor_repo = MockCoauthorRepo::new();
+        mock_coauthor_repo
+            .expect_clear_mob()
+            .once()
+            .return_const({});
+
+        let cli = Cli {
+            command: None,
+            mob: Mob {
+                with: None,
+                clear: true,
+                list: false,
+            },
+        };
+
+        run_inner(&cli, &mock_coauthor_repo);
+    }
+
+    #[test]
+    fn test_coauthor_delete_removes_coauthor() {
+        let key = "lm";
+        let mut mock_coauthor_repo = MockCoauthorRepo::new();
+        mock_coauthor_repo
+            .expect_remove()
+            .with(predicate::eq(key))
+            .once()
+            .return_const({});
+
+        let cli = Cli {
+            command: Some(Commands::Coauthor(Coauthor {
+                delete: Some(key.to_owned()),
+                add: None,
+                list: false,
+            })),
+            mob: Mob {
+                with: None,
+                clear: false,
+                list: false,
+            },
+        };
+
+        run_inner(&cli, &mock_coauthor_repo);
     }
 }
