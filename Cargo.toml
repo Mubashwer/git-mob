@@ -5,7 +5,6 @@ authors = ["Mubashwer Salman Khurshid"]
 edition = "2021"
 description = "A CLI app which can help users automatically add co-author(s) to git commits for pair/mob programming"
 license = "MIT"
-license-file = "LICENSE"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
