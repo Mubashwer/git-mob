@@ -26,9 +26,14 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
 
         assert!(output.status.success());
         let options: Vec<String> = String::from_utf8(output.stdout)
-            .unwrap()
+            .expect("failed to convert stdout to string")
             .lines()
-            .map(|x| x.split_once(' ').unwrap().1.to_string())
+            .map(|x| {
+                x.split_once(' ')
+                    .expect("failed to split string")
+                    .1
+                    .to_string()
+            })
             .collect();
 
         return options;
@@ -44,7 +49,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .expect("failed to execute process");
 
         let options: Vec<String> = String::from_utf8(output.stdout)
-            .unwrap()
+            .expect("failed to convert stdout to string")
             .lines()
             .map(|x| x.to_string())
             .collect();
@@ -61,7 +66,10 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .expect("failed to execute process");
 
         assert!(output.status.success());
-        return String::from_utf8(output.stdout).unwrap().trim().to_string();
+        return String::from_utf8(output.stdout)
+            .expect("failed to convert stdout to string")
+            .trim()
+            .to_string();
     }
 
     fn remove(&self, key: &str) {
