@@ -3,7 +3,7 @@ name = "git-mob"
 version = "0.1.0"
 authors = ["Mubashwer Salman Khurshid"]
 edition = "2021"
-description = "A CLI app which can help users automatically add co-author(s) to git commits for pair/mob programming."
+description = "A CLI app which can help users automatically add co-author(s) to git commits for pair/mob programming"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

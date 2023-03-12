@@ -1,7 +1,7 @@
 use crate::coauthor_repo::CoauthorRepo;
 use crate::commands::{coauthor::Coauthor, mob::Mob};
 use clap::{Parser, Subcommand};
-use std::str;
+use std::{io, str};
 
 #[derive(Parser)]
 #[command(
@@ -43,15 +43,15 @@ enum Commands {
     Coauthor(Coauthor),
 }
 
-pub fn run(coauthor_repo: &impl CoauthorRepo) {
+pub fn run(coauthor_repo: &impl CoauthorRepo, writer: &mut impl io::Write) {
     let cli = Cli::parse();
-    run_inner(&cli, coauthor_repo);
+    run_inner(&cli, coauthor_repo, writer);
 }
 
-fn run_inner(cli: &Cli, coauthor_repo: &impl CoauthorRepo) {
+fn run_inner(cli: &Cli, coauthor_repo: &impl CoauthorRepo, writer: &mut impl io::Write) {
     match &cli.command {
-        None => cli.mob.handle(coauthor_repo),
-        Some(Commands::Coauthor(coauthor)) => coauthor.handle(coauthor_repo),
+        None => cli.mob.handle(coauthor_repo, writer),
+        Some(Commands::Coauthor(coauthor)) => coauthor.handle(coauthor_repo, writer),
     }
 }
 
@@ -78,7 +78,8 @@ mod tests {
             },
         };
 
-        run_inner(&cli, &mock_coauthor_repo);
+        let mut writer = Vec::new();
+        run_inner(&cli, &mock_coauthor_repo, &mut writer);
     }
 
     #[test]
@@ -104,6 +105,7 @@ mod tests {
             },
         };
 
-        run_inner(&cli, &mock_coauthor_repo);
+        let mut writer = Vec::new();
+        run_inner(&cli, &mock_coauthor_repo, &mut writer);
     }
 }

@@ -1,7 +1,7 @@
+use crate::coauthor_repo::CoauthorRepo;
 use clap::{arg, Parser};
 use inquire::MultiSelect;
-
-use crate::coauthor_repo::CoauthorRepo;
+use std::io;
 
 #[derive(Parser)]
 #[command(arg_required_else_help = true)]
@@ -24,12 +24,12 @@ pub(crate) struct Mob {
 }
 
 impl Mob {
-    pub(crate) fn handle(&self, coauthor_repo: &impl CoauthorRepo) {
+    pub(crate) fn handle(&self, coauthor_repo: &impl CoauthorRepo, writer: &mut impl io::Write) {
         if self.clear || self.with.is_some() {
             coauthor_repo.clear_mob();
         }
         if self.list {
-            println!("{}", coauthor_repo.list_mob().join("\n"));
+            writeln!(writer, "{}", coauthor_repo.list_mob().join("\n")).expect("write failed");
         }
         if self.with.is_none() {
             return;
@@ -49,10 +49,10 @@ impl Mob {
                         });
 
                         if selected.is_empty() {
-                            println!("Going solo!")
+                            writeln!(writer, "Going solo!").expect("write failed");
                         }
                     }
-                    Err(_) => println!("failed to select co-author(s)"),
+                    Err(_) => eprintln!("failed to select co-author(s)"),
                 }
             }
             _ => {
@@ -65,7 +65,7 @@ impl Mob {
                     })
                     .collect();
 
-                println!("{}", coauthors.join("\n"));
+                writeln!(writer, "{}", coauthors.join("\n")).expect("write failed");
             }
         }
     }
@@ -84,17 +84,18 @@ mod tests {
             .once()
             .return_const({});
 
-        let mob = Mob {
+        let mob_cmd = Mob {
             clear: true,
             with: None,
             list: false,
         };
 
-        mob.handle(&mock_coauthor_repo);
+        let mut result = Vec::new();
+        mob_cmd.handle(&mock_coauthor_repo, &mut result);
     }
 
     #[test]
-    fn test_list_fetches_mob_coauthors() {
+    fn test_list_writes_mob_coauthors() {
         let coauthors = vec![
             "Leo Messi <leo.messi@example.com>".to_owned(),
             "Emi Martinez <emi.martinez@example.com>".to_owned(),
@@ -104,14 +105,17 @@ mod tests {
         mock_coauthor_repo
             .expect_list_mob()
             .once()
-            .return_const(coauthors);
+            .return_const(coauthors.to_owned());
 
-        let mob = Mob {
+        let mob_cmd = Mob {
             list: true,
             clear: false,
             with: None,
         };
 
-        mob.handle(&mock_coauthor_repo);
+        let mut result = Vec::new();
+        mob_cmd.handle(&mock_coauthor_repo, &mut result);
+
+        assert_eq!(result, format!("{}\n", coauthors.join("\n")).as_bytes());
     }
 }

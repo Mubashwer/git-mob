@@ -1,6 +1,6 @@
-use clap::{arg, Parser};
-
 use crate::coauthor_repo::CoauthorRepo;
+use clap::{arg, Parser};
+use std::io;
 
 #[derive(Parser)]
 #[command(arg_required_else_help = true)]
@@ -23,12 +23,12 @@ pub(crate) struct Coauthor {
 }
 
 impl Coauthor {
-    pub(crate) fn handle(&self, coauthor_repo: &impl CoauthorRepo) {
+    pub(crate) fn handle(&self, coauthor_repo: &impl CoauthorRepo, writer: &mut impl io::Write) {
         if self.delete.is_some() {
             coauthor_repo.remove(self.delete.as_ref().unwrap());
         }
         if self.list {
-            println!("{}", coauthor_repo.list().join("\n"));
+            writeln!(writer, "{}", coauthor_repo.list().join("\n")).expect("write failed");
         }
         if self.add.is_some() {
             let coauthor_info = self.add.as_ref().unwrap();
@@ -39,7 +39,7 @@ impl Coauthor {
             let coauthor = format!("{name} <{email}>");
             coauthor_repo.add(key, &coauthor);
 
-            println!("{coauthor}");
+            writeln!(writer, "{coauthor}").expect("write failed");
         }
     }
 }
@@ -66,7 +66,8 @@ mod tests {
             list: false,
         };
 
-        coauthor.handle(&mock_coauthor_repo);
+        let mut result = Vec::new();
+        coauthor.handle(&mock_coauthor_repo, &mut result);
     }
 
     #[test]
@@ -85,17 +86,20 @@ mod tests {
             .once()
             .return_const({});
 
-        let coauthor = Coauthor {
+        let coauthor_cmd = Coauthor {
             add: Some(vec![key.to_owned(), name.to_owned(), email.to_owned()]),
             delete: None,
             list: false,
         };
 
-        coauthor.handle(&mock_coauthor_repo);
+        let mut result = Vec::new();
+        coauthor_cmd.handle(&mock_coauthor_repo, &mut result);
+
+        assert_eq!(result, format!("{name} <{email}>\n").as_bytes());
     }
 
     #[test]
-    fn test_list_fetches_all_coauthors() {
+    fn test_list_writes_all_coauthors() {
         let coauthors = vec![
             "Leo Messi <leo.messi@example.com>".to_owned(),
             "Emi Martinez <emi.martinez@example.com>".to_owned(),
@@ -105,14 +109,17 @@ mod tests {
         mock_coauthor_repo
             .expect_list()
             .once()
-            .return_const(coauthors);
+            .return_const(coauthors.to_owned());
 
-        let mob = Coauthor {
+        let coauthor_cmd = Coauthor {
             list: true,
             delete: None,
             add: None,
         };
 
-        mob.handle(&mock_coauthor_repo);
+        let mut result = Vec::new();
+        coauthor_cmd.handle(&mock_coauthor_repo, &mut result);
+
+        assert_eq!(result, format!("{}\n", coauthors.join("\n")).as_bytes());
     }
 }
