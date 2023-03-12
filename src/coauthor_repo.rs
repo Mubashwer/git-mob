@@ -14,13 +14,20 @@ pub trait CoauthorRepo {
 }
 
 pub struct GitConfigCoauthorRepo {}
+impl GitConfigCoauthorRepo {
+    const COAUTHORS_SECTION_NAME: &str = "coauthors";
+    const COAUTHORS_MOB_SECTION_NAME: &str = "coauthors-mob";
+    const COAUTHOR_MOB_KEY: &str = "entry";
+}
+type GCCR = GitConfigCoauthorRepo;
+
 impl CoauthorRepo for GitConfigCoauthorRepo {
     fn list(&self) -> Vec<String> {
         let output = Command::new("git")
             .arg("config")
             .arg("--global")
             .arg("--get-regexp")
-            .arg("^coauthors\\.")
+            .arg(format!("^{}\\.", GCCR::COAUTHORS_SECTION_NAME))
             .output()
             .expect("failed to execute process");
 
@@ -44,7 +51,11 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .arg("config")
             .arg("--global")
             .arg("--get-all")
-            .arg("coauthors-mob.entry")
+            .arg(format!(
+                "{}.{}",
+                GCCR::COAUTHORS_MOB_SECTION_NAME,
+                GCCR::COAUTHOR_MOB_KEY
+            ))
             .output()
             .expect("failed to execute process");
 
@@ -61,7 +72,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
         let output = Command::new("git")
             .arg("config")
             .arg("--global")
-            .arg(format!("coauthors.{key}"))
+            .arg(format!("{}.{key}", GCCR::COAUTHORS_SECTION_NAME))
             .output()
             .expect("failed to execute process");
 
@@ -77,7 +88,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .arg("config")
             .arg("--global")
             .arg("--unset-all")
-            .arg(format!("coauthors.{key}"))
+            .arg(format!("{}.{key}", GCCR::COAUTHORS_SECTION_NAME))
             .output()
             .expect("failed to execute process");
 
@@ -88,7 +99,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
         let status = Command::new("git")
             .arg("config")
             .arg("--global")
-            .arg(format!("coauthors.{key}"))
+            .arg(format!("{}.{key}", GCCR::COAUTHORS_SECTION_NAME))
             .arg(&coauthor)
             .status()
             .expect("failed to execute process");
@@ -100,7 +111,11 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .arg("config")
             .arg("--global")
             .arg("--add")
-            .arg("coauthors-mob.entry")
+            .arg(format!(
+                "{}.{}",
+                GCCR::COAUTHORS_MOB_SECTION_NAME,
+                GCCR::COAUTHOR_MOB_KEY
+            ))
             .arg(&coauthor)
             .status()
             .expect("failed to execute process");
@@ -112,7 +127,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .arg("config")
             .arg("--global")
             .arg("--remove-section")
-            .arg("coauthors-mob")
+            .arg(format!("{}", GCCR::COAUTHORS_MOB_SECTION_NAME))
             .output()
             .expect("failed to execute process");
     }
