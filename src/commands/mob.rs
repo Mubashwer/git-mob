@@ -61,16 +61,19 @@ impl Mob {
                 }
             }
             false => {
-                let coauthors: Vec<String> = coauthor_keys
-                    .into_iter()
-                    .map(|key| {
-                        let coauthor = coauthor_repo.get(&key);
-                        coauthor_repo.add_to_mob(&coauthor);
-                        return coauthor;
-                    })
-                    .collect();
-
-                writeln!(writer, "{}", coauthors.join("\n")).expect("write failed");
+                let mut coauthors: Vec<String> = Vec::new();
+                for key in coauthor_keys {
+                    match coauthor_repo.get(&key) {
+                        Ok(coauthor) => {
+                            coauthor_repo.add_to_mob(&coauthor);
+                            coauthors.push(coauthor);
+                        }
+                        Err(_) => eprintln!("No co-author found with key: {key}"),
+                    }
+                }
+                if !coauthors.is_empty() {
+                    writeln!(writer, "{}", coauthors.join("\n")).expect("write failed");
+                }
             }
         }
     }

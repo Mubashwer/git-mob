@@ -6,7 +6,7 @@ use mockall::{automock, predicate::*};
 pub trait CoauthorRepo {
     fn list(&self) -> Vec<String>;
     fn list_mob(&self) -> Vec<String>;
-    fn get(&self, key: &str) -> String;
+    fn get(&self, key: &str) -> Result<String, String>;
     fn remove(&self, key: &str);
     fn add(&self, key: &str, coauthor: &str);
     fn add_to_mob(&self, coauthor: &str);
@@ -67,7 +67,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
         return options;
     }
 
-    fn get(&self, key: &str) -> String {
+    fn get(&self, key: &str) -> Result<String, String> {
         let output = Command::new("git")
             .arg("config")
             .arg("--global")
@@ -75,11 +75,15 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .output()
             .expect("failed to execute process");
 
-        assert!(output.status.success());
-        return String::from_utf8(output.stdout)
-            .expect("failed to convert stdout to string")
-            .trim()
-            .to_string();
+        return match output.status.success() {
+            true => Ok(String::from_utf8(output.stdout)
+                .expect("failed to convert stdout to string")
+                .trim()
+                .to_string()),
+            false => {
+                Err(String::from_utf8(output.stderr).expect("failed to convert stderr to string"))
+            }
+        };
     }
 
     fn remove(&self, key: &str) {
