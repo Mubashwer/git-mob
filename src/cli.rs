@@ -67,7 +67,7 @@ mod tests {
         mock_coauthor_repo
             .expect_clear_mob()
             .once()
-            .return_const({});
+            .return_const(());
 
         let cli = Cli {
             command: None,
@@ -87,10 +87,15 @@ mod tests {
         let key = "lm";
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
+            .expect_get()
+            .with(predicate::eq(key))
+            .once()
+            .return_const("Leo Messi <leo.messi@example.com>".to_owned());
+        mock_coauthor_repo
             .expect_remove()
             .with(predicate::eq(key))
             .once()
-            .return_const({});
+            .return_const(());
 
         let cli = Cli {
             command: Some(Commands::Coauthor(Coauthor {

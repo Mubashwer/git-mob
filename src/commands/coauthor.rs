@@ -25,7 +25,11 @@ pub(crate) struct Coauthor {
 impl Coauthor {
     pub(crate) fn handle(&self, coauthor_repo: &impl CoauthorRepo, writer: &mut impl io::Write) {
         if self.delete.is_some() {
-            coauthor_repo.remove(self.delete.as_ref().unwrap());
+            let key = self.delete.as_ref().unwrap();
+            match coauthor_repo.get(key) {
+                Some(_) => coauthor_repo.remove(key),
+                None => eprintln!("No co-author found with key: {key}"),
+            }
         }
         if self.list {
             writeln!(writer, "{}", coauthor_repo.list().join("\n")).expect("write failed");
@@ -35,10 +39,9 @@ impl Coauthor {
             let key: &str = coauthor_info[0].as_ref();
             let name: &str = coauthor_info[1].as_ref();
             let email: &str = coauthor_info[2].as_ref();
-
             let coauthor = format!("{name} <{email}>");
-            coauthor_repo.add(key, &coauthor);
 
+            coauthor_repo.add(key, &coauthor);
             writeln!(writer, "{coauthor}").expect("write failed");
         }
     }
@@ -55,10 +58,15 @@ mod tests {
         let key = "lm";
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
+            .expect_get()
+            .with(predicate::eq(key))
+            .once()
+            .return_const("Leo Messi <leo.messi@example.com>".to_owned());
+        mock_coauthor_repo
             .expect_remove()
             .with(predicate::eq(key))
             .once()
-            .return_const({});
+            .return_const(());
 
         let coauthor = Coauthor {
             delete: Some(key.to_owned()),
@@ -84,7 +92,7 @@ mod tests {
                 predicate::eq(format!("{name} <{email}>")),
             )
             .once()
-            .return_const({});
+            .return_const(());
 
         let coauthor_cmd = Coauthor {
             add: Some(vec![key.to_owned(), name.to_owned(), email.to_owned()]),

@@ -6,7 +6,7 @@ use mockall::{automock, predicate::*};
 pub trait CoauthorRepo {
     fn list(&self) -> Vec<String>;
     fn list_mob(&self) -> Vec<String>;
-    fn get(&self, key: &str) -> Result<String, String>;
+    fn get(&self, key: &str) -> Option<String>;
     fn remove(&self, key: &str);
     fn add(&self, key: &str, coauthor: &str);
     fn add_to_mob(&self, coauthor: &str);
@@ -67,7 +67,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
         return options;
     }
 
-    fn get(&self, key: &str) -> Result<String, String> {
+    fn get(&self, key: &str) -> Option<String> {
         let output = Command::new("git")
             .arg("config")
             .arg("--global")
@@ -75,29 +75,26 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .output()
             .expect("failed to execute process");
 
-        return match output.status.success() {
-            true => Ok(String::from_utf8(output.stdout)
-                .expect("failed to convert stdout to string")
-                .trim()
-                .to_string()),
-            false => {
-                Err(String::from_utf8(output.stderr).expect("failed to convert stderr to string"))
-            }
-        };
+        match output.status.success() {
+            true => Some(
+                String::from_utf8(output.stdout)
+                    .expect("failed to convert stdout to string")
+                    .trim()
+                    .to_string(),
+            ),
+            false => None,
+        }
     }
 
     fn remove(&self, key: &str) {
-        let output = Command::new("git")
+        let status = Command::new("git")
             .arg("config")
             .arg("--global")
             .arg("--unset-all")
             .arg(format!("{}.{key}", GCCR::COAUTHORS_SECTION_NAME))
-            .output()
+            .status()
             .expect("failed to execute process");
-
-        if !output.status.success() {
-            eprintln!("No co-author found with key: {key}")
-        }
+        assert!(status.success());
     }
 
     fn add(&self, key: &str, coauthor: &str) {

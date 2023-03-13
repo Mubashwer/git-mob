@@ -64,11 +64,11 @@ impl Mob {
                 let mut coauthors: Vec<String> = Vec::new();
                 for key in coauthor_keys {
                     match coauthor_repo.get(&key) {
-                        Ok(coauthor) => {
+                        Some(coauthor) => {
                             coauthor_repo.add_to_mob(&coauthor);
                             coauthors.push(coauthor);
                         }
-                        Err(_) => eprintln!("No co-author found with key: {key}"),
+                        None => eprintln!("No co-author found with key: {key}"),
                     }
                 }
                 if !coauthors.is_empty() {
@@ -90,7 +90,7 @@ mod tests {
         mock_coauthor_repo
             .expect_clear_mob()
             .once()
-            .return_const({});
+            .return_const(());
 
         let mob_cmd = Mob {
             clear: true,
