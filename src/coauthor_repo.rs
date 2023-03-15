@@ -30,7 +30,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .output()
             .expect("failed to execute process");
 
-        let options: Vec<String> = String::from_utf8(output.stdout)
+        String::from_utf8(output.stdout)
             .expect("failed to convert stdout to string")
             .lines()
             .map(|x| {
@@ -43,9 +43,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
                     .1
                     .to_string()
             })
-            .collect();
-
-        return options;
+            .collect()
     }
 
     fn list_mob(&self) -> Vec<String> {
@@ -59,13 +57,11 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .output()
             .expect("failed to execute process");
 
-        let options: Vec<String> = String::from_utf8(output.stdout)
+        String::from_utf8(output.stdout)
             .expect("failed to convert stdout to string")
             .lines()
             .map(|x| x.to_string())
-            .collect();
-
-        return options;
+            .collect()
     }
 
     fn get(&self, key: &str) -> Option<String> {

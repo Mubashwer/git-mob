@@ -59,7 +59,7 @@ mod tests {
     use mockall::predicate;
 
     #[test]
-    fn test_delete_removes_coauthor() {
+    fn test_delete_key_exists_removes_coauthor() {
         let key = "lm";
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
@@ -82,6 +82,32 @@ mod tests {
         let mut out = Vec::new();
         let mut err = Vec::new();
         coauthor_cmd.handle(&mock_coauthor_repo, &mut out, &mut err);
+    }
+
+    #[test]
+    fn test_delete_key_does_not_exist_prints_error_message() {
+        let key = "em";
+        let mut mock_coauthor_repo = MockCoauthorRepo::new();
+        mock_coauthor_repo
+            .expect_get()
+            .with(predicate::eq(key))
+            .once()
+            .return_const(None);
+
+        let coauthor_cmd = Coauthor {
+            delete: Some(key.to_owned()),
+            add: None,
+            list: false,
+        };
+
+        let mut out = Vec::new();
+        let mut err = Vec::new();
+        coauthor_cmd.handle(&mock_coauthor_repo, &mut out, &mut err);
+
+        assert_eq!(
+            err,
+            format!("No co-author found with key: {key}\n").as_bytes()
+        );
     }
 
     #[test]
