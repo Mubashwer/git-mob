@@ -59,7 +59,7 @@ mod tests {
     use mockall::predicate;
 
     #[test]
-    fn test_delete_key_exists_removes_coauthor() {
+    fn test_delete_coauthor() {
         let key = "lm";
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
@@ -85,7 +85,7 @@ mod tests {
     }
 
     #[test]
-    fn test_delete_key_does_not_exist_prints_error_message() {
+    fn test_error_message_shown_when_trying_to_delete_coauthor_with_non_existing_coauthor_key() {
         let key = "em";
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
@@ -111,7 +111,7 @@ mod tests {
     }
 
     #[test]
-    fn test_add_adds_coauthor() {
+    fn test_add_coauthor() {
         let key = "lm";
         let name = "Leo Messi";
         let email = "leo.messi@example.com";
@@ -140,7 +140,7 @@ mod tests {
     }
 
     #[test]
-    fn test_list_writes_all_coauthors() {
+    fn test_list_coauthors() {
         let coauthors = vec![
             "lm Leo Messi <leo.messi@example.com>".to_owned(),
             "em Emi Martinez <emi.martinez@example.com>".to_owned(),

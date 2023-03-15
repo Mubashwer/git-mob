@@ -94,9 +94,10 @@ impl Mob {
 mod tests {
     use super::*;
     use crate::coauthor_repo::MockCoauthorRepo;
+    use mockall::predicate;
 
     #[test]
-    fn test_clear_clears_mob() {
+    fn test_clear_mob_session() {
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
             .expect_clear_mob()
@@ -115,8 +116,8 @@ mod tests {
     }
 
     #[test]
-    fn test_list_writes_mob_coauthors() {
-        let coauthors = vec![
+    fn test_list_mob_coauthors() {
+        let coauthors = [
             "Leo Messi <leo.messi@example.com>".to_owned(),
             "Emi Martinez <emi.martinez@example.com>".to_owned(),
         ];
@@ -138,5 +139,114 @@ mod tests {
         mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err);
 
         assert_eq!(out, format!("{}\n", coauthors.join("\n")).as_bytes());
+    }
+
+    #[test]
+    fn test_error_message_shown_when_trying_to_mob_given_coauthors_list_is_empty() {
+        let coauthors = [];
+
+        let mut mock_coauthor_repo = MockCoauthorRepo::new();
+        mock_coauthor_repo
+            .expect_clear_mob()
+            .once()
+            .return_const(());
+        mock_coauthor_repo
+            .expect_list()
+            .with(predicate::eq(false))
+            .once()
+            .return_const(coauthors.to_owned());
+
+        let mob_cmd = Mob {
+            with: Some(vec![]),
+            clear: false,
+            list: false,
+        };
+
+        let mut out = Vec::new();
+        let mut err = Vec::new();
+        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err);
+
+        assert_eq!(
+            err,
+            b"No co-author(s) found. At least one co-author must be added\n"
+        );
+    }
+
+    #[test]
+    fn test_adding_coauthors_to_mob_session_by_keys() {
+        let keys = vec!["lm".to_owned(), "em".to_owned()];
+        let coauthors = [
+            "Leo Messi <leo.messi@example.com>",
+            "Emi Martinez <emi.martinez@example.com>",
+        ];
+
+        let mut mock_coauthor_repo = MockCoauthorRepo::new();
+        mock_coauthor_repo
+            .expect_clear_mob()
+            .once()
+            .return_const(());
+        mock_coauthor_repo
+            .expect_get()
+            .with(predicate::eq(keys[0].to_owned()))
+            .once()
+            .return_const(coauthors[0].to_owned());
+        mock_coauthor_repo
+            .expect_add_to_mob()
+            .with(predicate::eq(coauthors[0].to_owned()))
+            .once()
+            .return_const(());
+        mock_coauthor_repo
+            .expect_get()
+            .with(predicate::eq(keys[1].to_owned()))
+            .once()
+            .return_const(coauthors[1].to_owned());
+        mock_coauthor_repo
+            .expect_add_to_mob()
+            .with(predicate::eq(coauthors[1].to_owned()))
+            .once()
+            .return_const(());
+
+        let mob_cmd = Mob {
+            with: Some(keys),
+            clear: false,
+            list: false,
+        };
+
+        let mut out = Vec::new();
+        let mut err = Vec::new();
+        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err);
+
+        assert_eq!(out, format!("{}\n", coauthors.join("\n")).as_bytes());
+    }
+
+    #[test]
+    fn test_error_message_shown_when_trying_to_mob_while_passing_non_existing_coauthor_key() {
+        let key = "lm";
+
+        let mut mock_coauthor_repo = MockCoauthorRepo::new();
+        mock_coauthor_repo
+            .expect_clear_mob()
+            .once()
+            .return_const(());
+        mock_coauthor_repo
+            .expect_get()
+            .with(predicate::eq(key))
+            .once()
+            .return_const(None);
+
+        let mob_cmd = Mob {
+            with: Some(vec![key.to_owned()]),
+            clear: false,
+            list: false,
+        };
+
+        let mut out = Vec::new();
+        let mut err = Vec::new();
+        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err);
+
+        assert_eq!(
+            err,
+            format!("No co-author found with key: {key}").as_bytes()
+        );
     }
 }

@@ -67,7 +67,7 @@ mod tests {
     use mockall::predicate;
 
     #[test]
-    fn test_mob_clear_clears_mob() {
+    fn test_clear_mob_session() {
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
             .expect_clear_mob()
@@ -89,7 +89,7 @@ mod tests {
     }
 
     #[test]
-    fn test_coauthor_delete_removes_coauthor() {
+    fn test_delete_coauthor() {
         let key = "lm";
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
