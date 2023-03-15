@@ -15,7 +15,7 @@ pub(crate) struct Coauthor {
     /// Usage example: git mob co-author --delete lm
     #[arg(short = 'd', long = "delete", value_name = "COAUTHOR_KEY")]
     pub(crate) delete: Option<String>,
-    /// Lists co-author(s) from co-author repository
+    /// Lists co-author(s) with keys(s) from co-author repository
     ///
     /// Usage example: git mob co-author --list
     #[arg(short = 'l', long = "list")]
@@ -37,7 +37,7 @@ impl Coauthor {
             }
         }
         if self.list {
-            writeln!(out, "{}", coauthor_repo.list().join("\n")).expect("write failed");
+            writeln!(out, "{}", coauthor_repo.list(true).join("\n")).expect("write failed");
         }
         if self.add.is_some() {
             let coauthor_info = self.add.as_ref().unwrap();
@@ -116,8 +116,8 @@ mod tests {
     #[test]
     fn test_list_writes_all_coauthors() {
         let coauthors = vec![
-            "Leo Messi <leo.messi@example.com>".to_owned(),
-            "Emi Martinez <emi.martinez@example.com>".to_owned(),
+            "lm Leo Messi <leo.messi@example.com>".to_owned(),
+            "em Emi Martinez <emi.martinez@example.com>".to_owned(),
         ];
 
         let mut mock_coauthor_repo = MockCoauthorRepo::new();

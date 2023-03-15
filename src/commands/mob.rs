@@ -44,7 +44,7 @@ impl Mob {
 
         match coauthor_keys.is_empty() {
             true => {
-                let coauthors = coauthor_repo.list();
+                let coauthors = coauthor_repo.list(false);
                 if coauthors.is_empty() {
                     writeln!(
                         err,

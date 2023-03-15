@@ -4,7 +4,7 @@ use std::process::Command;
 use mockall::{automock, predicate::*};
 #[cfg_attr(test, automock)]
 pub trait CoauthorRepo {
-    fn list(&self) -> Vec<String>;
+    fn list(&self, show_keys: bool) -> Vec<String>;
     fn list_mob(&self) -> Vec<String>;
     fn get(&self, key: &str) -> Option<String>;
     fn remove(&self, key: &str);
@@ -22,10 +22,11 @@ impl GitConfigCoauthorRepo {
 type GCCR = GitConfigCoauthorRepo;
 
 impl CoauthorRepo for GitConfigCoauthorRepo {
-    fn list(&self) -> Vec<String> {
+    fn list(&self, show_keys: bool) -> Vec<String> {
+        let prefix = GCCR::COAUTHORS_SECTION_NAME;
         let output = Command::new("git")
             .args(["config", "--global", "--get-regexp"])
-            .arg(format!("^{}\\.", GCCR::COAUTHORS_SECTION_NAME))
+            .arg(format!("^{prefix}\\."))
             .output()
             .expect("failed to execute process");
 
@@ -33,7 +34,11 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .expect("failed to convert stdout to string")
             .lines()
             .map(|x| {
-                x.split_once(' ')
+                let delimeter = match show_keys {
+                    true => format!("{prefix}."),
+                    false => " ".to_owned(),
+                };
+                x.split_once(&delimeter)
                     .expect("failed to split string")
                     .1
                     .to_string()
