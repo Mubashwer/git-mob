@@ -24,12 +24,17 @@ pub(crate) struct Mob {
 }
 
 impl Mob {
-    pub(crate) fn handle(&self, coauthor_repo: &impl CoauthorRepo, writer: &mut impl io::Write) {
+    pub(crate) fn handle(
+        &self,
+        coauthor_repo: &impl CoauthorRepo,
+        out: &mut impl io::Write,
+        err: &mut impl io::Write,
+    ) {
         if self.clear || self.with.is_some() {
             coauthor_repo.clear_mob();
         }
         if self.list {
-            writeln!(writer, "{}", coauthor_repo.list_mob().join("\n")).expect("write failed");
+            writeln!(out, "{}", coauthor_repo.list_mob().join("\n")).expect("write failed");
         }
         if self.with.is_none() {
             return;
@@ -41,7 +46,11 @@ impl Mob {
             true => {
                 let coauthors = coauthor_repo.list();
                 if coauthors.is_empty() {
-                    eprintln!("No co-author(s) found. At least one co-author must be added");
+                    writeln!(
+                        err,
+                        "No co-author(s) found. At least one co-author must be added"
+                    )
+                    .expect("write failed");
                     return;
                 }
 
@@ -54,10 +63,11 @@ impl Mob {
                         });
 
                         if selected.is_empty() {
-                            writeln!(writer, "Going solo!").expect("write failed");
+                            writeln!(out, "Going solo!").expect("write failed");
                         }
                     }
-                    Err(_) => eprintln!("Failed to prompt selection of co-author(s)"),
+                    Err(_) => writeln!(err, "Failed to prompt selection of co-author(s)")
+                        .expect("write failed"),
                 }
             }
             false => {
@@ -68,11 +78,12 @@ impl Mob {
                             coauthor_repo.add_to_mob(&coauthor);
                             coauthors.push(coauthor);
                         }
-                        None => eprintln!("No co-author found with key: {key}"),
+                        None => writeln!(err, "No co-author found with key: {key}")
+                            .expect("write failed"),
                     }
                 }
                 if !coauthors.is_empty() {
-                    writeln!(writer, "{}", coauthors.join("\n")).expect("write failed");
+                    writeln!(out, "{}", coauthors.join("\n")).expect("write failed");
                 }
             }
         }
@@ -98,8 +109,9 @@ mod tests {
             list: false,
         };
 
-        let mut result = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut result);
+        let mut out = Vec::new();
+        let mut err = Vec::new();
+        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err);
     }
 
     #[test]
@@ -121,9 +133,10 @@ mod tests {
             with: None,
         };
 
-        let mut result = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut result);
+        let mut out = Vec::new();
+        let mut err = Vec::new();
+        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err);
 
-        assert_eq!(result, format!("{}\n", coauthors.join("\n")).as_bytes());
+        assert_eq!(out, format!("{}\n", coauthors.join("\n")).as_bytes());
     }
 }

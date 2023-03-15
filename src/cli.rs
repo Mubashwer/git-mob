@@ -43,15 +43,20 @@ enum Commands {
     Coauthor(Coauthor),
 }
 
-pub fn run(coauthor_repo: &impl CoauthorRepo, writer: &mut impl io::Write) {
+pub fn run(coauthor_repo: &impl CoauthorRepo, out: &mut impl io::Write, err: &mut impl io::Write) {
     let cli = Cli::parse();
-    run_inner(&cli, coauthor_repo, writer);
+    run_inner(&cli, coauthor_repo, out, err);
 }
 
-fn run_inner(cli: &Cli, coauthor_repo: &impl CoauthorRepo, writer: &mut impl io::Write) {
+fn run_inner(
+    cli: &Cli,
+    coauthor_repo: &impl CoauthorRepo,
+    out: &mut impl io::Write,
+    err: &mut impl io::Write,
+) {
     match &cli.command {
-        None => cli.mob.handle(coauthor_repo, writer),
-        Some(Commands::Coauthor(coauthor)) => coauthor.handle(coauthor_repo, writer),
+        None => cli.mob.handle(coauthor_repo, out, err),
+        Some(Commands::Coauthor(coauthor)) => coauthor.handle(coauthor_repo, out, err),
     }
 }
 
@@ -78,8 +83,9 @@ mod tests {
             },
         };
 
-        let mut writer = Vec::new();
-        run_inner(&cli, &mock_coauthor_repo, &mut writer);
+        let mut out = Vec::new();
+        let mut err = Vec::new();
+        run_inner(&cli, &mock_coauthor_repo, &mut out, &mut err);
     }
 
     #[test]
@@ -110,7 +116,8 @@ mod tests {
             },
         };
 
-        let mut writer = Vec::new();
-        run_inner(&cli, &mock_coauthor_repo, &mut writer);
+        let mut out = Vec::new();
+        let mut err = Vec::new();
+        run_inner(&cli, &mock_coauthor_repo, &mut out, &mut err);
     }
 }

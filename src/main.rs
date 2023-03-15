@@ -3,6 +3,7 @@ use std::io;
 
 fn main() {
     let coauthor_repo = GitConfigCoauthorRepo {};
-    let writer = &mut io::stdout();
-    cli::run(&coauthor_repo, writer);
+    let out = &mut io::stdout();
+    let err = &mut io::stderr();
+    cli::run(&coauthor_repo, out, err);
 }

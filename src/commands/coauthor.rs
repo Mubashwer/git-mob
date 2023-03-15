@@ -23,16 +23,21 @@ pub(crate) struct Coauthor {
 }
 
 impl Coauthor {
-    pub(crate) fn handle(&self, coauthor_repo: &impl CoauthorRepo, writer: &mut impl io::Write) {
+    pub(crate) fn handle(
+        &self,
+        coauthor_repo: &impl CoauthorRepo,
+        out: &mut impl io::Write,
+        err: &mut impl io::Write,
+    ) {
         if self.delete.is_some() {
             let key = self.delete.as_ref().unwrap();
             match coauthor_repo.get(key) {
                 Some(_) => coauthor_repo.remove(key),
-                None => eprintln!("No co-author found with key: {key}"),
+                None => writeln!(err, "No co-author found with key: {key}").expect("write failed"),
             }
         }
         if self.list {
-            writeln!(writer, "{}", coauthor_repo.list().join("\n")).expect("write failed");
+            writeln!(out, "{}", coauthor_repo.list().join("\n")).expect("write failed");
         }
         if self.add.is_some() {
             let coauthor_info = self.add.as_ref().unwrap();
@@ -42,7 +47,7 @@ impl Coauthor {
             let coauthor = format!("{name} <{email}>");
 
             coauthor_repo.add(key, &coauthor);
-            writeln!(writer, "{coauthor}").expect("write failed");
+            writeln!(out, "{coauthor}").expect("write failed");
         }
     }
 }
@@ -68,14 +73,15 @@ mod tests {
             .once()
             .return_const(());
 
-        let coauthor = Coauthor {
+        let coauthor_cmd = Coauthor {
             delete: Some(key.to_owned()),
             add: None,
             list: false,
         };
 
-        let mut result = Vec::new();
-        coauthor.handle(&mock_coauthor_repo, &mut result);
+        let mut out = Vec::new();
+        let mut err = Vec::new();
+        coauthor_cmd.handle(&mock_coauthor_repo, &mut out, &mut err);
     }
 
     #[test]
@@ -100,10 +106,11 @@ mod tests {
             list: false,
         };
 
-        let mut result = Vec::new();
-        coauthor_cmd.handle(&mock_coauthor_repo, &mut result);
+        let mut out = Vec::new();
+        let mut err = Vec::new();
+        coauthor_cmd.handle(&mock_coauthor_repo, &mut out, &mut err);
 
-        assert_eq!(result, format!("{name} <{email}>\n").as_bytes());
+        assert_eq!(out, format!("{name} <{email}>\n").as_bytes());
     }
 
     #[test]
@@ -125,9 +132,10 @@ mod tests {
             add: None,
         };
 
-        let mut result = Vec::new();
-        coauthor_cmd.handle(&mock_coauthor_repo, &mut result);
+        let mut out = Vec::new();
+        let mut err = Vec::new();
+        coauthor_cmd.handle(&mock_coauthor_repo, &mut out, &mut err);
 
-        assert_eq!(result, format!("{}\n", coauthors.join("\n")).as_bytes());
+        assert_eq!(out, format!("{}\n", coauthors.join("\n")).as_bytes());
     }
 }
