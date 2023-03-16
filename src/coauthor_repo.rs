@@ -42,7 +42,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
                 x.split_once(&delimeter)
                     .expect("failed to split string")
                     .1
-                    .to_string()
+                    .to_owned()
             })
             .collect()
     }
@@ -58,7 +58,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
         String::from_utf8(output.stdout)
             .expect("failed to convert stdout to string")
             .lines()
-            .map(|x| x.to_string())
+            .map(|x| x.to_owned())
             .collect()
     }
 
@@ -75,7 +75,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
                 String::from_utf8(output.stdout)
                     .expect("failed to convert stdout to string")
                     .trim()
-                    .to_string(),
+                    .to_owned(),
             ),
             false => None,
         }
