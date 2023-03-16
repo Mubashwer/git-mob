@@ -15,15 +15,15 @@ pub trait CoauthorRepo {
 
 pub struct GitConfigCoauthorRepo {}
 impl GitConfigCoauthorRepo {
-    const COAUTHORS_SECTION_NAME: &str = "coauthors";
-    const COAUTHORS_MOB_SECTION_NAME: &str = "coauthors-mob";
+    const COAUTHORS_SECTION: &str = "coauthors";
+    const COAUTHORS_MOB_SECTION: &str = "coauthors-mob";
     const COAUTHOR_MOB_KEY: &str = "entry";
 }
 type GCCR = GitConfigCoauthorRepo;
 
 impl CoauthorRepo for GitConfigCoauthorRepo {
     fn list(&self, show_keys: bool) -> Vec<String> {
-        let prefix = GCCR::COAUTHORS_SECTION_NAME;
+        let prefix = GCCR::COAUTHORS_SECTION;
         let output = Command::new("git")
             .args(["config", "--global", "--get-regexp"])
             .arg(format!("^{prefix}\\."))
@@ -51,7 +51,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .args(["config", "--global", "--get-all"])
             .arg(format!(
                 "{}.{}",
-                GCCR::COAUTHORS_MOB_SECTION_NAME,
+                GCCR::COAUTHORS_MOB_SECTION,
                 GCCR::COAUTHOR_MOB_KEY
             ))
             .output()
@@ -67,7 +67,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
     fn get(&self, key: &str) -> Option<String> {
         let output = Command::new("git")
             .args(["config", "--global"])
-            .arg(format!("{}.{key}", GCCR::COAUTHORS_SECTION_NAME))
+            .arg(format!("{}.{key}", GCCR::COAUTHORS_SECTION))
             .output()
             .expect("failed to execute process");
 
@@ -85,7 +85,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
     fn remove(&self, key: &str) {
         let status = Command::new("git")
             .args(["config", "--global", "--unset-all"])
-            .arg(format!("{}.{key}", GCCR::COAUTHORS_SECTION_NAME))
+            .arg(format!("{}.{key}", GCCR::COAUTHORS_SECTION))
             .status()
             .expect("failed to execute process");
         assert!(status.success());
@@ -94,7 +94,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
     fn add(&self, key: &str, coauthor: &str) {
         let status = Command::new("git")
             .args(["config", "--global"])
-            .arg(format!("{}.{key}", GCCR::COAUTHORS_SECTION_NAME))
+            .arg(format!("{}.{key}", GCCR::COAUTHORS_SECTION))
             .arg(&coauthor)
             .status()
             .expect("failed to execute process");
@@ -106,7 +106,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .args(["config", "--global", "--add"])
             .arg(format!(
                 "{}.{}",
-                GCCR::COAUTHORS_MOB_SECTION_NAME,
+                GCCR::COAUTHORS_MOB_SECTION,
                 GCCR::COAUTHOR_MOB_KEY
             ))
             .arg(&coauthor)
@@ -118,7 +118,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
     fn clear_mob(&self) {
         Command::new("git")
             .args(["config", "--global", "--remove-section"])
-            .arg(format!("{}", GCCR::COAUTHORS_MOB_SECTION_NAME))
+            .arg(format!("{}", GCCR::COAUTHORS_MOB_SECTION))
             .output()
             .expect("failed to execute process");
     }
