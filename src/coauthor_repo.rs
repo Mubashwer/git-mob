@@ -23,10 +23,11 @@ type GCCR = GitConfigCoauthorRepo;
 
 impl CoauthorRepo for GitConfigCoauthorRepo {
     fn list(&self, show_keys: bool) -> Vec<String> {
-        let prefix = GCCR::COAUTHORS_SECTION;
+        let section = GCCR::COAUTHORS_SECTION;
+        let search_regex = format!("^{section}\\.");
+
         let output = Command::new("git")
-            .args(["config", "--global", "--get-regexp"])
-            .arg(format!("^{prefix}\\."))
+            .args(["config", "--global", "--get-regexp", &search_regex])
             .output()
             .expect("failed to execute process");
 
@@ -35,7 +36,7 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .lines()
             .map(|x| {
                 let delimeter = match show_keys {
-                    true => format!("{prefix}."),
+                    true => format!("{section}."),
                     false => " ".to_owned(),
                 };
                 x.split_once(&delimeter)
@@ -47,13 +48,10 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
     }
 
     fn list_mob(&self) -> Vec<String> {
+        let full_key = format!("{}.{}", GCCR::COAUTHORS_MOB_SECTION, GCCR::COAUTHOR_MOB_KEY);
+
         let output = Command::new("git")
-            .args(["config", "--global", "--get-all"])
-            .arg(format!(
-                "{}.{}",
-                GCCR::COAUTHORS_MOB_SECTION,
-                GCCR::COAUTHOR_MOB_KEY
-            ))
+            .args(["config", "--global", "--get-all", &full_key])
             .output()
             .expect("failed to execute process");
 
@@ -65,9 +63,10 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
     }
 
     fn get(&self, key: &str) -> Option<String> {
+        let full_key = format!("{}.{key}", GCCR::COAUTHORS_SECTION);
+
         let output = Command::new("git")
-            .args(["config", "--global"])
-            .arg(format!("{}.{key}", GCCR::COAUTHORS_SECTION))
+            .args(["config", "--global", &full_key])
             .output()
             .expect("failed to execute process");
 
@@ -83,42 +82,40 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
     }
 
     fn remove(&self, key: &str) {
+        let full_key = format!("{}.{key}", GCCR::COAUTHORS_SECTION);
+
         let status = Command::new("git")
-            .args(["config", "--global", "--unset-all"])
-            .arg(format!("{}.{key}", GCCR::COAUTHORS_SECTION))
+            .args(["config", "--global", "--unset-all", &full_key])
             .status()
             .expect("failed to execute process");
         assert!(status.success());
     }
 
     fn add(&self, key: &str, coauthor: &str) {
+        let full_key = format!("{}.{key}", GCCR::COAUTHORS_SECTION);
+
         let status = Command::new("git")
-            .args(["config", "--global"])
-            .arg(format!("{}.{key}", GCCR::COAUTHORS_SECTION))
-            .arg(&coauthor)
+            .args(["config", "--global", &full_key, &coauthor])
             .status()
             .expect("failed to execute process");
         assert!(status.success());
     }
 
     fn add_to_mob(&self, coauthor: &str) {
+        let full_key = format!("{}.{}", GCCR::COAUTHORS_MOB_SECTION, GCCR::COAUTHOR_MOB_KEY);
+
         let status = Command::new("git")
-            .args(["config", "--global", "--add"])
-            .arg(format!(
-                "{}.{}",
-                GCCR::COAUTHORS_MOB_SECTION,
-                GCCR::COAUTHOR_MOB_KEY
-            ))
-            .arg(&coauthor)
+            .args(["config", "--global", "--add", &full_key, &coauthor])
             .status()
             .expect("failed to execute process");
         assert!(status.success());
     }
 
     fn clear_mob(&self) {
+        let section = format!("{}", GCCR::COAUTHORS_MOB_SECTION);
+
         Command::new("git")
-            .args(["config", "--global", "--remove-section"])
-            .arg(format!("{}", GCCR::COAUTHORS_MOB_SECTION))
+            .args(["config", "--global", "--remove-section", &section])
             .output()
             .expect("failed to execute process");
     }
