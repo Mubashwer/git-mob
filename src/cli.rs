@@ -19,8 +19,8 @@ use std::{io, str};
 /// A user can attribute a git commit to more than one author by adding one or more
 /// Co-authored-by trailers to the commit's message.
 /// Co-authored commits are visible on GitHub.
-/// This app will do the above automatically and also help users store and manage
-/// co-authors for pair/mob programming sessions.
+/// This CLI app will helper users do the this automatically and also help them
+/// store and manage co-authors for pair/mob programming sessions.
 ///
 /// Usage example:
 ///
