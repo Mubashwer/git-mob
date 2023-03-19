@@ -246,7 +246,7 @@ mod tests {
 
         assert_eq!(
             err,
-            format!("No co-author found with key: {key}").as_bytes()
+            format!("No co-author found with key: {key}\n").as_bytes()
         );
     }
 }
