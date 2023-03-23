@@ -34,7 +34,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Run cargo build
-        run: cargo build --release --all-features
+        run: cargo build --release --locked
 
   lint:
     name: Lint
@@ -96,4 +96,4 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Run cargo test
-        run: cargo test
+        run: cargo test --locked
