@@ -43,7 +43,7 @@ $ cargo install git-mob
 
 - Copy [`prepare-commit-msg`](./prepare-commit-msg) into the directory
 
-  This [hook](https://git-scm.com/docs/githooks#_prepare_commit_msg) will be used to append the `Co-authored-by` trailers to the commit's message.
+  This [`githook`](https://git-scm.com/docs/githooks#_prepare_commit_msg) will be used to append the `Co-authored-by` trailers to the commit's message.
 
 ## Usage
 
