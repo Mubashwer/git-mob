@@ -73,7 +73,7 @@ impl Mob {
             false => {
                 let mut coauthors: Vec<String> = Vec::new();
                 for key in coauthor_keys {
-                    match coauthor_repo.get(&key) {
+                    match coauthor_repo.get(key) {
                         Some(coauthor) => {
                             coauthor_repo.add_to_mob(&coauthor);
                             coauthors.push(coauthor);
