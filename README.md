@@ -34,7 +34,7 @@ $ cargo install git-mob
   ...
   ```
 
-- Set a global hooks directory
+- Set a global [`githooks`](https://git-scm.com/docs/githooks) directory
 
   ```sh
   $ mkdir ~/git
@@ -66,7 +66,7 @@ $ cargo install git-mob
 
   This will start a global mob session. Any git commit made afterwards will have `Co-authored-by` trailers added to the commit message as shown below:
 
-  ```sh
+  ```
   This is an example commit message
 
   Co-authored-by: Leo Messi <leo.messi@example.com>
