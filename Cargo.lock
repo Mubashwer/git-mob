@@ -159,7 +159,7 @@ checksum = "6c2141d6d6c8512188a7891b4b01590a45f6dac67afb4f255c4124dbb86d4eaa"
 
 [[package]]
 name = "git-mob"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "clap",
  "inquire",
