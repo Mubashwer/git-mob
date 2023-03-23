@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/Mubashwer/git-mob/compare/v0.1.1...v0.1.2) (2023-03-23)
+
+
+### Bug Fixes
+
+* try to fix triggering of cargo publish ([0181e27](https://github.com/Mubashwer/git-mob/commit/0181e27842bbecc7b057e08caf0a23ddc22da736))
+
 ## [0.1.1](https://github.com/Mubashwer/git-mob/compare/v0.1.0...v0.1.1) (2023-03-23)
 
 
