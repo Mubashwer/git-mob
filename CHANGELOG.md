@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/Mubashwer/git-mob/compare/v0.1.0...v0.1.1) (2023-03-23)
+
+
+### Bug Fixes
+
+* test commit to test release ([9a319cb](https://github.com/Mubashwer/git-mob/commit/9a319cb96ef4483f020efb00a2aa6b101f400c12))
+
 ## 0.1.0 (2023-03-23)
 
 
