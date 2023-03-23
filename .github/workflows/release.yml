@@ -15,9 +15,12 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    outputs:
+      releases_created: ${{ steps.release-please.outputs.releases_created }}
 
     steps:
       - uses: google-github-actions/release-please-action@v3
+        id: release-please
         with:
           package-name: release-please-action
           release-type: rust
