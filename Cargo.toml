@@ -4,7 +4,11 @@ version = "0.1.0"
 authors = ["Mubashwer Salman Khurshid"]
 edition = "2021"
 description = "A CLI app which can help users automatically add co-author(s) to git commits for pair/mob programming"
+readme = "README.md"
+repository = "https://github.com/Mubashwer/git-mob"
 license = "MIT"
+keywords = ["git", "cli", "pair-programming", "pairing", "mob-programming", "mobbing", "git-commit", "git-coauthors"]
+categories = ["command-line-interface", "command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
