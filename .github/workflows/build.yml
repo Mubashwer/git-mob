@@ -23,7 +23,7 @@ jobs:
           override: true
 
       - name: Run cargo build
-      - run: cargo build --release --all-features
+        run: cargo build --release --all-features
 
   lint:
     name: Lint
