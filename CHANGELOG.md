@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/Mubashwer/git-mob/compare/v1.0.1...v1.1.0) (2023-03-31)
+
+
+### Features
+
+* prevent adding of duplicate co-authored-by trailers ([3125a11](https://github.com/Mubashwer/git-mob/commit/3125a117fbd0af241b29ad09fe98bad1d4d9b63a))
+
+
+### Bug Fixes
+
+* change crate name to git-mob-tool as git-mob already exists ([203c7cf](https://github.com/Mubashwer/git-mob/commit/203c7cfe1847b15464a77dceca3b1c63343af4c6))
+
 ## [1.0.1](https://github.com/Mubashwer/git-mob/compare/v1.0.0...v1.0.1) (2023-03-31)
 
 
