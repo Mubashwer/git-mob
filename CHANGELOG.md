@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.0.0](https://github.com/Mubashwer/git-mob/compare/v0.1.2...v1.0.0) (2023-03-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* first release
+
+### Features
+
+* update prepare-commit-msg ([31e181b](https://github.com/Mubashwer/git-mob/commit/31e181bf62d7d925ea592dafe5647d856b6d9a95))
+
+
+### Bug Fixes
+
+* **prepare-commit-msg:** add empty lines before coauthor trailers ([31509c4](https://github.com/Mubashwer/git-mob/commit/31509c40e50d3a5149cbea95b8c44762e6a4ba3c))
+* stop printing empty lines when coauthor lists are empty ([ba2f0c6](https://github.com/Mubashwer/git-mob/commit/ba2f0c6e7936e8fd5b248cb4727b83e81c441dc7))
+
+
+### Continuous Integration
+
+* publish to cargo on release ([f0a554a](https://github.com/Mubashwer/git-mob/commit/f0a554ab9a4dff54eb024afd04ee16087520a212))
+
 ## [0.1.2](https://github.com/Mubashwer/git-mob/compare/v0.1.1...v0.1.2) (2023-03-23)
 
 
