@@ -3,12 +3,12 @@ set -e
 
 # Do nothing during rebase
 if [ "$(git branch --show-current)" = "" ]; then
-    exit 0
+  exit 0
 fi
 
 # Do nothing during amend or reuse of a commit message
 if [ "$2" = 'commit' ]; then
-    exit 0
+  exit 0
 fi
 
 commit_msg_file_text=$(cat "$1");
@@ -20,9 +20,9 @@ jira_issue_id=$(git branch --show-current | grep -o -E "^[a-zA-Z]+-[0-9]+" | tr 
 
 # Is the Jira Issue ID unable to be determined or does the commit message already start with it?
 if [ -z "$jira_issue_id" ] ||  echo "$commit_msg" | grep -q -i "^\[\?$jira_issue_id\]\?"; then
-	commit_prefix="";
+  commit_prefix="";
 else
-	commit_prefix="[$jira_issue_id] ";
+  commit_prefix="[$jira_issue_id] ";
 fi
 
 co_authored_by_trailers=$(git mob --list | sed "s/^/Co-authored-by: /");
