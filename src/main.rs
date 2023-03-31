@@ -1,4 +1,4 @@
-use git_mob::{cli, coauthor_repo::GitConfigCoauthorRepo};
+use git_mob_tool::{cli, coauthor_repo::GitConfigCoauthorRepo};
 use std::io;
 
 fn main() {
