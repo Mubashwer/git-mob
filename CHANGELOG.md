@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/Mubashwer/git-mob/compare/v1.0.0...v1.0.1) (2023-03-31)
+
+
+### Bug Fixes
+
+* remove some crate keywords as crates.io only allows 5 ([386bf4e](https://github.com/Mubashwer/git-mob/commit/386bf4eba9788e6d608e1eb5027c3f02e8068dd7))
+
 ## [1.0.0](https://github.com/Mubashwer/git-mob/compare/v0.1.2...v1.0.0) (2023-03-31)
 
 
