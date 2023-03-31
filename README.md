@@ -38,7 +38,7 @@ $ cargo install git-mob
 
   ```sh
   $ mkdir ~/git
-  $ git config --global core.hooksPath ~/git
+  $ git config --global core.hooksPath "~/git"
   ```
 
 - Copy [`prepare-commit-msg`](./prepare-commit-msg) into the directory
