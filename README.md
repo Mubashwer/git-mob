@@ -20,7 +20,7 @@ This CLI app will help you add them automatically and also help you store and ma
 - [Rust and Cargo](https://www.rust-lang.org/tools/install)
 
 ```sh
-$ cargo install git-mob
+$ cargo install git-mob-tool
 ```
 
 ## Configuration
