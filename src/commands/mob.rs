@@ -34,7 +34,10 @@ impl Mob {
             coauthor_repo.clear_mob();
         }
         if self.list {
-            writeln!(out, "{}", coauthor_repo.list_mob().join("\n")).expect("write failed");
+            let coauthors = coauthor_repo.list_mob();
+            if !coauthors.is_empty() {
+                writeln!(out, "{}", coauthors.join("\n")).expect("write failed");
+            }
         }
         if self.with.is_none() {
             return;

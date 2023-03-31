@@ -37,7 +37,10 @@ impl Coauthor {
             }
         }
         if self.list {
-            writeln!(out, "{}", coauthor_repo.list(true).join("\n")).expect("write failed");
+            let coauthors = coauthor_repo.list(true);
+            if !coauthors.is_empty() {
+                writeln!(out, "{}", coauthors.join("\n")).expect("write failed");
+            }
         }
         if self.add.is_some() {
             let coauthor_info = self.add.as_ref().unwrap();
