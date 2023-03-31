@@ -11,11 +11,7 @@ keywords = [
   "git",
   "cli",
   "pair-programming",
-  "pairing",
-  "mob-programming",
-  "mobbing",
-  "git-commit",
-  "git-coauthors"
+  "mob-programming"
 ]
 categories = ["command-line-interface", "command-line-utilities"]
 include = [
