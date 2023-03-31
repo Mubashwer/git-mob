@@ -28,4 +28,8 @@ fi
 co_authored_by_trailers=$(git mob --list | sed "s/^/Co-authored-by: /");
 
 # Update the file that holds the commit message
-printf "%s%s%s\n\n%s" "$commit_prefix" "$commit_msg" "$co_authored_by_trailers" "$commit_comments" > "$1"
+if [ -z "$co_authored_by_trailers" ]; then
+  printf "%s%s\n\n%s" "$commit_prefix" "$commit_msg" "$commit_comments" > "$1"
+else
+  printf "%s%s\n\n%s\n\n%s" "$commit_prefix" "$commit_msg" "$co_authored_by_trailers" "$commit_comments" > "$1"
+fi
