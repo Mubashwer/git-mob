@@ -1,5 +1,5 @@
 #!/bin/sh
-set -eu
+set -e
 
 # Do nothing during rebase
 if [ "$(git branch --show-current)" = "" ]; then
