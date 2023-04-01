@@ -17,6 +17,7 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     outputs:
       releases_created: ${{ steps.release-please.outputs.releases_created }}
+      tag_name: ${{ steps.release-please.outputs.tag_name }}
 
     steps:
       - uses: google-github-actions/release-please-action@v3
@@ -27,7 +28,57 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           prerelease: true
 
-  publish:
+  upload-binaries:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_name: git-mob
+            asset_name: git-mob-linux-amd64
+          - os: windows-latest
+            artifact_name: git-mob.exe
+            asset_name: git-mob-windows-amd64
+          - os: macos-latest
+            artifact_name: git-mob
+            asset_name: git-mob-macos-amd64
+    runs-on: ${{ matrix.os }}
+    if: ${{ needs.release-please.outputs.releases_created }}
+    needs: [release-please]
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Setup cargo cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Run cargo build
+        run: cargo build --release --locked
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GH_TOKEN }}
+          file: target/release/${{ matrix.artifact_name }}
+          asset_name: ${{ matrix.asset_name }}
+          tag: ${{ needs.release-please.outputs.tag_name }}
+
+  publish-cargo:
     runs-on: ubuntu-latest
     if: ${{ needs.release-please.outputs.releases_created }}
     needs: [release-please]

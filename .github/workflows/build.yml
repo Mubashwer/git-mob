@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
 
     steps:
@@ -37,7 +36,6 @@ jobs:
         run: cargo build --release --locked
 
   lint:
-    name: Lint
     runs-on: ubuntu-latest
 
     steps:
@@ -70,7 +68,6 @@ jobs:
         run: cargo clippy -- -D warnings
 
   test:
-    name: Test
     runs-on: ubuntu-latest
 
     steps:
