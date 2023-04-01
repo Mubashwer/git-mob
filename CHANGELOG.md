@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/Mubashwer/git-mob/compare/v1.1.3...v1.1.4) (2023-04-01)
+
+
+### Bug Fixes
+
+* **ci:** fix uploading archived binary to github release ([629fde8](https://github.com/Mubashwer/git-mob/commit/629fde8cd18f9beb8498753be93a33434ae978fe))
+
 ## [1.1.3](https://github.com/Mubashwer/git-mob/compare/v1.1.2...v1.1.3) (2023-04-01)
 
 
