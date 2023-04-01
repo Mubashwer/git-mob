@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/Mubashwer/git-mob/compare/v1.1.0...v1.1.1) (2023-04-01)
+
+
+### Bug Fixes
+
+* remove set -u from prepare-commit-msg ([49b4cc8](https://github.com/Mubashwer/git-mob/commit/49b4cc8564ffb674844c143a409a676c308b02d6))
+
 ## [1.1.0](https://github.com/Mubashwer/git-mob/compare/v1.0.1...v1.1.0) (2023-03-31)
 
 
