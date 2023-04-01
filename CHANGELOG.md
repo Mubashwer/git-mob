@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/Mubashwer/git-mob/compare/v1.1.1...v1.1.2) (2023-04-01)
+
+
+### Bug Fixes
+
+* zip binaries in github release ([b108084](https://github.com/Mubashwer/git-mob/commit/b108084dd878ebeb145eab02fe9f9fc1c1d37aef))
+
 ## [1.1.1](https://github.com/Mubashwer/git-mob/compare/v1.1.0...v1.1.1) (2023-04-01)
 
 
