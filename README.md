@@ -100,6 +100,6 @@ $ cargo install git-mob-tool
   $ git mob coauthor --help
   ```
 
-### Troubleshooting
+## Troubleshooting
 
 - Try installing the latest version of git
