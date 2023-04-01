@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/Mubashwer/git-mob/compare/v1.1.2...v1.1.3) (2023-04-01)
+
+
+### Bug Fixes
+
+* **ci:** set correct directory when archiving release binary ([632a9f1](https://github.com/Mubashwer/git-mob/commit/632a9f1fc38bedeba118241c3e270693b15d967c))
+
 ## [1.1.2](https://github.com/Mubashwer/git-mob/compare/v1.1.1...v1.1.2) (2023-04-01)
 
 
