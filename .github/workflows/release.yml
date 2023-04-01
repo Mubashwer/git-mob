@@ -70,12 +70,18 @@ jobs:
       - name: Run cargo build
         run: cargo build --release --locked
 
-      - name: Upload binaries to release
+      - name: Archive binary
+        uses: thedoctor0/zip-release@0.7.1
+        with:
+          type: zip
+          path: target/release/${{ matrix.artifact_name }}
+          filename: ${{ matrix.asset_name }}.zip
+
+      - name: Upload archived binary to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GH_TOKEN }}
-          file: target/release/${{ matrix.artifact_name }}
-          asset_name: ${{ matrix.asset_name }}
+          file: ${{ matrix.asset_name }}.zip
           tag: ${{ needs.release-please.outputs.tag_name }}
 
   publish-cargo:

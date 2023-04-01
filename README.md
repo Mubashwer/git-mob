@@ -15,9 +15,18 @@ This CLI app will help you add them automatically and also help you store and ma
 ## Installation
 
 ### Prerequisites
-
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-- [Rust and Cargo](https://www.rust-lang.org/tools/install)
+
+### With Binary Package:
+
+- Download and extract the appropriate binary depending on your OS from the [latest GitHub release](https://github.com/Mubashwer/git-mob/releases/latest)
+- Ensure the binary is in your `PATH` variable
+
+
+### With [Cargo](https://crates.io/crates/git-mob-tool):
+
+- Install [Rust and Cargo](https://www.rust-lang.org/tools/install)
+- If you are using Windows, you will also need to [install certain C++ build tools](https://learn.microsoft.com/en-us/windows/dev-environment/rust/setup#install-visual-studio-recommended-or-the-microsoft-c-build-tools)
 
 ```sh
 $ cargo install git-mob-tool
