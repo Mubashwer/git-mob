@@ -74,7 +74,8 @@ jobs:
         uses: thedoctor0/zip-release@0.7.1
         with:
           type: zip
-          path: target/release/${{ matrix.artifact_name }}
+          directory: target/release
+          path: ${{ matrix.artifact_name }}
           filename: ${{ matrix.asset_name }}.zip
 
       - name: Upload archived binary to release
