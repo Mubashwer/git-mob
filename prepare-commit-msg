@@ -3,19 +3,19 @@ set -e
 
 add_jira_issue_id_prefix() {
   # If the branch name starts with string resembling a Jira Issue ID, fetch it
-  jira_issue_id=$(git branch --show-current | grep -o -E "^[a-zA-Z]+-[0-9]+" | tr '[:lower:]' '[:upper:]');
-  commit_msg_file_text=$(cat "$1");
-  commit_msg=$(echo "$commit_msg_file_text" | grep -v "^\s*#" || "true");
+  jira_issue_id=$(git branch --show-current | grep -o -E "^[a-zA-Z]+-[0-9]+" | tr '[:lower:]' '[:upper:]')
+  commit_msg_file_text=$(cat "$1")
+  commit_msg=$(echo "$commit_msg_file_text" | grep -v "^\s*#" || "true")
 
   # If the Jira Issue ID is identified and the commit message does not already start with it
   # then prepend the commit message with it
   if [ -n "$jira_issue_id" ] && echo "$commit_msg" | grep -q -i -v "^\[\?$jira_issue_id\]\?"; then
-    printf "[%s] %s" "$jira_issue_id" "$commit_msg_file_text" > "$1" 
+    printf "[%s] %s\n" "$jira_issue_id" "$commit_msg_file_text" > "$1" 
   fi
 }
 
 add_co_authored_by_trailers() {
-  co_authored_by_trailers=$(git mob --list | sed "s/^/Co-authored-by: /");
+  co_authored_by_trailers=$(git mob --list | sed "s/^/Co-authored-by: /")
   trailer_args=""
 
   OLDIFS="$IFS"
@@ -28,20 +28,16 @@ add_co_authored_by_trailers() {
 
   if [ -n "$trailer_args" ]; then
     eval "git interpret-trailers --if-exists addIfDifferent ${trailer_args} --in-place $1"
-    printf "\n%s\n\n" "$co_authored_by_trailers"
+    printf "%s\n\n" "$co_authored_by_trailers"
   fi
 }
 
 main() {
   # Do nothing during rebase
-  if [ "$(git branch --show-current)" = "" ]; then
-    exit 0
-  fi
+  [ -z "$(git branch --show-current)" ] && exit 0
 
   # Do nothing during amend or reuse of a commit message
-  if [ "$2" = 'commit' ]; then
-    exit 0
-  fi
+  [ "$2" = 'commit' ] && exit 0
 
   add_jira_issue_id_prefix "$@"
   add_co_authored_by_trailers "$@"
