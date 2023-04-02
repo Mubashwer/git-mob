@@ -36,7 +36,7 @@ main() {
   # Do nothing during rebase
   [ -z "$(git branch --show-current)" ] && exit 0
 
-  # Do nothing during amend or reuse of a commit message
+  # Do nothing during amend (without message) or reuse of a commit message
   [ "$2" = 'commit' ] && exit 0
 
   add_jira_issue_id_prefix "$@"
