@@ -110,10 +110,10 @@ jobs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Generate coverage report
-        run: grcov . -s . --binary-path ./target/debug/ -t lcov --branch --ignore-not-existing --ignore src/main.rs --ignore src/lib.rs -o target/coverage/tests.lcov
+        run: grcov . -s . --binary-path ./target/debug/ -t lcov --branch --ignore-not-existing --ignore src/lib.rs --ignore src/main.rs -o target/tests.lcov
 
       - name: Upload coverage report to Codecov
         uses: codecov/codecov-action@v3
         with:
-          files: ./target/coverage/tests.lcov
+          files: ./target/tests.lcov
           fail_ci_if_error: true
