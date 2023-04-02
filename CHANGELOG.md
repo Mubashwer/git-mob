@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.5](https://github.com/Mubashwer/git-mob/compare/v1.1.4...v1.1.5) (2023-04-02)
+
+
+### Bug Fixes
+
+* make commands module private ([2c544a7](https://github.com/Mubashwer/git-mob/commit/2c544a7c95dee44f61cd6c03aa3f8f408fa29eef))
+
 ## [1.1.4](https://github.com/Mubashwer/git-mob/compare/v1.1.3...v1.1.4) (2023-04-01)
 
 
