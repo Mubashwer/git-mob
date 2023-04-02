@@ -11,6 +11,3 @@ target/
 
 # LLVM Profile files generated when LLVM_PROFILE_FILE is set
 **/*.profraw
-
-# Test coverage report file
-**/*.lcov

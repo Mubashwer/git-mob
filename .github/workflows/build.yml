@@ -77,7 +77,7 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v3
 
-      - name: Install nightly toolchain
+      - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -103,14 +103,17 @@ jobs:
           RUSTFLAGS: "-Cinstrument-coverage"
           LLVM_PROFILE_FILE: "git_mob_tool-%p-%m.profraw"
 
-      - name: Install grcov
-        run: cargo install grcov
+      - name: Download grcov
+        run: |
+          mkdir -p "${HOME}/.local/bin"
+          curl -sL https://github.com/mozilla/grcov/releases/download/v0.8.13/grcov-x86_64-unknown-linux-gnu.tar.bz2 | tar jxf - -C "${HOME}/.local/bin"
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Generate coverage report
-        run: grcov . -s . --binary-path ./target/debug/ -t lcov --branch --ignore-not-existing --ignore src/main.rs --ignore src/lib.rs -o tests.lcov
+        run: grcov . -s . --binary-path ./target/debug/ -t lcov --branch --ignore-not-existing --ignore src/main.rs --ignore src/lib.rs -o target/coverage/tests.lcov
 
       - name: Upload coverage report to Codecov
         uses: codecov/codecov-action@v3
         with:
-          files: ./tests.lcov
+          files: ./target/coverage/tests.lcov
           fail_ci_if_error: true
