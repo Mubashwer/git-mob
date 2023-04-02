@@ -77,12 +77,13 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v3
 
-      - name: Install stable toolchain
+      - name: Install nightly toolchain
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           toolchain: stable
           override: true
+          components: llvm-tools-preview
 
       - name: Setup cargo cache
         uses: actions/cache@v3
@@ -97,3 +98,19 @@ jobs:
 
       - name: Run cargo test
         run: cargo test --locked
+        env:
+          CARGO_INCREMENTAL: 0
+          RUSTFLAGS: "-Cinstrument-coverage"
+          LLVM_PROFILE_FILE: "git_mob_tool-%p-%m.profraw"
+
+      - name: Install grcov
+        run: cargo install grcov
+
+      - name: Generate coverage report
+        run: grcov . -s . --binary-path ./target/debug/ -t lcov --branch --ignore-not-existing --ignore src/main.rs --ignore src/lib.rs -o tests.lcov
+
+      - name: Upload coverage report to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./tests.lcov
+          fail_ci_if_error: true

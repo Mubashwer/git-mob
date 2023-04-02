@@ -8,3 +8,9 @@ target/
 
 # MSVC Windows builds of rustc generate these, which store debugging information
 *.pdb
+
+# LLVM Profile files generated when LLVM_PROFILE_FILE is set
+**/*.profraw
+
+# Test coverage report file
+**/*.lcov
