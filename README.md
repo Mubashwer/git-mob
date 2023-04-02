@@ -7,7 +7,6 @@
 [![build status](https://github.com/mubashwer/git-mob/actions/workflows/build.yml/badge.svg)](https://github.com/Mubashwer/git-mob/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/Mubashwer/git-mob/branch/main/graph/badge.svg?token=R522R7NZH4)](https://codecov.io/gh/Mubashwer/git-mob)
 
-
 You can attribute a git commit to more than one author by adding one or more `Co-authored-by` trailers to the commit's message. Co-authored commits are visible on GitHub. For more information, see [here](https://docs.github.com/en/pull-requests/committing-changes-to-your-project/creating-and-editing-commits/creating-a-commit-with-multiple-authors).
 
 This CLI app will help you add them automatically and also help you store and manage co-authors for pair/mob programming sessions.
@@ -23,13 +22,13 @@ This CLI app will help you add them automatically and also help you store and ma
 ## Installation
 
 ### Prerequisites
+
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
 ### With Binary Package:
 
 - Download and extract the appropriate binary depending on your OS from the [latest GitHub release](https://github.com/Mubashwer/git-mob/releases/latest)
 - Ensure the binary is in your `PATH` variable
-
 
 ### With [Cargo](https://crates.io/crates/git-mob-tool):
 
@@ -61,6 +60,8 @@ $ cargo install git-mob-tool
 - Copy [`prepare-commit-msg`](./prepare-commit-msg) into the directory. Ensure it is set as executable.
 
   This [`githook`](https://git-scm.com/docs/githooks#_prepare_commit_msg) will be used to append the `Co-authored-by` trailers to the commit's message.
+
+  _This githook also adds a Jira Issue ID as a prefix to the commit message if the branch name starts with a string resembling one. If you don't want want this, comment out line 46 which calls the function `add_jira_issue_id_prefix`._
 
 ## Usage
 
