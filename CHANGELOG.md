@@ -1,12 +1,5 @@
 # Changelog
 
-## [1.1.6](https://github.com/Mubashwer/git-mob/compare/v1.1.5...v1.1.6) (2023-04-03)
-
-
-### Bug Fixes
-
-* **prepare-commit-msg:** append co-author-trailers correctly when adding jira prefix ([dd4775a](https://github.com/Mubashwer/git-mob/commit/dd4775a3eda55e58fe542ee0bd2057edbea6fb4e))
-
 ## [1.1.6](https://github.com/Mubashwer/git-mob/compare/v1.1.5...v1.1.6) (2023-04-02)
 
 
