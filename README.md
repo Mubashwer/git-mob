@@ -29,6 +29,7 @@ This CLI app will help you add them automatically and also help you store and ma
 
 - Download and extract the appropriate binary depending on your OS from the [latest GitHub release](https://github.com/Mubashwer/git-mob/releases/latest)
 - Ensure the binary is in your `PATH` variable
+- Ensure the binary is set as executable (Linux and MacOS)
 
 ### With [Cargo](https://crates.io/crates/git-mob-tool):
 
@@ -57,7 +58,7 @@ $ cargo install git-mob-tool
   $ git config --global core.hooksPath "~/git"
   ```
 
-- Copy [`prepare-commit-msg`](./prepare-commit-msg) into the directory. Ensure it is set as executable.
+- Copy [`prepare-commit-msg`](./prepare-commit-msg) into the directory. Ensure it is set as executable (Linux and MacOS).
 
   This [`githook`](https://git-scm.com/docs/githooks#_prepare_commit_msg) will be used to append the `Co-authored-by` trailers to the commit's message.
 
