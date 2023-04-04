@@ -113,7 +113,7 @@ $ cargo install git-mob-tool
 
 - To print help information:
   ```sh
-  $ git mob --help
+  $ git mob help
   $ git mob coauthor --help
   ```
 
