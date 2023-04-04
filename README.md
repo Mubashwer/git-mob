@@ -36,7 +36,7 @@ This CLI app will help you add them automatically and also help you store and ma
 
 ### With [Cargo](https://crates.io/crates/git-mob-tool):
 
-- Install [Rust and Cargo](https://www.rust-lang.org/tools/install)
+- Install [Rust](https://www.rust-lang.org/tools/install)
 - If you are using Windows, you will also need to [install certain C++ build tools](https://learn.microsoft.com/en-us/windows/dev-environment/rust/setup#install-visual-studio-recommended-or-the-microsoft-c-build-tools)
 
 ```sh
@@ -61,7 +61,7 @@ $ cargo install git-mob-tool
   $ git config --global core.hooksPath "~/git"
   ```
 
-- Copy [`prepare-commit-msg`](./prepare-commit-msg) into the directory
+- Download the [`prepare-commit-msg`](./prepare-commit-msg) file into the directory
 - Ensure it is set as executable (Linux and macOS)
    ```sh
   $ chmod +x ./prepare-commit-msg
