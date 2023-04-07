@@ -47,6 +47,15 @@ fn before_each() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn assert_commit_message(input_msg: &str, expected_msg: &str) {
+    let mut cmd = Command::new("git");
+    cmd.args(["config", "user.email", "test@email.com"]);
+    cmd.assert().success();
+
+    let mut cmd = Command::new("git");
+    cmd.args(["config", "user.name", "Test User"]);
+    cmd.assert().success();
+    
+    
     // making a test commit
     let mut cmd = Command::new("git");
     cmd.args(["commit", "-m", input_msg, "--allow-empty"]);
