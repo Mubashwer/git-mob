@@ -73,16 +73,16 @@ jobs:
       - name: Archive binary
         uses: thedoctor0/zip-release@0.7.1
         with:
-          type: zip
+          type: tar
           directory: target/release
           path: ${{ matrix.artifact_name }}
-          filename: ${{ matrix.asset_name }}.zip
+          filename: ${{ matrix.asset_name }}.tar.gz
 
       - name: Upload archived binary to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GH_TOKEN }}
-          file: target/release/${{ matrix.asset_name }}.zip
+          file: target/release/${{ matrix.asset_name }}.tar.gz
           tag: ${{ needs.release-please.outputs.tag_name }}
 
   publish-cargo:
