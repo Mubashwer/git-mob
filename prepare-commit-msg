@@ -5,12 +5,12 @@ add_jira_issue_id_prefix() {
   # If the branch name starts with string resembling a Jira Issue ID, fetch it
   jira_issue_id=$(git branch --show-current | grep -o -E "^[a-zA-Z]+-[0-9]+" | tr '[:lower:]' '[:upper:]')
   commit_msg_file_text=$(cat "$1")
-  commit_msg=$(echo "$commit_msg_file_text" | grep -v "^\s*#" || "true")
+  commit_msg=$(echo "$commit_msg_file_text" | grep -v "^[[:space:]]*#" || true)
 
   # If the Jira Issue ID is identified and the commit message does not already start with it
   # then prepend the commit message with it
   if [ -n "$jira_issue_id" ] && echo "$commit_msg" | grep -q -i -v "^\[\?$jira_issue_id\]\?"; then
-    printf "[%s] %s\n" "$jira_issue_id" "$commit_msg_file_text" > "$1" 
+    printf "[%s] %s\n" "$jira_issue_id" "$commit_msg_file_text" > "$1"
   fi
 }
 
