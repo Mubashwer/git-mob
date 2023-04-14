@@ -48,9 +48,9 @@ $ cargo install git-mob-tool
 - Store your team members' details with keys (usually initials)
 
   ```sh
-  $ git mob coauthor -a lm "Leo Messi" leo.messi@example.com
-  $ git mob coauthor -a em "Emi Martinez" emi.martinez@example.com
-  $ git mob coauthor -a sa "Sergio Aguero" sergio.aguero@example.com
+  $ git mob coauthor --add lm "Leo Messi" leo.messi@example.com
+  $ git mob coauthor --add em "Emi Martinez" emi.martinez@example.com
+  $ git mob coauthor --add sa "Sergio Aguero" sergio.aguero@example.com
   ...
   ```
 
@@ -114,7 +114,7 @@ $ cargo install git-mob-tool
 - To print help information:
   ```sh
   $ git mob help
-  $ git mob coauthor --help
+  $ git mob help coauthor
   ```
 
 ## Troubleshooting
