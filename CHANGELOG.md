@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/Mubashwer/git-mob/compare/v1.2.0...v1.2.1) (2023-04-15)
+
+
+### Bug Fixes
+
+* set target correctly when building release binary ([38497e9](https://github.com/Mubashwer/git-mob/commit/38497e942afdd27a9239cc88121dea84e0f3d46a))
+
 ## [1.2.0](https://github.com/Mubashwer/git-mob/compare/v1.1.7...v1.2.0) (2023-04-15)
 
 
