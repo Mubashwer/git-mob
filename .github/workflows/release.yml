@@ -38,9 +38,6 @@ jobs:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-musl
             artifact_name: git-mob
-          - os: ubuntu-latest
-            target: aarch64-unknown-linux-musl
-            artifact_name: git-mob
           - os: windows-latest
             target: x86_64-pc-windows-msvc
             artifact_name: git-mob.exe
