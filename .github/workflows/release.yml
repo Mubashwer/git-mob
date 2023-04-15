@@ -34,13 +34,19 @@ jobs:
         include:
           - os: ubuntu-latest
             artifact_name: git-mob
-            asset_name: git-mob-linux-amd64
+            target_name: x86_64-unknown-linux-gnu
+          - os: ubuntu-latest
+            artifact_name: git-mob
+            target_name: x86_64-unknown-linux-musl
           - os: windows-latest
             artifact_name: git-mob.exe
-            asset_name: git-mob-windows-amd64
+            target_name: x86_64-pc-windows-msvc
           - os: macos-latest
+            target: x86_64-apple-darwin
             artifact_name: git-mob
-            asset_name: git-mob-macos-amd64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact_name: git-mob
     runs-on: ${{ matrix.os }}
     if: ${{ needs.release-please.outputs.releases_created }}
     needs: [release-please]
@@ -55,6 +61,7 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+          target: ${{ matrix.target }}
 
       - name: Setup cargo cache
         uses: actions/cache@v3
@@ -68,7 +75,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Run cargo build
-        run: cargo build --release --locked
+        run: cargo build --release --locked --target ${{ matrix.target }}
 
       - name: Archive binary
         uses: thedoctor0/zip-release@0.7.1
@@ -76,13 +83,13 @@ jobs:
           type: tar
           directory: target/release
           path: ${{ matrix.artifact_name }}
-          filename: ${{ matrix.asset_name }}.tar.gz
+          filename: git-mob-${{ matrix.target }}.tar.gz
 
       - name: Upload archived binary to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GH_TOKEN }}
-          file: target/release/${{ matrix.asset_name }}.tar.gz
+          file: target/release/git-mob-${{ matrix.target }}.tar.gz
           tag: ${{ needs.release-please.outputs.tag_name }}
 
   publish-cargo:
