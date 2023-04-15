@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/Mubashwer/git-mob/compare/v1.1.7...v1.2.0) (2023-04-15)
+
+
+### Features
+
+* add support for more platforms ([031a9f8](https://github.com/Mubashwer/git-mob/commit/031a9f8aacaaf0d579f13e62fbf6554d52fae674))
+
 ## [1.1.7](https://github.com/Mubashwer/git-mob/compare/v1.1.6...v1.1.7) (2023-04-15)
 
 
