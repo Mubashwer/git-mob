@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.1](https://github.com/Mubashwer/git-mob/compare/v1.3.0...v1.3.1) (2023-04-15)
+
+
+### Bug Fixes
+
+* remove building binary for aarch64 linux ([d4c3604](https://github.com/Mubashwer/git-mob/commit/d4c3604d3812778c8bd964d01826c43cf8ebef58))
+* remove building binary for aarch64 linux-musl ([65ee650](https://github.com/Mubashwer/git-mob/commit/65ee650ab809cb3c70c3eb72cedced4e9b068364))
+
 ## [1.3.0](https://github.com/Mubashwer/git-mob/compare/v1.2.3...v1.3.0) (2023-04-15)
 
 
