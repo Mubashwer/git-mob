@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/Mubashwer/git-mob/compare/v1.2.1...v1.2.2) (2023-04-15)
+
+
+### Bug Fixes
+
+* set correct path when archiving release binary ([a5e4956](https://github.com/Mubashwer/git-mob/commit/a5e49560a8a94273ce64b22414aa9146a20d8cf3))
+
 ## [1.2.1](https://github.com/Mubashwer/git-mob/compare/v1.2.0...v1.2.1) (2023-04-15)
 
 
