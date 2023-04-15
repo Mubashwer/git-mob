@@ -29,6 +29,10 @@ This CLI app will help you add them automatically and also help you store and ma
 
 - Download and extract the appropriate binary depending on your OS from the [latest GitHub release](https://github.com/Mubashwer/git-mob/releases/latest)
 - Ensure the binary is in your `PATH` variable e.g. you may place the file in `C:\Windows` on Windows or `/usr/local/bin` on Linux and macOS
+- Ensure the binary is set as executable (Linux and macOS)
+  ```sh
+  $ chmod +x ./git-mob
+  ```
 
 ### With [Cargo](https://crates.io/crates/git-mob-tool):
 
@@ -116,3 +120,8 @@ $ cargo install git-mob-tool
 ## Troubleshooting
 
 - Try installing the latest version of git
+- If you get an error like this on linux: 
+  ```
+  /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.33' not found
+  ```
+  Try installing with Cargo or downloading release binary for linux-musl instead of linux-gnu
