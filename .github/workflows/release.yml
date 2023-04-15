@@ -81,7 +81,7 @@ jobs:
         uses: thedoctor0/zip-release@0.7.1
         with:
           type: tar
-          directory: target/release
+          directory: target/${{ matrix.target }}/release
           path: ${{ matrix.artifact_name }}
           filename: git-mob-${{ matrix.target }}.tar.gz
 
