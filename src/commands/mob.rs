@@ -30,7 +30,7 @@ impl Mob {
         out: &mut impl io::Write,
         err: &mut impl io::Write,
     ) {
-        if self.clear || self.with.is_some() {
+        if self.clear {
             coauthor_repo.clear_mob();
         }
         if self.list {
@@ -61,6 +61,7 @@ impl Mob {
 
                 match result {
                     Ok(selected) => {
+                        coauthor_repo.clear_mob();
                         selected.clone().into_iter().for_each(|coauthor| {
                             coauthor_repo.add_to_mob(&coauthor);
                         });
@@ -75,6 +76,7 @@ impl Mob {
             }
             false => {
                 let mut coauthors: Vec<String> = Vec::new();
+                coauthor_repo.clear_mob();
                 for key in coauthor_keys {
                     match coauthor_repo.get(key) {
                         Some(coauthor) => {
