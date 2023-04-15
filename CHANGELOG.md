@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/Mubashwer/git-mob/compare/v1.2.3...v1.3.0) (2023-04-15)
+
+
+### Features
+
+* add binaries for more platforms ([decf42b](https://github.com/Mubashwer/git-mob/commit/decf42bfd807734e772e3c8900d64f6d27bb913c))
+
 ## [1.2.3](https://github.com/Mubashwer/git-mob/compare/v1.2.2...v1.2.3) (2023-04-15)
 
 
