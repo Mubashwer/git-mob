@@ -89,7 +89,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GH_TOKEN }}
-          file: target/release/git-mob-${{ matrix.target }}.tar.gz
+          file: target/${{ matrix.target }}/release/git-mob-${{ matrix.target }}.tar.gz
           tag: ${{ needs.release-please.outputs.tag_name }}
 
   publish-cargo:
