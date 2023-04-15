@@ -28,7 +28,7 @@ This CLI app will help you add them automatically and also help you store and ma
 ### With Binary Package:
 
 - Download and extract the appropriate binary depending on your OS from the [latest GitHub release](https://github.com/Mubashwer/git-mob/releases/latest)
-- Ensure the binary is in your `PATH` variable e.g. you may place the file in `C:\Windows` on Windows or `/usr/local/bin` on Linux and macOS.
+- Ensure the binary is in your `PATH` variable e.g. you may place the file in `C:\Windows` on Windows or `/usr/local/bin` on Linux and macOS
 
 ### With [Cargo](https://crates.io/crates/git-mob-tool):
 

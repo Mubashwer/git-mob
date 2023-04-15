@@ -152,10 +152,6 @@ mod tests {
 
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
-            .expect_clear_mob()
-            .once()
-            .return_const(());
-        mock_coauthor_repo
             .expect_list()
             .with(predicate::eq(false))
             .once()
