@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.7](https://github.com/Mubashwer/git-mob/compare/v1.1.6...v1.1.7) (2023-04-15)
+
+
+### Bug Fixes
+
+* stop clearing mob when quitting -with prompt ([d45cafc](https://github.com/Mubashwer/git-mob/commit/d45cafc5523c0ccd15e39d1166de6b81bd06c52c))
+
 ## [1.1.6](https://github.com/Mubashwer/git-mob/compare/v1.1.5...v1.1.6) (2023-04-02)
 
 
