@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/Mubashwer/git-mob/compare/v1.3.1...v1.4.0) (2023-04-21)
+
+
+### Features
+
+* add support for aarch64-unknown-linux-musl ([aa458cb](https://github.com/Mubashwer/git-mob/commit/aa458cbc758527f120e10a69d62133ecb1e1ec84))
+
 ## [1.3.1](https://github.com/Mubashwer/git-mob/compare/v1.3.0...v1.3.1) (2023-04-15)
 
 
