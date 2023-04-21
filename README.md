@@ -120,8 +120,3 @@ $ cargo install git-mob-tool
 ## Troubleshooting
 
 - Try installing the latest version of git
-- If you get an error like this on linux: 
-  ```
-  /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.33' not found
-  ```
-  Try installing with Cargo or downloading release binary for linux-musl instead of linux-gnu
