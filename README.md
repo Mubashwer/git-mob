@@ -23,7 +23,7 @@ This CLI app will help you add them automatically and also help you store and ma
 
 ### Prerequisites
 
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Git v2.32](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) or later
 
 ### With Binary Package:
 
@@ -116,7 +116,3 @@ $ cargo install git-mob-tool
   $ git mob help
   $ git mob help coauthor
   ```
-
-## Troubleshooting
-
-- Try installing the latest version of git
