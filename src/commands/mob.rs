@@ -54,12 +54,11 @@ impl Mob {
                 }
 
                 let result = MultiSelect::new("Select active co-author(s):", coauthors).prompt();
-
-                match result {
+                match &result {
                     Ok(selected) => {
                         coauthor_repo.clear_mob();
-                        selected.clone().into_iter().for_each(|coauthor| {
-                            coauthor_repo.add_to_mob(&coauthor);
+                        selected.iter().for_each(|coauthor| {
+                            coauthor_repo.add_to_mob(coauthor);
                         });
 
                         if selected.is_empty() {
@@ -73,6 +72,7 @@ impl Mob {
             Some(coauthor_keys) => {
                 let mut coauthors: Vec<String> = Vec::new();
                 coauthor_repo.clear_mob();
+
                 for key in coauthor_keys {
                     match coauthor_repo.get(key) {
                         Some(coauthor) => {
@@ -83,6 +83,7 @@ impl Mob {
                             .expect("write failed"),
                     }
                 }
+
                 if !coauthors.is_empty() {
                     writeln!(out, "{}", coauthors.join("\n")).expect("write failed");
                 }
