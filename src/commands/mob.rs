@@ -39,14 +39,10 @@ impl Mob {
                 writeln!(out, "{}", coauthors.join("\n")).expect("write failed");
             }
         }
-        if self.with.is_none() {
-            return;
-        }
 
-        let coauthor_keys = self.with.as_ref().unwrap();
-
-        match coauthor_keys.is_empty() {
-            true => {
+        match self.with.as_deref() {
+            None => {}
+            Some([]) => {
                 let coauthors = coauthor_repo.list(false);
                 if coauthors.is_empty() {
                     writeln!(
@@ -74,7 +70,7 @@ impl Mob {
                         .expect("write failed"),
                 }
             }
-            false => {
+            Some(coauthor_keys) => {
                 let mut coauthors: Vec<String> = Vec::new();
                 coauthor_repo.clear_mob();
                 for key in coauthor_keys {

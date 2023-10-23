@@ -29,9 +29,8 @@ impl Coauthor {
         out: &mut impl io::Write,
         err: &mut impl io::Write,
     ) {
-        if self.delete.is_some() {
-            let key = self.delete.as_ref().unwrap();
-            match coauthor_repo.get(key) {
+        if let Some(key) = &self.delete {
+            match coauthor_repo.get(key.as_ref()) {
                 Some(_) => coauthor_repo.remove(key),
                 None => writeln!(err, "No co-author found with key: {key}").expect("write failed"),
             }
@@ -42,13 +41,8 @@ impl Coauthor {
                 writeln!(out, "{}", coauthors.join("\n")).expect("write failed");
             }
         }
-        if self.add.is_some() {
-            let coauthor_info = self.add.as_ref().unwrap();
-            let key: &str = coauthor_info[0].as_ref();
-            let name: &str = coauthor_info[1].as_ref();
-            let email: &str = coauthor_info[2].as_ref();
+        if let Some([key, name, email]) = self.add.as_deref() {
             let coauthor = format!("{name} <{email}>");
-
             coauthor_repo.add(key, &coauthor);
             writeln!(out, "{coauthor}").expect("write failed");
         }
