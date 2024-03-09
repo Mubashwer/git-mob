@@ -1,5 +1,28 @@
 #!/bin/sh
+
 set -e
+
+main() {
+  # Do nothing during rebase
+  [ -z "$(git branch --show-current)" ] && exit 0
+
+  # Do nothing during amend (without message) or reuse of a commit message
+  [ "$2" = 'commit' ] && exit 0
+
+  add_jira_issue_id_prefix "$@"
+  add_co_authored_by_trailers "$@"
+}
+
+# git mob - https://github.com/Mubashwer/git-mob
+add_co_authored_by_trailers() {
+  trailers=$(git mob --list | sed "s/^/Co-authored-by: /")
+  [ -n "$trailers" ] || return 0
+  printf "%s\n" "$trailers" |
+    sed "s/^/--trailer\n/" |
+    tr '\n' '\0' |
+    xargs -0 git interpret-trailers --if-exists addIfDifferent --in-place "$1"
+  printf "%s\n\n" "$trailers"
+}
 
 add_jira_issue_id_prefix() {
   # If the branch name starts with string resembling a Jira Issue ID, fetch it
@@ -12,35 +35,6 @@ add_jira_issue_id_prefix() {
   if [ -n "$jira_issue_id" ] && echo "$commit_msg" | grep -q -i -v "^\[\?$jira_issue_id\]\?"; then
     printf "[%s] %s\n" "$jira_issue_id" "$commit_msg_file_text" > "$1"
   fi
-}
-
-add_co_authored_by_trailers() {
-  co_authored_by_trailers=$(git mob --list | sed "s/^/Co-authored-by: /")
-  trailer_args=""
-
-  OLDIFS="$IFS"
-  IFS='
-'
-  for line in $co_authored_by_trailers; do
-    trailer_args="${trailer_args} --trailer \"$line\""
-  done
-  IFS="$OLDIFS"
-
-  if [ -n "$trailer_args" ]; then
-    eval "git interpret-trailers --if-exists addIfDifferent ${trailer_args} --in-place $1"
-    printf "%s\n\n" "$co_authored_by_trailers"
-  fi
-}
-
-main() {
-  # Do nothing during rebase
-  [ -z "$(git branch --show-current)" ] && exit 0
-
-  # Do nothing during amend (without message) or reuse of a commit message
-  [ "$2" = 'commit' ] && exit 0
-
-  add_jira_issue_id_prefix "$@"
-  add_co_authored_by_trailers "$@"
 }
 
 main "$@"
