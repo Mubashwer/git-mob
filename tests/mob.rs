@@ -1,86 +1,77 @@
+use crate::common::TestContext;
 use assert_cmd::prelude::*;
 use predicates::prelude::*;
-use serial_test::serial;
-use std::process::Command;
 
-fn before_each() -> Result<(), Box<dyn std::error::Error>> {
-    Command::new("git")
-        .args(["config", "--global", "--remove-section", "coauthors"])
-        .output()
-        .expect("failed to execute process");
+pub mod common;
 
-    Command::new("git")
-        .args(["config", "--global", "--remove-section", "coauthors-mob"])
-        .output()
-        .expect("failed to execute process");
+fn before_each() -> TestContext {
+    let cx = TestContext::new();
 
     // adding 2 co-authors
-    let mut cmd = Command::cargo_bin("git-mob")?;
-    cmd.args([
+    cx.git([
+        "mob",
         "coauthor",
         "--add",
         "lm",
         "Leo Messi",
         "leo.messi@example.com",
-    ]);
-    cmd.assert().success();
+    ])
+    .assert()
+    .success();
 
-    cmd = Command::cargo_bin("git-mob")?;
-    cmd.args([
+    cx.git([
+        "mob",
         "coauthor",
         "--add",
         "em",
         "Emi Martinez",
         "emi.martinez@example.com",
-    ]);
-    cmd.assert().success();
+    ])
+    .assert()
+    .success();
 
-    Ok(())
+    cx
 }
 
 #[test]
-#[serial]
-fn test_mob_with_by_keys() -> Result<(), Box<dyn std::error::Error>> {
-    before_each()?;
+fn test_mob_with_by_keys() {
+    let cx = before_each();
 
     // mobbing with both of the co-authors
-    let mut cmd = Command::cargo_bin("git-mob")?;
-    cmd.args(["--with", "lm", "em"]);
-    cmd.assert().success().stdout(predicate::str::diff(
-        "Leo Messi <leo.messi@example.com>\nEmi Martinez <emi.martinez@example.com>\n",
-    ));
+    cx.git(["mob", "--with", "lm", "em"])
+        .assert()
+        .success()
+        .stdout(predicate::str::diff(
+            "Leo Messi <leo.messi@example.com>\nEmi Martinez <emi.martinez@example.com>\n",
+        ));
 
     // verifying mob list shows both of the co-authors
-    cmd = Command::cargo_bin("git-mob")?;
-    cmd.args(["--list"]);
-    cmd.assert().success().stdout(predicate::str::diff(
-        "Leo Messi <leo.messi@example.com>\nEmi Martinez <emi.martinez@example.com>\n",
-    ));
-
-    Ok(())
+    cx.git(["mob", "--list"])
+        .assert()
+        .success()
+        .stdout(predicate::str::diff(
+            "Leo Messi <leo.messi@example.com>\nEmi Martinez <emi.martinez@example.com>\n",
+        ));
 }
 
 #[test]
-#[serial]
-fn test_mob_clear() -> Result<(), Box<dyn std::error::Error>> {
-    before_each()?;
+fn test_mob_clear() {
+    let cx = before_each();
 
     // mobbing with both of the co-authors
-    let mut cmd = Command::cargo_bin("git-mob")?;
-    cmd.args(["--with", "lm", "em"]);
-    cmd.assert().success().stdout(predicate::str::diff(
-        "Leo Messi <leo.messi@example.com>\nEmi Martinez <emi.martinez@example.com>\n",
-    ));
+    cx.git(["mob", "--with", "lm", "em"])
+        .assert()
+        .success()
+        .stdout(predicate::str::diff(
+            "Leo Messi <leo.messi@example.com>\nEmi Martinez <emi.martinez@example.com>\n",
+        ));
 
     // clearing mob session
-    cmd = Command::cargo_bin("git-mob")?;
-    cmd.args(["--clear"]);
-    cmd.assert().success();
+    cx.git(["mob", "--clear"]).assert().success();
 
     // verifying mob list is empty
-    cmd = Command::cargo_bin("git-mob")?;
-    cmd.args(["--list"]);
-    cmd.assert().success().stdout(predicate::str::diff(""));
-
-    Ok(())
+    cx.git(["mob", "--list"])
+        .assert()
+        .success()
+        .stdout(predicate::str::diff(""));
 }
