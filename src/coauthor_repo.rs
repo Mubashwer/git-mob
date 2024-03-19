@@ -15,9 +15,9 @@ pub trait CoauthorRepo {
 
 pub struct GitConfigCoauthorRepo {}
 impl GitConfigCoauthorRepo {
-    const COAUTHORS_SECTION: &str = "coauthors";
-    const COAUTHORS_MOB_SECTION: &str = "coauthors-mob";
-    const COAUTHOR_MOB_KEY: &str = "entry";
+    const COAUTHORS_SECTION: &'static str = "coauthors";
+    const COAUTHORS_MOB_SECTION: &'static str = "coauthors-mob";
+    const COAUTHOR_MOB_KEY: &'static str = "entry";
 }
 type Gccr = GitConfigCoauthorRepo;
 
