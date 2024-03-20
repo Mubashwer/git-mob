@@ -13,14 +13,16 @@ main() {
   add_co_authored_by_trailers "$@"
 }
 
-# git mob - https://github.com/Mubashwer/git-mob
 add_co_authored_by_trailers() {
+  # Uses https://github.com/Mubashwer/git-mob
   trailers=$(git mob --list | sed "s/^/Co-authored-by: /")
   [ -n "$trailers" ] || return 0
+
   printf "%s\n" "$trailers" |
     sed "s/^/--trailer\n/" |
     tr '\n' '\0' |
     xargs -0 git interpret-trailers --if-exists addIfDifferent --in-place "$1"
+
   printf "%s\n\n" "$trailers"
 }
 
