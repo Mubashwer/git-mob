@@ -71,6 +71,19 @@ $ cargo install git-mob-tool
 
   _This githook also adds a Jira Issue ID as a prefix to the commit message if the branch name starts with a string resembling one. If you don't want want this, comment out [line 42 which calls the function `add_jira_issue_id_prefix`](./prepare-commit-msg#LL42)._
 
+- If you have a repository with its own set of git hooks, you can invoke the global hook from a repository-specific hook. For example:
+  
+  ```sh
+  cd path/to/my/repo
+  git config core.hooksPath .git/hooks
+  cat > .git/hooks/prepare-commit-msg <<'EOF'
+  #!/usr/bin/env sh
+  
+  ~/git/prepare-commit-msg "$@"
+  EOF
+  chmod +x .git/hooks/prepare-commit-msg
+  ```
+
 ## Usage
 
 - To mob with some team member(s):
