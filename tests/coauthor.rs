@@ -1,23 +1,17 @@
+mod helpers;
+
 use assert_cmd::prelude::*;
+use helpers::test_contexts::TestContextCli;
 use predicates::prelude::*;
-use serial_test::serial;
-use std::process::Command;
+use test_context::test_context;
 
-fn before_each() {
-    Command::new("git")
-        .args(["config", "--global", "--remove-section", "coauthors"])
-        .output()
-        .expect("failed to execute process");
-}
-
+#[test_context(TestContextCli, skip_teardown)]
 #[test]
-#[serial]
-fn test_add_coauthors() -> Result<(), Box<dyn std::error::Error>> {
-    before_each();
-
+fn test_add_coauthors(ctx: TestContextCli) -> Result<(), Box<dyn std::error::Error>> {
     // adding 2 co-authors
-    Command::cargo_bin("git-mob")?
+    ctx.git()
         .args([
+            "mob",
             "coauthor",
             "--add",
             "lm",
@@ -28,8 +22,9 @@ fn test_add_coauthors() -> Result<(), Box<dyn std::error::Error>> {
         .success()
         .stdout(predicate::str::diff("Leo Messi <leo.messi@example.com>\n"));
 
-    Command::cargo_bin("git-mob")?
+    ctx.git()
         .args([
+            "mob",
             "coauthor",
             "--add",
             "em",
@@ -43,8 +38,8 @@ fn test_add_coauthors() -> Result<(), Box<dyn std::error::Error>> {
         ));
 
     // co-authors list shows the 2 co-authors that were added
-    Command::cargo_bin("git-mob")?
-        .args(["coauthor", "--list"])
+    ctx.git()
+        .args(["mob", "coauthor", "--list"])
         .assert()
         .success()
         .stdout(predicate::str::diff(
@@ -54,14 +49,13 @@ fn test_add_coauthors() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+#[test_context(TestContextCli, skip_teardown)]
 #[test]
-#[serial]
-fn test_delete_coauthor() -> Result<(), Box<dyn std::error::Error>> {
-    before_each();
-
+fn test_delete_coauthor(ctx: TestContextCli) -> Result<(), Box<dyn std::error::Error>> {
     // adding 2 co-authors
-    Command::cargo_bin("git-mob")?
+    ctx.git()
         .args([
+            "mob",
             "coauthor",
             "--add",
             "lm",
@@ -71,8 +65,9 @@ fn test_delete_coauthor() -> Result<(), Box<dyn std::error::Error>> {
         .assert()
         .success();
 
-    Command::cargo_bin("git-mob")?
+    ctx.git()
         .args([
+            "mob",
             "coauthor",
             "--add",
             "em",
@@ -83,14 +78,14 @@ fn test_delete_coauthor() -> Result<(), Box<dyn std::error::Error>> {
         .success();
 
     // deleting one co-author
-    Command::cargo_bin("git-mob")?
-        .args(["coauthor", "--delete", "lm"])
+    ctx.git()
+        .args(["mob", "coauthor", "--delete", "lm"])
         .assert()
         .success();
 
     // co-authors list excludes the deleted co-author
-    Command::cargo_bin("git-mob")?
-        .args(["coauthor", "--list"])
+    ctx.git()
+        .args(["mob", "coauthor", "--list"])
         .assert()
         .success()
         .stdout(predicate::str::diff(

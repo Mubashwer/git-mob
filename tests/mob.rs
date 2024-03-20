@@ -1,22 +1,15 @@
+mod helpers;
+
 use assert_cmd::prelude::*;
+use helpers::test_contexts::TestContextCli;
 use predicates::prelude::*;
-use serial_test::serial;
-use std::process::Command;
+use test_context::test_context;
 
-fn before_each() -> Result<(), Box<dyn std::error::Error>> {
-    Command::new("git")
-        .args(["config", "--global", "--remove-section", "coauthors"])
-        .output()
-        .expect("failed to execute process");
-
-    Command::new("git")
-        .args(["config", "--global", "--remove-section", "coauthors-mob"])
-        .output()
-        .expect("failed to execute process");
-
+fn before_each(ctx: &TestContextCli) -> Result<(), Box<dyn std::error::Error>> {
     // adding 2 co-authors
-    Command::cargo_bin("git-mob")?
+    ctx.git()
         .args([
+            "mob",
             "coauthor",
             "--add",
             "lm",
@@ -26,8 +19,9 @@ fn before_each() -> Result<(), Box<dyn std::error::Error>> {
         .assert()
         .success();
 
-    Command::cargo_bin("git-mob")?
+    ctx.git()
         .args([
+            "mob",
             "coauthor",
             "--add",
             "em",
@@ -40,14 +34,14 @@ fn before_each() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+#[test_context(TestContextCli, skip_teardown)]
 #[test]
-#[serial]
-fn test_mob_with_by_keys() -> Result<(), Box<dyn std::error::Error>> {
-    before_each()?;
+fn test_mob_with_by_keys(ctx: TestContextCli) -> Result<(), Box<dyn std::error::Error>> {
+    before_each(&ctx)?;
 
     // mobbing with both of the co-authors
-    Command::cargo_bin("git-mob")?
-        .args(["--with", "lm", "em"])
+    ctx.git()
+        .args(["mob", "--with", "lm", "em"])
         .assert()
         .success()
         .stdout(predicate::str::diff(
@@ -55,8 +49,8 @@ fn test_mob_with_by_keys() -> Result<(), Box<dyn std::error::Error>> {
         ));
 
     // verifying mob list shows both of the co-authors
-    Command::cargo_bin("git-mob")?
-        .args(["--list"])
+    ctx.git()
+        .args(["mob", "--list"])
         .assert()
         .success()
         .stdout(predicate::str::diff(
@@ -66,14 +60,14 @@ fn test_mob_with_by_keys() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+#[test_context(TestContextCli, skip_teardown)]
 #[test]
-#[serial]
-fn test_mob_clear() -> Result<(), Box<dyn std::error::Error>> {
-    before_each()?;
+fn test_mob_clear(ctx: TestContextCli) -> Result<(), Box<dyn std::error::Error>> {
+    before_each(&ctx)?;
 
     // mobbing with both of the co-authors
-    Command::cargo_bin("git-mob")?
-        .args(["--with", "lm", "em"])
+    ctx.git()
+        .args(["mob", "--with", "lm", "em"])
         .assert()
         .success()
         .stdout(predicate::str::diff(
@@ -81,14 +75,11 @@ fn test_mob_clear() -> Result<(), Box<dyn std::error::Error>> {
         ));
 
     // clearing mob session
-    Command::cargo_bin("git-mob")?
-        .args(["--clear"])
-        .assert()
-        .success();
+    ctx.git().args(["mob", "--clear"]).assert().success();
 
     // verifying mob list is empty
-    Command::cargo_bin("git-mob")?
-        .args(["--list"])
+    ctx.git()
+        .args(["mob", "--list"])
         .assert()
         .success()
         .stdout(predicate::str::diff(""));
