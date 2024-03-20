@@ -69,7 +69,7 @@ $ cargo install git-mob-tool
 
   This `githook` will be used to append the `Co-authored-by` trailers to the commit's message.
 
-  _This githook also adds a Jira Issue ID as a prefix to the commit message if the branch name starts with a string resembling one. If you don't want want this, comment out [line 42 which calls the function `add_jira_issue_id_prefix`](./prepare-commit-msg#LL42)._
+  _This githook also adds a Jira Issue ID as a prefix to the commit message if the branch name starts with a string resembling one. If you don't want want this, comment out [line 12 which calls the function `add_jira_issue_id_prefix`](./prepare-commit-msg#LL12)._
 
 ## Usage
 
