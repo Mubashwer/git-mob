@@ -174,4 +174,27 @@ mod tests {
 
         Ok(())
     }
+
+    #[test]
+    fn test_list_coauthors_when_list_is_empty() -> Result<(), Box<dyn std::error::Error>> {
+        let mut mock_coauthor_repo = MockCoauthorRepo::new();
+        mock_coauthor_repo
+            .expect_list()
+            .once()
+            .returning(move |_| Ok(vec![]));
+
+        let coauthor_cmd = Coauthor {
+            list: true,
+            delete: None,
+            add: None,
+        };
+
+        let mut out = Vec::new();
+        let mut err = Vec::new();
+        coauthor_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+
+        assert_eq!(out, b"");
+
+        Ok(())
+    }
 }
