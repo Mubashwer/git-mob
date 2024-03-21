@@ -30,19 +30,18 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .args(["config", "--global", "--get-regexp", &search_regex])
             .output()?;
 
-        Ok(String::from_utf8(output.stdout)?
+        String::from_utf8(output.stdout)?
             .lines()
             .map(|x| {
-                let delimeter = match show_keys {
+                let delimiter = match show_keys {
                     true => format!("{section}."),
                     false => " ".to_owned(),
                 };
-                x.split_once(&delimeter)
-                    .expect("failed to split string")
-                    .1
-                    .to_owned()
+                x.split_once(&delimiter)
+                    .ok_or(format!("Failed to split string: '{}'", x).into())
+                    .map(|(_, coauthor)| coauthor.to_owned())
             })
-            .collect())
+            .collect()
     }
 
     fn list_mob(&self) -> Result<Vec<String>, Box<dyn Error>> {
