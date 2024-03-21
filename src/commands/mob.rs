@@ -1,7 +1,7 @@
 use crate::coauthor_repo::CoauthorRepo;
 use clap::{arg, Parser};
 use inquire::MultiSelect;
-use std::io;
+use std::{error::Error, io::Write};
 
 #[derive(Parser)]
 #[command(arg_required_else_help = true)]
@@ -27,84 +27,85 @@ impl Mob {
     pub(crate) fn handle(
         &self,
         coauthor_repo: &impl CoauthorRepo,
-        out: &mut impl io::Write,
-        err: &mut impl io::Write,
-    ) {
+        out: &mut impl Write,
+        err: &mut impl Write,
+    ) -> Result<(), Box<dyn Error>> {
         if self.clear {
-            coauthor_repo.clear_mob();
+            coauthor_repo.clear_mob()?;
         }
         if self.list {
-            let coauthors = coauthor_repo.list_mob();
+            let coauthors = coauthor_repo.list_mob()?;
             if !coauthors.is_empty() {
-                writeln!(out, "{}", coauthors.join("\n")).expect("write failed");
+                writeln!(out, "{}", coauthors.join("\n"))?
             }
         }
 
         match self.with.as_deref() {
             None => {}
             Some([]) => {
-                let coauthors = coauthor_repo.list(false);
+                let coauthors = coauthor_repo.list(false)?;
                 if coauthors.is_empty() {
                     writeln!(
                         err,
                         "No co-author(s) found. At least one co-author must be added"
-                    )
-                    .expect("write failed");
-                    return;
+                    )?;
+                    return Ok(());
                 }
 
                 let result = MultiSelect::new("Select active co-author(s):", coauthors).prompt();
                 match &result {
                     Ok(selected) => {
-                        coauthor_repo.clear_mob();
-                        selected.iter().for_each(|coauthor| {
-                            coauthor_repo.add_to_mob(coauthor);
-                        });
+                        coauthor_repo.clear_mob()?;
+                        for coauthor in selected.iter() {
+                            coauthor_repo.add_to_mob(coauthor)?;
+                        }
 
                         if selected.is_empty() {
-                            writeln!(out, "Going solo!").expect("write failed");
+                            writeln!(out, "Going solo!")?
                         }
                     }
-                    Err(_) => writeln!(err, "Failed to prompt selection of co-author(s)")
-                        .expect("write failed"),
+                    Err(_) => writeln!(err, "Failed to prompt selection of co-author(s)")?,
                 }
             }
             Some(coauthor_keys) => {
                 let mut coauthors: Vec<String> = Vec::new();
-                coauthor_repo.clear_mob();
+                coauthor_repo.clear_mob()?;
 
                 for key in coauthor_keys {
-                    match coauthor_repo.get(key) {
+                    match coauthor_repo.get(key)? {
                         Some(coauthor) => {
-                            coauthor_repo.add_to_mob(&coauthor);
+                            coauthor_repo.add_to_mob(&coauthor)?;
                             coauthors.push(coauthor);
                         }
-                        None => writeln!(err, "No co-author found with key: {key}")
-                            .expect("write failed"),
+                        None => writeln!(err, "No co-author found with key: {key}")?,
                     }
                 }
 
                 if !coauthors.is_empty() {
-                    writeln!(out, "{}", coauthors.join("\n")).expect("write failed");
+                    writeln!(out, "{}", coauthors.join("\n"))?
                 }
             }
         }
+
+        Ok(())
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use std::error::Error;
+
     use super::*;
     use crate::coauthor_repo::MockCoauthorRepo;
     use mockall::predicate;
 
     #[test]
-    fn test_clear_mob_session() {
+    fn test_clear_mob_session() -> Result<(), Box<dyn Error>> {
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
             .expect_clear_mob()
             .once()
-            .return_const(());
+            .returning(|| Ok(()));
 
         let mob_cmd = Mob {
             clear: true,
@@ -114,21 +115,25 @@ mod tests {
 
         let mut out = Vec::new();
         let mut err = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err);
+        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+
+        Ok(())
     }
 
     #[test]
-    fn test_list_mob_coauthors() {
-        let coauthors = [
+    fn test_list_mob_coauthors() -> Result<(), Box<dyn Error>> {
+        let coauthors = vec![
             "Leo Messi <leo.messi@example.com>".to_owned(),
             "Emi Martinez <emi.martinez@example.com>".to_owned(),
         ];
+
+        let expected_output = format!("{}\n", coauthors.join("\n"));
 
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
             .expect_list_mob()
             .once()
-            .return_const(coauthors.to_owned());
+            .returning(move || Ok(coauthors.to_owned()));
 
         let mob_cmd = Mob {
             list: true,
@@ -138,21 +143,24 @@ mod tests {
 
         let mut out = Vec::new();
         let mut err = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err);
+        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
 
-        assert_eq!(out, format!("{}\n", coauthors.join("\n")).as_bytes());
+        assert_eq!(out, expected_output.as_bytes());
+
+        Ok(())
     }
 
     #[test]
-    fn test_error_message_shown_when_trying_to_mob_given_coauthors_list_is_empty() {
-        let coauthors = [];
+    fn test_error_message_shown_when_trying_to_mob_given_coauthors_list_is_empty(
+    ) -> Result<(), Box<dyn Error>> {
+        let coauthors = vec![];
 
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
             .expect_list()
             .with(predicate::eq(false))
             .once()
-            .return_const(coauthors.to_owned());
+            .returning(move |_| Ok(coauthors.to_owned()));
 
         let mob_cmd = Mob {
             with: Some(vec![]),
@@ -162,16 +170,18 @@ mod tests {
 
         let mut out = Vec::new();
         let mut err = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err);
+        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
 
         assert_eq!(
             err,
             b"No co-author(s) found. At least one co-author must be added\n"
         );
+
+        Ok(())
     }
 
     #[test]
-    fn test_adding_coauthors_to_mob_session_by_keys() {
+    fn test_adding_coauthors_to_mob_session_by_keys() -> Result<(), Box<dyn Error>> {
         let keys = vec!["lm".to_owned(), "em".to_owned()];
         let coauthors = [
             "Leo Messi <leo.messi@example.com>",
@@ -182,27 +192,27 @@ mod tests {
         mock_coauthor_repo
             .expect_clear_mob()
             .once()
-            .return_const(());
+            .returning(|| Ok(()));
         mock_coauthor_repo
             .expect_get()
             .with(predicate::eq(keys[0].to_owned()))
             .once()
-            .return_const(coauthors[0].to_owned());
+            .returning(move |_| Ok(Some(coauthors[0].to_owned())));
         mock_coauthor_repo
             .expect_add_to_mob()
             .with(predicate::eq(coauthors[0].to_owned()))
             .once()
-            .return_const(());
+            .returning(|_| Ok(()));
         mock_coauthor_repo
             .expect_get()
             .with(predicate::eq(keys[1].to_owned()))
             .once()
-            .return_const(coauthors[1].to_owned());
+            .returning(move |_| Ok(Some(coauthors[1].to_owned())));
         mock_coauthor_repo
             .expect_add_to_mob()
             .with(predicate::eq(coauthors[1].to_owned()))
             .once()
-            .return_const(());
+            .returning(|_| Ok(()));
 
         let mob_cmd = Mob {
             with: Some(keys),
@@ -212,25 +222,28 @@ mod tests {
 
         let mut out = Vec::new();
         let mut err = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err);
+        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
 
         assert_eq!(out, format!("{}\n", coauthors.join("\n")).as_bytes());
+
+        Ok(())
     }
 
     #[test]
-    fn test_error_message_shown_when_trying_to_mob_while_passing_non_existing_coauthor_key() {
+    fn test_error_message_shown_when_trying_to_mob_while_passing_non_existing_coauthor_key(
+    ) -> Result<(), Box<dyn Error>> {
         let key = "lm";
 
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
             .expect_clear_mob()
             .once()
-            .return_const(());
+            .returning(|| Ok(()));
         mock_coauthor_repo
             .expect_get()
             .with(predicate::eq(key))
             .once()
-            .return_const(None);
+            .returning(|_| Ok(None));
 
         let mob_cmd = Mob {
             with: Some(vec![key.to_owned()]),
@@ -240,11 +253,13 @@ mod tests {
 
         let mut out = Vec::new();
         let mut err = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err);
+        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
 
         assert_eq!(
             err,
             format!("No co-author found with key: {key}\n").as_bytes()
         );
+
+        Ok(())
     }
 }

@@ -3,12 +3,12 @@ mod helpers;
 use assert_cmd::prelude::*;
 use helpers::test_contexts::TestContextRepo;
 use predicates::prelude::*;
-use std::env;
+use std::{env, error::Error};
 use test_context::test_context;
 
 #[test_context(TestContextRepo, skip_teardown)]
 #[test]
-fn test_prepare_commit_msg(ctx: TestContextRepo) -> Result<(), Box<dyn std::error::Error>> {
+fn test_prepare_commit_msg(ctx: TestContextRepo) -> Result<(), Box<dyn Error>> {
     ctx.git()
         .args(["config", "core.hooksPath", env!("CARGO_MANIFEST_DIR")])
         .assert()

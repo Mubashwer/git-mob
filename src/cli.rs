@@ -1,7 +1,9 @@
 use crate::coauthor_repo::CoauthorRepo;
 use crate::commands::{coauthor::Coauthor, mob::Mob};
 use clap::{Parser, Subcommand};
-use std::{io, str};
+use std::error::Error;
+use std::io::Write;
+use std::str;
 
 #[derive(Parser)]
 #[command(
@@ -43,36 +45,43 @@ enum Commands {
     Coauthor(Coauthor),
 }
 
-pub fn run(coauthor_repo: &impl CoauthorRepo, out: &mut impl io::Write, err: &mut impl io::Write) {
+pub fn run(
+    coauthor_repo: &impl CoauthorRepo,
+    out: &mut impl Write,
+    err: &mut impl Write,
+) -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
-    run_inner(&cli, coauthor_repo, out, err);
+    run_inner(&cli, coauthor_repo, out, err)
 }
 
 fn run_inner(
     cli: &Cli,
     coauthor_repo: &impl CoauthorRepo,
-    out: &mut impl io::Write,
-    err: &mut impl io::Write,
-) {
+    out: &mut impl Write,
+    err: &mut impl Write,
+) -> Result<(), Box<dyn Error>> {
     match &cli.command {
-        None => cli.mob.handle(coauthor_repo, out, err),
-        Some(Commands::Coauthor(coauthor)) => coauthor.handle(coauthor_repo, out, err),
+        None => cli.mob.handle(coauthor_repo, out, err)?,
+        Some(Commands::Coauthor(coauthor)) => coauthor.handle(coauthor_repo, out, err)?,
     }
+    Ok(())
 }
 
 #[cfg(test)]
 mod tests {
+    use std::error::Error;
+
     use super::*;
     use crate::coauthor_repo::MockCoauthorRepo;
     use mockall::predicate;
 
     #[test]
-    fn test_clear_mob_session() {
+    fn test_clear_mob_session() -> Result<(), Box<dyn Error>> {
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
             .expect_clear_mob()
             .once()
-            .return_const(());
+            .returning(|| Ok(()));
 
         let cli = Cli {
             command: None,
@@ -85,23 +94,25 @@ mod tests {
 
         let mut out = Vec::new();
         let mut err = Vec::new();
-        run_inner(&cli, &mock_coauthor_repo, &mut out, &mut err);
+        run_inner(&cli, &mock_coauthor_repo, &mut out, &mut err)?;
+
+        Ok(())
     }
 
     #[test]
-    fn test_delete_coauthor() {
+    fn test_delete_coauthor() -> Result<(), Box<dyn Error>> {
         let key = "lm";
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
             .expect_get()
             .with(predicate::eq(key))
             .once()
-            .return_const("Leo Messi <leo.messi@example.com>".to_owned());
+            .returning(|_| Ok(Some("Leo Messi <leo.messi@example.com>".to_owned())));
         mock_coauthor_repo
             .expect_remove()
             .with(predicate::eq(key))
             .once()
-            .return_const(());
+            .returning(|_| Ok(()));
 
         let cli = Cli {
             command: Some(Commands::Coauthor(Coauthor {
@@ -118,6 +129,8 @@ mod tests {
 
         let mut out = Vec::new();
         let mut err = Vec::new();
-        run_inner(&cli, &mock_coauthor_repo, &mut out, &mut err);
+        run_inner(&cli, &mock_coauthor_repo, &mut out, &mut err)?;
+
+        Ok(())
     }
 }

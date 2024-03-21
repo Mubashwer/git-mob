@@ -3,11 +3,12 @@ mod helpers;
 use assert_cmd::prelude::*;
 use helpers::test_contexts::TestContextCli;
 use predicates::prelude::*;
+use std::error::Error;
 use test_context::test_context;
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_add_coauthors(ctx: TestContextCli) -> Result<(), Box<dyn std::error::Error>> {
+fn test_add_coauthors(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     // adding 2 co-authors
     ctx.git()
         .args([
@@ -51,7 +52,7 @@ fn test_add_coauthors(ctx: TestContextCli) -> Result<(), Box<dyn std::error::Err
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_delete_coauthor(ctx: TestContextCli) -> Result<(), Box<dyn std::error::Error>> {
+fn test_delete_coauthor(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     // adding 2 co-authors
     ctx.git()
         .args([

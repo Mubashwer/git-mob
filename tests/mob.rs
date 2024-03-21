@@ -3,9 +3,10 @@ mod helpers;
 use assert_cmd::prelude::*;
 use helpers::test_contexts::TestContextCli;
 use predicates::prelude::*;
+use std::error::Error;
 use test_context::test_context;
 
-fn before_each(ctx: &TestContextCli) -> Result<(), Box<dyn std::error::Error>> {
+fn before_each(ctx: &TestContextCli) -> Result<(), Box<dyn Error>> {
     // adding 2 co-authors
     ctx.git()
         .args([
@@ -36,7 +37,7 @@ fn before_each(ctx: &TestContextCli) -> Result<(), Box<dyn std::error::Error>> {
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_mob_with_by_keys(ctx: TestContextCli) -> Result<(), Box<dyn std::error::Error>> {
+fn test_mob_with_by_keys(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     before_each(&ctx)?;
 
     // mobbing with both of the co-authors
@@ -62,7 +63,7 @@ fn test_mob_with_by_keys(ctx: TestContextCli) -> Result<(), Box<dyn std::error::
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_mob_clear(ctx: TestContextCli) -> Result<(), Box<dyn std::error::Error>> {
+fn test_mob_clear(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     before_each(&ctx)?;
 
     // mobbing with both of the co-authors
