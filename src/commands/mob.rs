@@ -172,6 +172,30 @@ mod tests {
     }
 
     #[test]
+    fn test_list_mob_coauthors_when_mob_session_is_empty() -> Result<(), Box<dyn Error>> {
+        let mut mock_coauthor_repo = MockCoauthorRepo::new();
+        mock_coauthor_repo
+            .expect_list_mob()
+            .once()
+            .returning(move || Ok(vec![]));
+
+        let mob_cmd = Mob {
+            list: true,
+            clear: false,
+            with: None,
+            trailers: false,
+        };
+
+        let mut out = Vec::new();
+        let mut err = Vec::new();
+        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+
+        assert_eq!(out, b"");
+
+        Ok(())
+    }
+
+    #[test]
     fn test_mob_coauthor_trailers() -> Result<(), Box<dyn Error>> {
         let coauthors = vec![
             "Leo Messi <leo.messi@example.com>".to_owned(),
@@ -195,7 +219,31 @@ mod tests {
         let mut err = Vec::new();
         mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
 
-        assert_eq!(out, "Co-authored-by: Leo Messi <leo.messi@example.com>\nCo-authored-by: Emi Martinez <emi.martinez@example.com>\n".as_bytes());
+        assert_eq!(out, b"Co-authored-by: Leo Messi <leo.messi@example.com>\nCo-authored-by: Emi Martinez <emi.martinez@example.com>\n");
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_mob_coauthor_trailers_when_mob_session_is_empty() -> Result<(), Box<dyn Error>> {
+        let mut mock_coauthor_repo = MockCoauthorRepo::new();
+        mock_coauthor_repo
+            .expect_list_mob()
+            .once()
+            .returning(move || Ok(vec![]));
+
+        let mob_cmd = Mob {
+            list: false,
+            clear: false,
+            with: None,
+            trailers: true,
+        };
+
+        let mut out = Vec::new();
+        let mut err = Vec::new();
+        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+
+        assert_eq!(out, b"");
 
         Ok(())
     }
