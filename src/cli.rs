@@ -89,6 +89,7 @@ mod tests {
                 with: None,
                 clear: true,
                 list: false,
+                trailers: false,
             },
         };
 
@@ -124,6 +125,7 @@ mod tests {
                 with: None,
                 clear: false,
                 list: false,
+                trailers: false,
             },
         };
 

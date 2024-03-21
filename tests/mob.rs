@@ -87,3 +87,29 @@ fn test_mob_clear(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[test_context(TestContextCli, skip_teardown)]
+#[test]
+fn test_mob_coauthor_trailers(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+    before_each(&ctx)?;
+
+    // mobbing with both of the co-authors
+    ctx.git()
+        .args(["mob", "--with", "lm", "em"])
+        .assert()
+        .success()
+        .stdout(predicate::str::diff(
+            "Leo Messi <leo.messi@example.com>\nEmi Martinez <emi.martinez@example.com>\n",
+        ));
+
+    // verifying mob trailers show Co-authored-by trailers for both co-authors
+    ctx.git()
+        .args(["mob", "--trailers"])
+        .assert()
+        .success()
+        .stdout(predicate::str::diff(
+            "Co-authored-by: Leo Messi <leo.messi@example.com>\nCo-authored-by: Emi Martinez <emi.martinez@example.com>\n",
+        ));
+
+    Ok(())
+}

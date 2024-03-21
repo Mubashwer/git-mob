@@ -21,6 +21,11 @@ pub(crate) struct Mob {
     /// Usage example: git mob --list
     #[arg(short = 'l', long = "list")]
     pub(crate) list: bool,
+    /// Lists Co-authored-by trailers in current mob/pair programming session
+    ///
+    /// Usage example: git mob --trailers
+    #[arg(short = 't', long = "trailers")]
+    pub(crate) trailers: bool,
 }
 
 impl Mob {
@@ -33,10 +38,24 @@ impl Mob {
         if self.clear {
             coauthor_repo.clear_mob()?;
         }
+
         if self.list {
             let coauthors = coauthor_repo.list_mob()?;
             if !coauthors.is_empty() {
                 writeln!(out, "{}", coauthors.join("\n"))?
+            }
+        }
+
+        if self.trailers {
+            let coauthors = coauthor_repo.list_mob()?;
+            let trailers = coauthors
+                .iter()
+                .map(|x| format!("Co-authored-by: {x}"))
+                .collect::<Vec<String>>()
+                .join("\n");
+
+            if !coauthors.is_empty() {
+                writeln!(out, "{}", trailers)?
             }
         }
 
@@ -111,6 +130,7 @@ mod tests {
             clear: true,
             with: None,
             list: false,
+            trailers: false,
         };
 
         let mut out = Vec::new();
@@ -139,6 +159,7 @@ mod tests {
             list: true,
             clear: false,
             with: None,
+            trailers: false,
         };
 
         let mut out = Vec::new();
@@ -146,6 +167,35 @@ mod tests {
         mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
 
         assert_eq!(out, expected_output.as_bytes());
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_mob_coauthor_trailers() -> Result<(), Box<dyn Error>> {
+        let coauthors = vec![
+            "Leo Messi <leo.messi@example.com>".to_owned(),
+            "Emi Martinez <emi.martinez@example.com>".to_owned(),
+        ];
+
+        let mut mock_coauthor_repo = MockCoauthorRepo::new();
+        mock_coauthor_repo
+            .expect_list_mob()
+            .once()
+            .returning(move || Ok(coauthors.to_owned()));
+
+        let mob_cmd = Mob {
+            list: false,
+            clear: false,
+            with: None,
+            trailers: true,
+        };
+
+        let mut out = Vec::new();
+        let mut err = Vec::new();
+        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+
+        assert_eq!(out, "Co-authored-by: Leo Messi <leo.messi@example.com>\nCo-authored-by: Emi Martinez <emi.martinez@example.com>\n".as_bytes());
 
         Ok(())
     }
@@ -166,6 +216,7 @@ mod tests {
             with: Some(vec![]),
             clear: false,
             list: false,
+            trailers: false,
         };
 
         let mut out = Vec::new();
@@ -218,6 +269,7 @@ mod tests {
             with: Some(keys),
             clear: false,
             list: false,
+            trailers: false,
         };
 
         let mut out = Vec::new();
@@ -249,6 +301,7 @@ mod tests {
             with: Some(vec![key.to_owned()]),
             clear: false,
             list: false,
+            trailers: false,
         };
 
         let mut out = Vec::new();
