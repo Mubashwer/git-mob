@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/Mubashwer/git-mob/compare/v1.4.0...v1.5.0) (2024-03-21)
+
+
+### Features
+
+* add git mob --trailers command ([17e35cf](https://github.com/Mubashwer/git-mob/commit/17e35cf862bcc11b8a333629ff0fba3b0edbd0de))
+
 ## [1.4.0](https://github.com/Mubashwer/git-mob/compare/v1.3.1...v1.4.0) (2023-04-21)
 
 
