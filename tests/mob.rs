@@ -1,10 +1,10 @@
 mod helpers;
 
-use serial_test::serial;
 use assert_cmd::prelude::*;
 use helpers::test_contexts::TestContextCli;
 use predicates::prelude::*;
 use rexpect::session::spawn_command;
+use serial_test::serial;
 use std::error::Error;
 use test_context::test_context;
 

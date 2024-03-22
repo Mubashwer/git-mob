@@ -71,19 +71,17 @@ impl Mob {
                     return Ok(());
                 }
 
-                let result = MultiSelect::new("Select active co-author(s):", coauthors).prompt();
-                match &result {
-                    Ok(selected) => {
-                        coauthor_repo.clear_mob()?;
-                        for coauthor in selected.iter() {
-                            coauthor_repo.add_to_mob(coauthor)?;
-                        }
-
-                        if selected.is_empty() {
-                            writeln!(out, "Going solo!")?
-                        }
+                let result = MultiSelect::new("Select active co-author(s):", coauthors)
+                    .prompt_skippable()?;
+                if let Some(selected) = result {
+                    coauthor_repo.clear_mob()?;
+                    for coauthor in selected.iter() {
+                        coauthor_repo.add_to_mob(coauthor)?;
                     }
-                    Err(_) => writeln!(err, "Failed to prompt selection of co-author(s)")?,
+
+                    if selected.is_empty() {
+                        writeln!(out, "Going solo!")?
+                    }
                 }
             }
             Some(coauthor_keys) => {
