@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/Mubashwer/git-mob/compare/v1.5.0...v1.5.1) (2024-03-22)
+
+
+### Bug Fixes
+
+* stop error msg when escaping git mob --with ([ed04a38](https://github.com/Mubashwer/git-mob/commit/ed04a389bb269938b7d7e22b8dcfbe3f469dffc0))
+
 ## [1.5.0](https://github.com/Mubashwer/git-mob/compare/v1.4.0...v1.5.0) (2024-03-21)
 
 
