@@ -25,21 +25,22 @@ This CLI app will help you add them automatically and also help you store and ma
 
 - [Git v2.32](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) or later
 
-### With Binary Package:
+### With Binary Package
 
 - Download and extract the appropriate binary depending on your OS from the [latest GitHub release](https://github.com/Mubashwer/git-mob/releases/latest)
 - Ensure the binary is in your `PATH` variable e.g. you may place the file in `C:\Windows` on Windows or `/usr/local/bin` on Linux and macOS
 - Ensure the binary is set as executable (Linux and macOS)
-  ```sh
+
+  ```console
   $ chmod +x ./git-mob
   ```
 
-### With [Cargo](https://crates.io/crates/git-mob-tool):
+### With [Cargo](https://crates.io/crates/git-mob-tool)
 
 - Install [Rust](https://www.rust-lang.org/tools/install)
 - If you are using Windows, you will also need to [install certain C++ build tools](https://learn.microsoft.com/en-us/windows/dev-environment/rust/setup#install-visual-studio-recommended-or-the-microsoft-c-build-tools)
 
-```sh
+```console
 $ cargo install git-mob-tool
 ```
 
@@ -47,23 +48,23 @@ $ cargo install git-mob-tool
 
 - Store your team members' details with keys (usually initials)
 
-  ```sh
+  ```console
   $ git mob coauthor --add lm "Leo Messi" leo.messi@example.com
   $ git mob coauthor --add em "Emi Martinez" emi.martinez@example.com
   $ git mob coauthor --add sa "Sergio Aguero" sergio.aguero@example.com
-  ...
   ```
 
 - Set a global [`githooks`](https://git-scm.com/docs/githooks) directory
 
-  ```sh
+  ```console
   $ mkdir ~/git
   $ git config --global core.hooksPath "~/git"
   ```
 
 - Download the [`prepare-commit-msg`](./prepare-commit-msg) file into the directory
 - Ensure it is set as executable (Linux and macOS)
-   ```sh
+
+   ```console
   $ chmod +x ./prepare-commit-msg
   ```
 
@@ -75,7 +76,7 @@ $ cargo install git-mob-tool
 
 - To mob with some team member(s):
 
-  ```
+  ```console
   $ git mob --with
   ? Select active co-author(s):
   > [ ] Leo Messi <leo.messi@example.com>
@@ -86,13 +87,13 @@ $ cargo install git-mob-tool
 
   Alternatively, if you remember the co-author keys, you may bypass the multi-select menu by running:
 
-  ```sh
+  ```console
   $ git mob --with lm em
   ```
 
   This will start a global mob session. Any git commit made afterwards will have `Co-authored-by` trailers added to the commit message as shown below:
 
-  ```
+  ```text
   This is an example commit message
 
   Co-authored-by: Leo Messi <leo.messi@example.com>
@@ -101,18 +102,19 @@ $ cargo install git-mob-tool
 
 - To clear the mob session:
 
-  ```sh
+  ```console
   $ git mob --clear
   ```
 
 - To view the co-authors in the current mob session:
 
-  ```sh
+  ```console
   $ git mob --list
   ```
 
 - To print help information:
-  ```sh
+
+  ```console
   $ git mob help
   $ git mob help coauthor
   ```
