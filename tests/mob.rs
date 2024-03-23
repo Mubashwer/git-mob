@@ -3,7 +3,9 @@ mod helpers;
 use assert_cmd::prelude::*;
 use helpers::test_contexts::TestContextCli;
 use predicates::prelude::*;
+#[cfg(unix)]
 use rexpect::session::spawn_command;
+#[cfg(unix)]
 use serial_test::serial;
 use std::error::Error;
 use test_context::test_context;
@@ -62,6 +64,7 @@ fn test_mob_with_by_keys(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+#[cfg(unix)]
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
 #[serial]
@@ -77,6 +80,7 @@ fn test_mob_with_multiselect_given_no_coauthors(ctx: TestContextCli) -> Result<(
     Ok(())
 }
 
+#[cfg(unix)]
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
 #[serial]
@@ -115,6 +119,7 @@ fn test_mob_with_multiselect_select_none(ctx: TestContextCli) -> Result<(), Box<
     Ok(())
 }
 
+#[cfg(unix)]
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
 #[serial]
@@ -148,6 +153,7 @@ fn test_mob_with_multiselect_select_coauthor(ctx: TestContextCli) -> Result<(), 
     Ok(())
 }
 
+#[cfg(unix)]
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
 #[serial]
