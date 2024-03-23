@@ -116,3 +116,9 @@ $ cargo install git-mob-tool
   $ git mob help
   $ git mob help coauthor
   ```
+
+## Troubleshooting
+
+- When using `git mob --help`, an error may occur because Git looks for man pages for subcommands. To avoid this error, use one of the following alternatives:
+  - `git mob help`
+  - `git-mob --help`
