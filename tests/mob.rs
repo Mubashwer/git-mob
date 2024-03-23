@@ -64,18 +64,19 @@ fn test_mob_with_by_keys(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-#[cfg(unix)]
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-#[serial]
-fn test_mob_with_multiselect_given_no_coauthors(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+fn test_mob_with_multiselect_given_no_coauthors_added(
+    ctx: TestContextCli,
+) -> Result<(), Box<dyn Error>> {
     // running command to display mob session multiselect prompt
-    let mut command = ctx.git();
-    command.args(["mob", "--with"]);
-
-    let mut session = spawn_command(command, Some(5000))?;
-    session.exp_string("No co-author(s) found. At least one co-author must be added")?;
-    session.process.wait()?;
+    ctx.git()
+        .args(["mob", "--with"])
+        .assert()
+        .success()
+        .stderr(predicate::str::diff(
+            "No co-author(s) found. At least one co-author must be added\n",
+        ));
 
     Ok(())
 }
