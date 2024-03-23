@@ -20,13 +20,11 @@ jobs:
       tag_name: ${{ steps.release-please.outputs.tag_name }}
 
     steps:
-      - uses: google-github-actions/release-please-action@v3
+      - uses: google-github-actions/release-please-action@v4
         id: release-please
         with:
-          package-name: release-please-action
           release-type: rust
           token: ${{ secrets.GH_TOKEN }}
-          prerelease: true
 
   upload-binaries:
     strategy:
@@ -51,7 +49,8 @@ jobs:
             target: aarch64-apple-darwin
             artifact_name: git-mob
     runs-on: ${{ matrix.os }}
-    if: ${{ needs.release-please.outputs.releases_created }}
+    # https://github.com/google-github-actions/release-please-action/issues/912
+    if: ${{ needs.release-please.outputs.releases_created == true || needs.release-please.outputs.releases_created == 'true' }}
     needs: [release-please]
 
     steps:
