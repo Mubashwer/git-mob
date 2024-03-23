@@ -2,7 +2,7 @@ use std::{env, ffi::OsString, path::PathBuf, process::Command};
 
 use assert_cmd::{assert::OutputAssertExt, cargo::cargo_bin};
 use once_cell::sync::Lazy;
-use tempfile::{tempdir, NamedTempFile, TempDir};
+use tempfile::{tempdir, NamedTempFile, TempDir, TempPath};
 use test_context::TestContext;
 
 static PATH_ENV_VAR: Lazy<OsString> = Lazy::new(|| {
@@ -20,13 +20,13 @@ static PATH_ENV_VAR: Lazy<OsString> = Lazy::new(|| {
 });
 
 pub(crate) struct TestContextCli {
-    git_config_global: NamedTempFile,
+    git_config_global: TempPath,
 }
 
 impl TestContextCli {
     pub fn git(&self) -> Command {
         let mut command = Command::new("git");
-        command.env("GIT_CONFIG_GLOBAL", self.git_config_global.path());
+        command.env("GIT_CONFIG_GLOBAL", &self.git_config_global);
         command
     }
 }
@@ -36,13 +36,13 @@ impl TestContext for TestContextCli {
         env::set_var("PATH", &*PATH_ENV_VAR);
 
         TestContextCli {
-            git_config_global: NamedTempFile::new().unwrap(),
+            git_config_global: NamedTempFile::new().unwrap().into_temp_path(),
         }
     }
 }
 
 pub(crate) struct TestContextRepo {
-    git_config_global: NamedTempFile,
+    git_config_global: TempPath,
     dir: TempDir,
 }
 
@@ -51,7 +51,7 @@ impl TestContextRepo {
         let mut command = Command::new("git");
         command
             .current_dir(self.dir.path())
-            .env("GIT_CONFIG_GLOBAL", self.git_config_global.path());
+            .env("GIT_CONFIG_GLOBAL", &self.git_config_global);
         command
     }
 }
@@ -61,7 +61,7 @@ impl TestContext for TestContextRepo {
         env::set_var("PATH", &*PATH_ENV_VAR);
 
         let ctx = TestContextRepo {
-            git_config_global: NamedTempFile::new().unwrap(),
+            git_config_global: NamedTempFile::new().unwrap().into_temp_path(),
             dir: tempdir().unwrap(),
         };
 
