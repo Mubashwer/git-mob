@@ -5,8 +5,6 @@ use helpers::test_contexts::TestContextCli;
 use predicates::prelude::*;
 #[cfg(unix)]
 use rexpect::session::spawn_command;
-#[cfg(unix)]
-use serial_test::serial;
 use std::error::Error;
 use test_context::test_context;
 
@@ -84,7 +82,6 @@ fn test_mob_with_multiselect_given_no_coauthors_added(
 #[cfg(unix)]
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-#[serial]
 fn test_mob_with_multiselect_select_none(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     // given a mob session with 2 co-authors is active
     add_two_coauthors(&ctx)?;
@@ -123,7 +120,6 @@ fn test_mob_with_multiselect_select_none(ctx: TestContextCli) -> Result<(), Box<
 #[cfg(unix)]
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-#[serial]
 fn test_mob_with_multiselect_select_coauthor(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     add_two_coauthors(&ctx)?;
 
@@ -157,7 +153,6 @@ fn test_mob_with_multiselect_select_coauthor(ctx: TestContextCli) -> Result<(), 
 #[cfg(unix)]
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-#[serial]
 fn test_mob_with_multiselect_escape(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     // given a mob session  with 2 co-authors is active
     add_two_coauthors(&ctx)?;
