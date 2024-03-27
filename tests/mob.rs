@@ -8,34 +8,6 @@ use rexpect::session::spawn_command;
 use std::error::Error;
 use test_context::test_context;
 
-fn add_two_coauthors(ctx: &TestContextCli) -> Result<(), Box<dyn Error>> {
-    ctx.git()
-        .args([
-            "mob",
-            "coauthor",
-            "--add",
-            "lm",
-            "Leo Messi",
-            "leo.messi@example.com",
-        ])
-        .assert()
-        .success();
-
-    ctx.git()
-        .args([
-            "mob",
-            "coauthor",
-            "--add",
-            "em",
-            "Emi Martinez",
-            "emi.martinez@example.com",
-        ])
-        .assert()
-        .success();
-
-    Ok(())
-}
-
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
 fn test_mob_with_by_keys(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
@@ -58,6 +30,18 @@ fn test_mob_with_by_keys(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
         .stdout(predicate::str::diff(
             "Leo Messi <leo.messi@example.com>\nEmi Martinez <emi.martinez@example.com>\n",
         ));
+
+    Ok(())
+}
+
+#[test_context(TestContextCli, skip_teardown)]
+#[test]
+fn test_mob_with_by_keys_no_coauthor_found(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+    ctx.git()
+        .args(["mob", "--with", "jk"])
+        .assert()
+        .success()
+        .stderr(predicate::str::diff("No co-author found with key: jk\n"));
 
     Ok(())
 }
@@ -205,7 +189,11 @@ fn test_mob_clear(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
         ));
 
     // clearing mob session
-    ctx.git().args(["mob", "--clear"]).assert().success();
+    ctx.git()
+        .args(["mob", "--clear"])
+        .assert()
+        .success()
+        .stdout(predicate::str::diff(""));
 
     // verifying mob list is empty
     ctx.git()
@@ -219,7 +207,27 @@ fn test_mob_clear(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_mob_coauthor_trailers(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+fn test_mob_clear_given_empty_mob_session(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+    // clearing mob session
+    ctx.git()
+        .args(["mob", "--clear"])
+        .assert()
+        .success()
+        .stdout(predicate::str::diff(""));
+
+    // verifying mob list is empty
+    ctx.git()
+        .args(["mob", "--list"])
+        .assert()
+        .success()
+        .stdout("");
+
+    Ok(())
+}
+
+#[test_context(TestContextCli, skip_teardown)]
+#[test]
+fn test_mob_trailers(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     add_two_coauthors(&ctx)?;
 
     // mobbing with both of the co-authors
@@ -239,6 +247,60 @@ fn test_mob_coauthor_trailers(ctx: TestContextCli) -> Result<(), Box<dyn Error>>
         .stdout(predicate::str::diff(
             "Co-authored-by: Leo Messi <leo.messi@example.com>\nCo-authored-by: Emi Martinez <emi.martinez@example.com>\n",
         ));
+
+    Ok(())
+}
+
+#[test_context(TestContextCli, skip_teardown)]
+#[test]
+fn test_mob_trailers_given_empty_mob_session(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+    // verifying mob trailers is empty
+    ctx.git()
+        .args(["mob", "--trailers"])
+        .assert()
+        .success()
+        .stdout("");
+
+    Ok(())
+}
+
+#[test_context(TestContextCli, skip_teardown)]
+#[test]
+fn test_mob_list_given_empty_mob_session(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+    // verifying mob list is empty
+    ctx.git()
+        .args(["mob", "--list"])
+        .assert()
+        .success()
+        .stdout("");
+
+    Ok(())
+}
+
+fn add_two_coauthors(ctx: &TestContextCli) -> Result<(), Box<dyn Error>> {
+    ctx.git()
+        .args([
+            "mob",
+            "coauthor",
+            "--add",
+            "lm",
+            "Leo Messi",
+            "leo.messi@example.com",
+        ])
+        .assert()
+        .success();
+
+    ctx.git()
+        .args([
+            "mob",
+            "coauthor",
+            "--add",
+            "em",
+            "Emi Martinez",
+            "emi.martinez@example.com",
+        ])
+        .assert()
+        .success();
 
     Ok(())
 }

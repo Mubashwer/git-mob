@@ -8,7 +8,7 @@ use test_context::test_context;
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_add_coauthors(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+fn test_add_and_list_coauthors(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     // adding 2 co-authors
     ctx.git()
         .args([
@@ -46,6 +46,18 @@ fn test_add_coauthors(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
         .stdout(predicate::str::diff(
             "lm Leo Messi <leo.messi@example.com>\nem Emi Martinez <emi.martinez@example.com>\n",
         ));
+
+    Ok(())
+}
+
+#[test_context(TestContextCli, skip_teardown)]
+#[test]
+fn test_list_coauthors_given_no_coauthors_added(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+    ctx.git()
+        .args(["mob", "coauthor", "--list"])
+        .assert()
+        .success()
+        .stdout(predicate::str::diff(""));
 
     Ok(())
 }
