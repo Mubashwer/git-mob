@@ -45,24 +45,19 @@ enum Commands {
     Coauthor(Coauthor),
 }
 
-pub fn run(
-    coauthor_repo: &impl CoauthorRepo,
-    out: &mut impl Write,
-    err: &mut impl Write,
-) -> Result<(), Box<dyn Error>> {
+pub fn run(coauthor_repo: &impl CoauthorRepo, out: &mut impl Write) -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
-    run_inner(&cli, coauthor_repo, out, err)
+    run_inner(&cli, coauthor_repo, out)
 }
 
 fn run_inner(
     cli: &Cli,
     coauthor_repo: &impl CoauthorRepo,
     out: &mut impl Write,
-    err: &mut impl Write,
 ) -> Result<(), Box<dyn Error>> {
     match &cli.command {
-        None => cli.mob.handle(coauthor_repo, out, err)?,
-        Some(Commands::Coauthor(coauthor)) => coauthor.handle(coauthor_repo, out, err)?,
+        None => cli.mob.handle(coauthor_repo, out)?,
+        Some(Commands::Coauthor(coauthor)) => coauthor.handle(coauthor_repo, out)?,
     }
     Ok(())
 }
@@ -94,8 +89,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let mut err = Vec::new();
-        run_inner(&cli, &mock_coauthor_repo, &mut out, &mut err)?;
+        run_inner(&cli, &mock_coauthor_repo, &mut out)?;
 
         Ok(())
     }
@@ -130,8 +124,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let mut err = Vec::new();
-        run_inner(&cli, &mock_coauthor_repo, &mut out, &mut err)?;
+        run_inner(&cli, &mock_coauthor_repo, &mut out)?;
 
         Ok(())
     }

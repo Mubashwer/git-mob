@@ -36,12 +36,14 @@ fn test_mob_with_by_keys(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_mob_with_by_keys_no_coauthor_found(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+fn test_mob_with_by_key_when_coauthor_not_found(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     ctx.git()
         .args(["mob", "--with", "jk"])
         .assert()
-        .success()
-        .stderr(predicate::str::diff("No co-author found with key: jk\n"));
+        .failure()
+        .stderr(predicate::str::diff(
+            "Error: \"No co-author found with key: jk\"\n",
+        ));
 
     Ok(())
 }
@@ -55,9 +57,9 @@ fn test_mob_with_multiselect_given_no_coauthors_added(
     ctx.git()
         .args(["mob", "--with"])
         .assert()
-        .success()
+        .failure()
         .stderr(predicate::str::diff(
-            "No co-author(s) found. At least one co-author must be added\n",
+            "Error: \"No co-author(s) found. At least one co-author must be added\"\n",
         ));
 
     Ok(())
@@ -66,7 +68,7 @@ fn test_mob_with_multiselect_given_no_coauthors_added(
 #[cfg(unix)]
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_mob_with_multiselect_select_none(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+fn test_mob_with_multiselect_when_select_none(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     // given a mob session with 2 co-authors is active
     add_two_coauthors(&ctx)?;
     ctx.git()
@@ -104,7 +106,9 @@ fn test_mob_with_multiselect_select_none(ctx: TestContextCli) -> Result<(), Box<
 #[cfg(unix)]
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_mob_with_multiselect_select_coauthor(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+fn test_mob_with_multiselect_when_select_coauthor(
+    ctx: TestContextCli,
+) -> Result<(), Box<dyn Error>> {
     add_two_coauthors(&ctx)?;
 
     // running command to display mob session multiselect prompt
@@ -137,7 +141,7 @@ fn test_mob_with_multiselect_select_coauthor(ctx: TestContextCli) -> Result<(), 
 #[cfg(unix)]
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_mob_with_multiselect_escape(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+fn test_mob_with_multiselect_when_press_escape(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     // given a mob session  with 2 co-authors is active
     add_two_coauthors(&ctx)?;
     ctx.git()
@@ -176,7 +180,7 @@ fn test_mob_with_multiselect_escape(ctx: TestContextCli) -> Result<(), Box<dyn E
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_mob_clear(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+fn test_clear_mob(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     add_two_coauthors(&ctx)?;
 
     // mobbing with both of the co-authors
@@ -207,7 +211,7 @@ fn test_mob_clear(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_mob_clear_given_empty_mob_session(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+fn test_clear_mob_given_empty_mob_session(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     // clearing mob session
     ctx.git()
         .args(["mob", "--clear"])
@@ -227,7 +231,7 @@ fn test_mob_clear_given_empty_mob_session(ctx: TestContextCli) -> Result<(), Box
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_mob_trailers(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+fn test_mob_coauthor_trailers(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     add_two_coauthors(&ctx)?;
 
     // mobbing with both of the co-authors
@@ -239,7 +243,7 @@ fn test_mob_trailers(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
             "Leo Messi <leo.messi@example.com>\nEmi Martinez <emi.martinez@example.com>\n",
         ));
 
-    // verifying mob trailers show Co-authored-by trailers for both co-authors
+    // verifying mob co-author trailers show Co-authored-by trailers for both co-authors
     ctx.git()
         .args(["mob", "--trailers"])
         .assert()
@@ -253,8 +257,10 @@ fn test_mob_trailers(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_mob_trailers_given_empty_mob_session(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
-    // verifying mob trailers is empty
+fn test_mob_coauthor_trailers_given_empty_mob_session(
+    ctx: TestContextCli,
+) -> Result<(), Box<dyn Error>> {
+    // verifying mob co-author trailers is empty
     ctx.git()
         .args(["mob", "--trailers"])
         .assert()
@@ -266,7 +272,7 @@ fn test_mob_trailers_given_empty_mob_session(ctx: TestContextCli) -> Result<(), 
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_mob_list_given_empty_mob_session(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+fn test_list_mob_given_empty_mob_session(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     // verifying mob list is empty
     ctx.git()
         .args(["mob", "--list"])

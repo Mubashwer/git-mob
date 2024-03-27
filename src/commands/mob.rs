@@ -33,7 +33,6 @@ impl Mob {
         &self,
         coauthor_repo: &impl CoauthorRepo,
         out: &mut impl Write,
-        err: &mut impl Write,
     ) -> Result<(), Box<dyn Error>> {
         if self.clear {
             coauthor_repo.clear_mob()?;
@@ -64,11 +63,9 @@ impl Mob {
             Some([]) => {
                 let coauthors = coauthor_repo.list(false)?;
                 if coauthors.is_empty() {
-                    writeln!(
-                        err,
-                        "No co-author(s) found. At least one co-author must be added"
-                    )?;
-                    return Ok(());
+                    return Err(
+                        "No co-author(s) found. At least one co-author must be added".into(),
+                    );
                 }
 
                 let result = MultiSelect::new("Select active co-author(s):", coauthors)
@@ -94,7 +91,7 @@ impl Mob {
                             coauthor_repo.add_to_mob(&coauthor)?;
                             coauthors.push(coauthor);
                         }
-                        None => writeln!(err, "No co-author found with key: {key}")?,
+                        None => return Err(format!("No co-author found with key: {key}").into()),
                     }
                 }
 
@@ -117,7 +114,7 @@ mod tests {
     use mockall::predicate;
 
     #[test]
-    fn test_clear_mob_session() -> Result<(), Box<dyn Error>> {
+    fn test_clear_mob() -> Result<(), Box<dyn Error>> {
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
             .expect_clear_mob()
@@ -132,14 +129,13 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let mut err = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+        mob_cmd.handle(&mock_coauthor_repo, &mut out)?;
 
         Ok(())
     }
 
     #[test]
-    fn test_list_mob_coauthors() -> Result<(), Box<dyn Error>> {
+    fn test_list_mob() -> Result<(), Box<dyn Error>> {
         let coauthors = vec![
             "Leo Messi <leo.messi@example.com>".to_owned(),
             "Emi Martinez <emi.martinez@example.com>".to_owned(),
@@ -161,8 +157,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let mut err = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+        mob_cmd.handle(&mock_coauthor_repo, &mut out)?;
 
         assert_eq!(out, expected_output.as_bytes());
 
@@ -170,7 +165,7 @@ mod tests {
     }
 
     #[test]
-    fn test_list_mob_coauthors_when_mob_session_is_empty() -> Result<(), Box<dyn Error>> {
+    fn test_list_mob_when_mob_session_is_empty() -> Result<(), Box<dyn Error>> {
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
             .expect_list_mob()
@@ -185,8 +180,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let mut err = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+        mob_cmd.handle(&mock_coauthor_repo, &mut out)?;
 
         assert_eq!(out, b"");
 
@@ -214,8 +208,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let mut err = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+        mob_cmd.handle(&mock_coauthor_repo, &mut out)?;
 
         assert_eq!(out, b"Co-authored-by: Leo Messi <leo.messi@example.com>\nCo-authored-by: Emi Martinez <emi.martinez@example.com>\n");
 
@@ -238,8 +231,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let mut err = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+        mob_cmd.handle(&mock_coauthor_repo, &mut out)?;
 
         assert_eq!(out, b"");
 
@@ -247,8 +239,7 @@ mod tests {
     }
 
     #[test]
-    fn test_error_message_shown_when_trying_to_mob_given_coauthors_list_is_empty(
-    ) -> Result<(), Box<dyn Error>> {
+    fn test_mob_with_given_no_coauthors_added() -> Result<(), Box<dyn Error>> {
         let coauthors = vec![];
 
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
@@ -266,19 +257,16 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let mut err = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+        let result = mob_cmd.handle(&mock_coauthor_repo, &mut out);
 
-        assert_eq!(
-            err,
-            b"No co-author(s) found. At least one co-author must be added\n"
-        );
+        assert!(result.is_err_and(|err| err.to_string()
+            == "No co-author(s) found. At least one co-author must be added".to_string()));
 
         Ok(())
     }
 
     #[test]
-    fn test_adding_coauthors_to_mob_session_by_keys() -> Result<(), Box<dyn Error>> {
+    fn test_mob_with_by_keys() -> Result<(), Box<dyn Error>> {
         let keys = vec!["lm".to_owned(), "em".to_owned()];
         let coauthors = [
             "Leo Messi <leo.messi@example.com>",
@@ -319,8 +307,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let mut err = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+        mob_cmd.handle(&mock_coauthor_repo, &mut out)?;
 
         assert_eq!(out, format!("{}\n", coauthors.join("\n")).as_bytes());
 
@@ -328,8 +315,7 @@ mod tests {
     }
 
     #[test]
-    fn test_error_message_shown_when_trying_to_mob_while_passing_non_existing_coauthor_key(
-    ) -> Result<(), Box<dyn Error>> {
+    fn test_mob_with_by_key_when_coauthor_not_found() -> Result<(), Box<dyn Error>> {
         let key = "lm";
 
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
@@ -351,13 +337,10 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let mut err = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+        let result = mob_cmd.handle(&mock_coauthor_repo, &mut out);
 
-        assert_eq!(
-            err,
-            format!("No co-author found with key: {key}\n").as_bytes()
-        );
+        assert!(result
+            .is_err_and(|err| err.to_string() == format!("No co-author found with key: {key}")));
 
         Ok(())
     }

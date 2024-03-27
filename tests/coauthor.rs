@@ -110,12 +110,14 @@ fn test_delete_coauthor(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_delete_coauthor_no_coauthor_found(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+fn test_delete_coauthor_when_coauthor_not_found(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     ctx.git()
         .args(["mob", "coauthor", "--delete", "lm"])
         .assert()
-        .success()
-        .stderr(predicate::str::diff("No co-author found with key: lm\n"));
+        .failure()
+        .stderr(predicate::str::diff(
+            "Error: \"No co-author found with key: lm\"\n",
+        ));
 
     Ok(())
 }

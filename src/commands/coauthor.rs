@@ -27,12 +27,11 @@ impl Coauthor {
         &self,
         coauthor_repo: &impl CoauthorRepo,
         out: &mut impl Write,
-        err: &mut impl Write,
     ) -> Result<(), Box<dyn std::error::Error>> {
         if let Some(key) = self.delete.as_deref() {
             match coauthor_repo.get(key)? {
                 Some(_) => coauthor_repo.remove(key)?,
-                None => writeln!(err, "No co-author found with key: {key}")?,
+                None => return Err(format!("No co-author found with key: {key}").into()),
             }
         }
         if self.list {
@@ -79,15 +78,15 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let mut err = Vec::new();
-        coauthor_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+        coauthor_cmd.handle(&mock_coauthor_repo, &mut out)?;
+
+        assert!(out.is_empty());
 
         Ok(())
     }
 
     #[test]
-    fn test_error_message_shown_when_trying_to_delete_coauthor_with_non_existing_coauthor_key(
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    fn test_delete_coauthor_when_coauthor_not_found() -> Result<(), Box<dyn std::error::Error>> {
         let key = "em";
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
@@ -103,13 +102,10 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let mut err = Vec::new();
-        coauthor_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+        let result = coauthor_cmd.handle(&mock_coauthor_repo, &mut out);
 
-        assert_eq!(
-            err,
-            format!("No co-author found with key: {key}\n").as_bytes()
-        );
+        assert!(result
+            .is_err_and(|err| err.to_string() == format!("No co-author found with key: {key}")));
 
         Ok(())
     }
@@ -137,8 +133,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let mut err = Vec::new();
-        coauthor_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+        coauthor_cmd.handle(&mock_coauthor_repo, &mut out)?;
 
         assert_eq!(out, format!("{name} <{email}>\n").as_bytes());
 
@@ -167,8 +162,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let mut err = Vec::new();
-        coauthor_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+        coauthor_cmd.handle(&mock_coauthor_repo, &mut out)?;
 
         assert_eq!(out, expected_output.as_bytes());
 
@@ -176,7 +170,7 @@ mod tests {
     }
 
     #[test]
-    fn test_list_coauthors_when_list_is_empty() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_list_coauthors_when_no_coauthors_added() -> Result<(), Box<dyn std::error::Error>> {
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
             .expect_list()
@@ -190,8 +184,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let mut err = Vec::new();
-        coauthor_cmd.handle(&mock_coauthor_repo, &mut out, &mut err)?;
+        coauthor_cmd.handle(&mock_coauthor_repo, &mut out)?;
 
         assert_eq!(out, b"");
 
