@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.2](https://github.com/Mubashwer/git-mob/compare/v1.5.1...v1.5.2) (2024-03-27)
+
+
+### Bug Fixes
+
+* return non-zero exit code in expected error cases ([215586a](https://github.com/Mubashwer/git-mob/commit/215586ac5cf0d84d3de72a1369d268dc2084f62d))
+
 ## [1.5.1](https://github.com/Mubashwer/git-mob/compare/v1.5.0...v1.5.1) (2024-03-22)
 
 

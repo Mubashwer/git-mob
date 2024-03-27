@@ -333,7 +333,7 @@ dependencies = [
 
 [[package]]
 name = "git-mob-tool"
-version = "1.5.1"
+version = "1.5.2"
 dependencies = [
  "assert_cmd",
  "clap",
