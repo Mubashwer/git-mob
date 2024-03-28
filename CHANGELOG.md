@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.3](https://github.com/Mubashwer/git-mob/compare/v1.5.2...v1.5.3) (2024-03-28)
+
+
+### Bug Fixes
+
+* **coauthor_repo:** improve error handling ([72b5e32](https://github.com/Mubashwer/git-mob/commit/72b5e3289cb1c3ef766d1575cc107150e084e14c))
+
 ## [1.5.2](https://github.com/Mubashwer/git-mob/compare/v1.5.1...v1.5.2) (2024-03-27)
 
 
