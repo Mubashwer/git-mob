@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.4](https://github.com/Mubashwer/git-mob/compare/v1.5.3...v1.5.4) (2024-03-29)
+
+
+### Bug Fixes
+
+* improve error msg when adding coauthor with invalid key ([81fd16d](https://github.com/Mubashwer/git-mob/commit/81fd16d03a91cdda98a42c14d3b7c9f2b386f061))
+
 ## [1.5.3](https://github.com/Mubashwer/git-mob/compare/v1.5.2...v1.5.3) (2024-03-28)
 
 
