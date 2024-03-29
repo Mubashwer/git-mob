@@ -100,7 +100,7 @@ jobs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Generate coverage report
-        run: grcov . -s . --binary-path ./target/debug/ -t lcov --branch --ignore-not-existing --ignore "/*" --ignore "tests/**/*" --ignore src/lib.rs -o target/tests.lcov
+        run: grcov . -s . --binary-path ./target/debug/ -t lcov --branch --ignore-not-existing --ignore "/*" --ignore "tests/**/*" --ignore src/lib.rs --excl-br-start "mod tests \{" --excl-start "mod tests \{" -o target/tests.lcov
 
       - name: Upload coverage report to Codecov
         uses: codecov/codecov-action@v4
