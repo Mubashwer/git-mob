@@ -115,9 +115,10 @@ impl CoauthorRepo for GitConfigCoauthorRepo {
             .args(["config", "--global", &full_key, coauthor])
             .output()?;
 
-        match output.status.success() {
-            true => Ok(()),
-            false => Self::git_config_error(&output),
+        match output.status.code() {
+            Some(Self::EXIT_CODE_SUCCESS) => Ok(()),
+            Some(Self::EXIT_CODE_CONFIG_INVALID_KEY) => Err(format!("Invalid key: {key}").into()),
+            _ => Self::git_config_error(&output),
         }
     }
 

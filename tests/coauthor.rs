@@ -52,6 +52,27 @@ fn test_add_and_list_coauthors(ctx: TestContextCli) -> Result<(), Box<dyn Error>
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
+fn test_add_coauthor_with_invalid_key(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+    ctx.git()
+        .args([
+            "mob",
+            "coauthor",
+            "--add",
+            "invalid_key_with_underscore",
+            "Leo Messi",
+            "leo.messi@example.com",
+        ])
+        .assert()
+        .failure()
+        .stderr(predicate::str::diff(
+            "Error: \"Invalid key: invalid_key_with_underscore\"\n",
+        ));
+
+    Ok(())
+}
+
+#[test_context(TestContextCli, skip_teardown)]
+#[test]
 fn test_list_coauthors_given_no_coauthors_added(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     ctx.git()
         .args(["mob", "coauthor", "--list"])

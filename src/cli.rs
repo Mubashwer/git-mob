@@ -41,7 +41,7 @@ enum Commands {
     /// Add/delete/list co-author(s) from co-author repository
     ///
     /// User must store co-author(s) to co-author repository by using keys
-    /// (usually initials) before starting pair/mob programming session(s).
+    /// before starting pair/mob programming session(s).
     Coauthor(Coauthor),
 }
 

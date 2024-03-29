@@ -46,7 +46,7 @@ $ cargo install git-mob-tool
 
 ## Configuration
 
-- Store your team members' details with keys (usually initials)
+- Store your team members' details with keys
 
   ```console
   $ git mob coauthor --add lm "Leo Messi" leo.messi@example.com

@@ -101,7 +101,7 @@ fn test_coauthor_help(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
         .stdout(predicate::str::diff(
 r#"Add/delete/list co-author(s) from co-author repository
 
-User must store co-author(s) to co-author repository by using keys (usually initials) before starting pair/mob programming session(s).
+User must store co-author(s) to co-author repository by using keys before starting pair/mob programming session(s).
 
 Usage: git mob coauthor [OPTIONS]
 
