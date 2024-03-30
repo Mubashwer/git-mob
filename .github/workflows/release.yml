@@ -97,7 +97,8 @@ jobs:
 
   publish-cargo:
     runs-on: ubuntu-latest
-    if: ${{ needs.release-please.outputs.releases_created }}
+    # https://github.com/google-github-actions/release-please-action/issues/912
+    if: ${{ needs.release-please.outputs.releases_created == true || needs.release-please.outputs.releases_created == 'true' }}
     needs: [release-please]
 
     steps:
