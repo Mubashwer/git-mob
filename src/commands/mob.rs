@@ -95,9 +95,7 @@ impl Mob {
                     }
                 }
 
-                if !coauthors.is_empty() {
-                    writeln!(out, "{}", coauthors.join("\n"))?
-                }
+                writeln!(out, "{}", coauthors.join("\n"))?
             }
         }
 
