@@ -109,17 +109,14 @@ impl Setup {
     }
 
     fn set_hooks_dir(out: &mut impl Write, path: &Path, scope: &str) -> Result<(), Box<dyn Error>> {
+        let path_str = &path.to_string_lossy();
         let status = Command::new("git")
-            .args(["config", scope, "core.hooksPath", &path.to_string_lossy()])
+            .args(["config", scope, "core.hooksPath", path_str])
             .status()?;
 
         assert!(status.success());
 
-        writeln!(
-            out,
-            "Set global githooks directory: {:?}",
-            &path.to_string_lossy()
-        )?;
+        writeln!(out, "Set global githooks directory: {}", path_str)?;
 
         Ok(())
     }
@@ -138,7 +135,11 @@ impl Setup {
             fs::set_permissions(path, Permissions::from_mode(0o755))?; // Sets rwxr-xr-x permissions
         }
 
-        writeln!(out, "Created new prepare-commit-msg githook: {:?}", path)?;
+        writeln!(
+            out,
+            "Created new prepare-commit-msg githook: {}",
+            &path.to_string_lossy()
+        )?;
 
         Ok(())
     }
@@ -152,8 +153,8 @@ impl Setup {
 
         writeln!(
             out,
-            "Backed up existing prepare-commit-msg githook: {:?}",
-            backup_path
+            "Backed up existing prepare-commit-msg githook: {}",
+            &backup_path.to_string_lossy()
         )?;
 
         Ok(())

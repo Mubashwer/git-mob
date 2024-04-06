@@ -17,8 +17,8 @@ fn test_setup_global_given_hooks_dir_not_set(ctx: TestContextRepo) -> Result<(),
         .assert()
         .success()
         .stdout(predicate::str::diff(format!(
-            r#"Set global githooks directory: "{}"
-Created new prepare-commit-msg githook: "{}"
+            r#"Set global githooks directory: {}
+Created new prepare-commit-msg githook: {}
 Setup complete
 "#,
             hooks_dir.to_string_lossy(),
@@ -52,7 +52,7 @@ fn test_setup_global_given_hooks_dir_set_and_exists(
         .assert()
         .success()
         .stdout(predicate::str::diff(format!(
-            r#"Created new prepare-commit-msg githook: "{}"
+            r#"Created new prepare-commit-msg githook: {}
 Setup complete
 "#,
             hooks_dir.join("prepare-commit-msg").to_string_lossy()
@@ -89,7 +89,7 @@ fn test_setup_global_given_hooks_dir_set_but_does_not_exist(
         .assert()
         .success()
         .stdout(predicate::str::diff(format!(
-            r#"Created new prepare-commit-msg githook: "{}"
+            r#"Created new prepare-commit-msg githook: {}
 Setup complete
 "#,
             hooks_dir.join("prepare-commit-msg").to_string_lossy()
@@ -128,8 +128,8 @@ fn test_setup_global_given_prepare_commit_msg_hook_already_exists(
         .assert()
         .success()
         .stdout(predicate::str::diff(format!(
-            r#"Backed up existing prepare-commit-msg githook: "{}"
-Created new prepare-commit-msg githook: "{}"
+            r#"Backed up existing prepare-commit-msg githook: {}
+Created new prepare-commit-msg githook: {}
 Setup complete
 "#,
             backup_path.to_string_lossy(),
@@ -182,7 +182,7 @@ fn test_setup_local_given_hooks_dir_set_and_exists(
         .assert()
         .success()
         .stdout(predicate::str::diff(format!(
-            r#"Created new prepare-commit-msg githook: "{}"
+            r#"Created new prepare-commit-msg githook: {}
 Setup complete
 "#,
             hooks_dir.join("prepare-commit-msg").to_string_lossy()
@@ -219,7 +219,7 @@ fn test_setup_local_given_hooks_dir_set_but_does_not_exist(
         .assert()
         .success()
         .stdout(predicate::str::diff(format!(
-            r#"Created new prepare-commit-msg githook: "{}"
+            r#"Created new prepare-commit-msg githook: {}
 Setup complete
 "#,
             hooks_dir.join("prepare-commit-msg").to_string_lossy()
@@ -258,8 +258,8 @@ fn test_setup_local_given_prepare_commit_msg_hook_already_exists(
         .assert()
         .success()
         .stdout(predicate::str::diff(format!(
-            r#"Backed up existing prepare-commit-msg githook: "{}"
-Created new prepare-commit-msg githook: "{}"
+            r#"Backed up existing prepare-commit-msg githook: {}
+Created new prepare-commit-msg githook: {}
 Setup complete
 "#,
             backup_path.to_string_lossy(),
