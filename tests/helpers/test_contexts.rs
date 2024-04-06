@@ -15,8 +15,7 @@ static PATH_ENV_VAR: Lazy<OsString> = Lazy::new(|| {
     let mut split_paths: Vec<PathBuf> = env::split_paths(path).collect();
     split_paths.push(PathBuf::from(exe_dir));
 
-    let new_path = env::join_paths(split_paths).unwrap();
-    new_path
+    env::join_paths(split_paths).unwrap()
 });
 
 pub(crate) struct TestContextCli {
@@ -44,6 +43,7 @@ impl TestContext for TestContextCli {
 pub(crate) struct TestContextRepo {
     git_config_global: TempPath,
     dir: TempDir,
+    pub home_dir: TempDir,
 }
 
 impl TestContextRepo {
@@ -51,6 +51,7 @@ impl TestContextRepo {
         let mut command = Command::new("git");
         command
             .current_dir(self.dir.path())
+            .env("HOME", self.home_dir.path())
             .env("GIT_CONFIG_GLOBAL", &self.git_config_global);
         command
     }
@@ -63,6 +64,7 @@ impl TestContext for TestContextRepo {
         let ctx = TestContextRepo {
             git_config_global: NamedTempFile::new().unwrap().into_temp_path(),
             dir: tempdir().unwrap(),
+            home_dir: tempdir().unwrap(),
         };
 
         ctx.git().arg("init").assert().success();
