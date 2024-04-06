@@ -181,7 +181,7 @@ mod tests {
                 Ok(CmdOutput {
                     stdout: stdout.clone(),
                     stderr: stderr.clone(),
-                    status_code: status_code.clone(),
+                    status_code,
                 })
             });
         mock_cmd_runner
@@ -632,7 +632,7 @@ mod tests {
         command_runner
             .expect_execute()
             .once()
-            .withf(|program, args| program == "git" && args == &["config", "--global", "--get-all", "coauthors-mob.entry"])
+            .withf(|program, args| program == "git" && args == ["config", "--global", "--get-all", "coauthors-mob.entry"])
             .returning(|_, _| {
                 Ok(CmdOutput {
                     stdout: b"Leo Messi <leo.messi@example.com>\nEmi Martinez <emi.martinez@example.com>\n".into(),
@@ -645,7 +645,7 @@ mod tests {
             .once()
             .withf(|program, args| {
                 program == "git"
-                    && args == &["config", "--global", "--remove-section", "coauthors-mob"]
+                    && args == ["config", "--global", "--remove-section", "coauthors-mob"]
             })
             .returning(|_, _| {
                 Ok(CmdOutput {
@@ -681,7 +681,7 @@ mod tests {
         command_runner
             .expect_execute()
             .once()
-            .withf( |program, args| program == "git" && args == &["config", "--global", "--get-all", "coauthors-mob.entry"])
+            .withf( |program, args| program == "git" && args == ["config", "--global", "--get-all", "coauthors-mob.entry"])
             .returning( |_, _| {
                 Ok(CmdOutput {
                     stdout: b"Leo Messi <leo.messi@example.com>\nEmi Martinez <emi.martinez@example.com>\n".into(),
@@ -694,7 +694,7 @@ mod tests {
             .once()
             .withf(|program, args| {
                 program == "git"
-                    && args == &["config", "--global", "--remove-section", "coauthors-mob"]
+                    && args == ["config", "--global", "--remove-section", "coauthors-mob"]
             })
             .returning(|_, _| {
                 Ok(CmdOutput {
@@ -719,7 +719,7 @@ mod tests {
         command_runner
             .expect_execute()
             .once()
-            .withf( |program, args| program == "git" && args == &["config", "--global", "--get-all", "coauthors-mob.entry"])
+            .withf( |program, args| program == "git" && args == ["config", "--global", "--get-all", "coauthors-mob.entry"])
             .returning( |_, _| {
                 Ok(CmdOutput {
                     stdout: b"Leo Messi <leo.messi@example.com>\nEmi Martinez <emi.martinez@example.com>\n".into(),
@@ -732,7 +732,7 @@ mod tests {
             .once()
             .withf(|program, args| {
                 program == "git"
-                    && args == &["config", "--global", "--remove-section", "coauthors-mob"]
+                    && args == ["config", "--global", "--remove-section", "coauthors-mob"]
             })
             .returning(|_, _| {
                 Ok(CmdOutput {

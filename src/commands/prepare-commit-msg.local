@@ -1,0 +1,21 @@
+#!/bin/sh
+
+set -e
+
+# Get the global hooks directory
+hooks_dir=$(git config --global core.hooksPath)
+
+# Check if the global hooks directory is set
+if [ -z "$hooks_dir" ]; then
+  printf "Error: Global hooks directory is not set" >&2
+  exit 1
+fi
+
+# Invoke the prepare-commit-msg hook from the global hooks directory
+hook_path="$hooks_dir/prepare-commit-msg"
+if [ -x "$hook_path" ]; then
+  exec "$hook_path" "$@"
+else
+  printf "Error: prepare-commit-msg hook not found in the global hooks directory" >&2
+  exit 1
+fi
