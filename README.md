@@ -44,7 +44,17 @@ This CLI app will help you add them automatically and also help you store and ma
 $ cargo install git-mob-tool
 ```
 
-## Configuration
+## Setup & Configuration
+
+- Set up a global [`prepare-commit-msg`](https://git-scm.com/docs/githooks#_prepare_commit_msg) githook which appends the `Co-authored-by` trailers to the commit message.
+
+  ```console
+  $ git mob setup --global
+  ```
+
+  If a repository overrides `core.hooksPath` git configuration variable (e.g when using husky), then you will additionally need to run `git mob setup --local` for each such repository. This will set up a local (repository-specific) `prepare-commit-msg` githook which invokes the global one.
+
+  _If you prefer to set this up manually or encounter any issues with the automated setup process, you can follow steps outlined [here.](./docs/manual_setup.md)_
 
 - Store your team members' details with keys
 
@@ -53,24 +63,6 @@ $ cargo install git-mob-tool
   $ git mob coauthor --add em "Emi Martinez" emi.martinez@example.com
   $ git mob coauthor --add sa "Sergio Aguero" sergio.aguero@example.com
   ```
-
-- Set a global [`githooks`](https://git-scm.com/docs/githooks) directory
-
-  ```console
-  $ mkdir ~/git
-  $ git config --global core.hooksPath "~/git"
-  ```
-
-- Download the [`prepare-commit-msg`](./prepare-commit-msg) file into the directory
-- Ensure it is set as executable (Linux and macOS)
-
-   ```console
-  $ chmod +x ./prepare-commit-msg
-  ```
-
-  This `githook` will be used to append the `Co-authored-by` trailers to the commit's message.
-
-  _This githook also adds a Jira Issue ID as a prefix to the commit message if the branch name starts with a string resembling one. If you don't want want this, comment out [line 12 which calls the function `add_jira_issue_id_prefix`](./prepare-commit-msg#LL12)._
 
 ## Usage
 
