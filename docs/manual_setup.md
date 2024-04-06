@@ -1,6 +1,6 @@
 # Manual Setup
 
-- Set a global [`githooks`](https://git-scm.com/docs/githooks) directory
+- Set a global [githooks](https://git-scm.com/docs/githooks) directory
 
   ```console
   $ mkdir -p ~/.git/hooks

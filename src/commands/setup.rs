@@ -1,6 +1,6 @@
 use std::{
     error::Error,
-    fs::{self, Permissions},
+    fs,
     io::Write,
     path::{Path, PathBuf},
     process::Command,
@@ -133,6 +133,7 @@ impl Setup {
 
         #[cfg(unix)]
         {
+            use std::fs::Permissions;
             use std::os::unix::fs::PermissionsExt;
             fs::set_permissions(path, Permissions::from_mode(0o755))?; // Sets rwxr-xr-x permissions
         }
