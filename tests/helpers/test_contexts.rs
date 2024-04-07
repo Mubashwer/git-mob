@@ -51,8 +51,17 @@ impl TestContextRepo {
         let mut command = Command::new("git");
         command
             .current_dir(self.dir.path())
-            .env("HOME", self.home_dir.path())
             .env("GIT_CONFIG_GLOBAL", &self.git_config_global);
+
+        #[cfg(unix)]
+        {
+            command.env("HOME", self.home_dir.path());
+        }
+        #[cfg(windows)]
+        {
+            command.env("USERPROFILE", &self.home_dir.path());
+        }
+
         command
     }
 }

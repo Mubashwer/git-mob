@@ -7,6 +7,7 @@ use std::{
 };
 
 use clap::Parser;
+use home::home_dir;
 
 #[derive(Parser)]
 #[command(arg_required_else_help = true)]
@@ -42,7 +43,7 @@ impl Setup {
         let hooks_dir = match Self::get_hooks_dir("--global")? {
             Some(hooks_dir) => hooks_dir,
             None => {
-                let new_hooks_dir = dirs::home_dir()
+                let new_hooks_dir = home_dir()
                     .ok_or("Failed to get home directory")?
                     .join(".git")
                     .join("hooks");
