@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/Mubashwer/git-mob/compare/v1.5.4...v1.6.0) (2024-04-07)
+
+
+### Features
+
+* add setup subcommand to automate `prepare-commit-msg` githook setup ([#58](https://github.com/Mubashwer/git-mob/issues/58)) ([8077a21](https://github.com/Mubashwer/git-mob/commit/8077a213c6fdd84937184a387474cb3548538237))
+
 ## [1.5.4](https://github.com/Mubashwer/git-mob/compare/v1.5.3...v1.5.4) (2024-03-29)
 
 
