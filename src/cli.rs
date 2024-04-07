@@ -1,5 +1,5 @@
 use crate::coauthor_repo::CoauthorRepo;
-use crate::commands::{coauthor::Coauthor, mob::Mob};
+use crate::commands::{coauthor::Coauthor, mob::Mob, setup::Setup};
 use clap::{Parser, Subcommand};
 use std::error::Error;
 use std::io::Write;
@@ -26,9 +26,11 @@ use std::str;
 ///
 /// Usage example:
 ///
-/// git mob co-author --add lm "Leo Messi" leo.messi@example.com
+/// git mob setup --global
 ///
-/// git pair with
+/// git mob coauthor --add lm "Leo Messi" leo.messi@example.com
+///
+/// git mob --with lm
 struct Cli {
     #[command(subcommand)]
     command: Option<Commands>,
@@ -38,6 +40,8 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
+    /// Create prepare-commit-msg githook which append Co-authored-by trailers to commit message
+    Setup(Setup),
     /// Add/delete/list co-author(s) from co-author repository
     ///
     /// User must store co-author(s) to co-author repository by using keys
@@ -57,6 +61,7 @@ fn run_inner(
 ) -> Result<(), Box<dyn Error>> {
     match &cli.command {
         None => cli.mob.handle(coauthor_repo, out)?,
+        Some(Commands::Setup(setup)) => setup.handle(out)?,
         Some(Commands::Coauthor(coauthor)) => coauthor.handle(coauthor_repo, out)?,
     }
     Ok(())

@@ -7,17 +7,17 @@ use std::io::Write;
 pub(crate) struct Coauthor {
     /// Adds co-author to co-author repository
     ///
-    /// Usage example: git mob co-author --add lm "Leo Messi" leo.messi@example.com
+    /// Usage example: git mob coauthor --add lm "Leo Messi" leo.messi@example.com
     #[arg(short = 'a', long = "add", num_args=3, value_names=["COAUTHOR_KEY", "COAUTHOR_NAME", "COAUTHOR_EMAIL"])]
     pub(crate) add: Option<Vec<String>>,
     /// Remove co-author from co-author repository
     ///
-    /// Usage example: git mob co-author --delete lm
+    /// Usage example: git mob coauthor --delete lm
     #[arg(short = 'd', long = "delete", value_name = "COAUTHOR_KEY")]
     pub(crate) delete: Option<String>,
     /// Lists co-author(s) with keys(s) from co-author repository
     ///
-    /// Usage example: git mob co-author --list
+    /// Usage example: git mob coauthor --list
     #[arg(short = 'l', long = "list")]
     pub(crate) list: bool,
 }

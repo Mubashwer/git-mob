@@ -257,8 +257,9 @@ mod tests {
         let mut out = Vec::new();
         let result = mob_cmd.handle(&mock_coauthor_repo, &mut out);
 
-        assert!(result.is_err_and(|err| err.to_string()
-            == "No co-author(s) found. At least one co-author must be added".to_string()));
+        assert!(result
+            .is_err_and(|err| err.to_string()
+                == *"No co-author(s) found. At least one co-author must be added"));
 
         Ok(())
     }

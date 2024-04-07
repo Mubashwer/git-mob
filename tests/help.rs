@@ -20,13 +20,16 @@ A user can attribute a git commit to more than one author by adding one or more 
 
 Usage example:
 
-git mob co-author --add lm "Leo Messi" leo.messi@example.com
+git mob setup --global
 
-git pair with
+git mob coauthor --add lm "Leo Messi" leo.messi@example.com
+
+git mob --with lm
 
 Usage: git mob [COMMAND] [OPTIONS]
 
 Commands:
+  setup     Create prepare-commit-msg githook which append Co-authored-by trailers to commit message
   coauthor  Add/delete/list co-author(s) from co-author repository
   help      Print this message or the help of the given subcommand(s)
 
@@ -75,6 +78,7 @@ r#"A CLI app which can help users automatically add co-author(s) to git commits 
 Usage: git mob [COMMAND] [OPTIONS]
 
 Commands:
+  setup     Create prepare-commit-msg githook which append Co-authored-by trailers to commit message
   coauthor  Add/delete/list co-author(s) from co-author repository
   help      Print this message or the help of the given subcommand(s)
 
@@ -109,17 +113,17 @@ Options:
   -a, --add <COAUTHOR_KEY> <COAUTHOR_NAME> <COAUTHOR_EMAIL>
           Adds co-author to co-author repository
           
-          Usage example: git mob co-author --add lm "Leo Messi" leo.messi@example.com
+          Usage example: git mob coauthor --add lm "Leo Messi" leo.messi@example.com
 
   -d, --delete <COAUTHOR_KEY>
           Remove co-author from co-author repository
           
-          Usage example: git mob co-author --delete lm
+          Usage example: git mob coauthor --delete lm
 
   -l, --list
           Lists co-author(s) with keys(s) from co-author repository
           
-          Usage example: git mob co-author --list
+          Usage example: git mob coauthor --list
 
   -h, --help
           Print help (see a summary with '-h')
@@ -155,6 +159,65 @@ Options:
           Print help (see more with '--help')
   -V, --version
           Print version
+"#,
+        ));
+
+    Ok(())
+}
+
+#[test_context(TestContextCli, skip_teardown)]
+#[test]
+fn test_setup_help(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+    ctx.git()
+        .args(["mob", "help", "setup"])
+        .assert()
+        .success()
+        .stdout(predicate::str::diff(
+r#"Create prepare-commit-msg githook which append Co-authored-by trailers to commit message
+
+Usage: git mob setup [OPTIONS]
+
+Options:
+  -g, --global
+          Set up global prepare-commit-msg githook
+          
+          Usage example: git mob setup --global
+
+      --local
+          Set up local prepare-commit-msg githook which invokes the global one
+          
+          Only need to be run for repo which overrides local hooks directory
+          
+          Usage example: git mob setup --local
+
+  -h, --help
+          Print help (see a summary with '-h')
+
+  -V, --version
+          Print version
+"#
+        ));
+
+    Ok(())
+}
+
+#[test_context(TestContextCli, skip_teardown)]
+#[test]
+fn test_setup_help_summary(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+    ctx.git()
+        .args(["mob", "setup", "-h"])
+        .assert()
+        .success()
+        .stdout(predicate::str::diff(
+            r#"Create prepare-commit-msg githook which append Co-authored-by trailers to commit message
+
+Usage: git mob setup [OPTIONS]
+
+Options:
+  -g, --global   Set up global prepare-commit-msg githook
+      --local    Set up local prepare-commit-msg githook which invokes the global one
+  -h, --help     Print help (see more with '--help')
+  -V, --version  Print version
 "#,
         ));
 

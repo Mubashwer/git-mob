@@ -29,6 +29,7 @@ path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4.5.4", features = ["derive"] }
+home = "0.5.9"
 inquire = "0.6.2"
 
 [dev-dependencies]
