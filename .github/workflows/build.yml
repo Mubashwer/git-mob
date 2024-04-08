@@ -64,6 +64,34 @@ jobs:
 
   test:
     name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Install stable toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup cargo cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Run cargo test
+        run: cargo test --locked
+
+  test-coverage:
+    name: Test coverage
     runs-on: ubuntu-latest
 
     steps:
@@ -89,7 +117,6 @@ jobs:
       - name: Run cargo test
         run: cargo test --locked
         env:
-          CARGO_INCREMENTAL: 0
           RUSTFLAGS: -Cinstrument-coverage
           LLVM_PROFILE_FILE: ${{ github.workspace }}/target/coverage/git_mob-%p-%m.profraw
 
