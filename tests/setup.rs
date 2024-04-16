@@ -100,6 +100,41 @@ Setup complete
 
 #[test_context(TestContextRepo, skip_teardown)]
 #[test]
+fn test_setup_global_given_hooks_dir_set_and_starts_with_tilde(
+    ctx: TestContextRepo,
+) -> Result<(), Box<dyn Error>> {
+    let hooks_dir = Path::new("~").join("my").join("githooks");
+    let expanded_hooks_dir = ctx.home_dir.path().join("my").join("githooks");
+
+    // setting global hooks directory
+    ctx.git()
+        .args([
+            "config",
+            "--global",
+            "core.hooksPath",
+            &hooks_dir.to_string_lossy(),
+        ])
+        .assert()
+        .success();
+
+    ctx.git()
+        .args(["mob", "setup", "--global"])
+        .assert()
+        .success()
+        .stdout(predicate::str::diff(format!(
+            r#"Created new prepare-commit-msg githook: {}
+Setup complete
+"#,
+            expanded_hooks_dir
+                .join("prepare-commit-msg")
+                .to_string_lossy()
+        )));
+
+    verify_prepare_commit_msg_global_hook(&ctx, &hooks_dir)
+}
+
+#[test_context(TestContextRepo, skip_teardown)]
+#[test]
 fn test_setup_global_given_prepare_commit_msg_hook_already_exists(
     ctx: TestContextRepo,
 ) -> Result<(), Box<dyn Error>> {
@@ -230,6 +265,41 @@ Setup complete
 
 #[test_context(TestContextRepo, skip_teardown)]
 #[test]
+fn test_setup_local_given_hooks_dir_set_and_starts_with_tilde(
+    ctx: TestContextRepo,
+) -> Result<(), Box<dyn Error>> {
+    let hooks_dir = Path::new("~").join("my").join("githooks");
+    let expanded_hooks_dir = ctx.home_dir.path().join("my").join("githooks");
+
+    // setting local hooks directory
+    ctx.git()
+        .args([
+            "config",
+            "--local",
+            "core.hooksPath",
+            &hooks_dir.to_string_lossy(),
+        ])
+        .assert()
+        .success();
+
+    ctx.git()
+        .args(["mob", "setup", "--local"])
+        .assert()
+        .success()
+        .stdout(predicate::str::diff(format!(
+            r#"Created new prepare-commit-msg githook: {}
+Setup complete
+"#,
+            expanded_hooks_dir
+                .join("prepare-commit-msg")
+                .to_string_lossy()
+        )));
+
+    verify_prepare_commit_msg_local_hook(&ctx, &hooks_dir)
+}
+
+#[test_context(TestContextRepo, skip_teardown)]
+#[test]
 fn test_setup_local_given_prepare_commit_msg_hook_already_exists(
     ctx: TestContextRepo,
 ) -> Result<(), Box<dyn Error>> {
@@ -290,9 +360,15 @@ fn verify_prepare_commit_msg_global_hook(
             hooks_dir.to_string_lossy()
         )));
 
-    // verifying prepare-commit-msg githook exists
-    let hook_path = hooks_dir.join("prepare-commit-msg");
+    let hook_path = if hooks_dir.starts_with("~") {
+        let mut expanded_hooks_dir = ctx.home_dir.path().to_path_buf();
+        expanded_hooks_dir.extend(hooks_dir.components().skip(1));
+        expanded_hooks_dir.join("prepare-commit-msg")
+    } else {
+        hooks_dir.join("prepare-commit-msg")
+    };
 
+    // verifying prepare-commit-msg githook exists
     assert!(hook_path.exists());
 
     let metadata = fs::metadata(&hook_path)?;
@@ -326,9 +402,15 @@ fn verify_prepare_commit_msg_local_hook(
             hooks_dir.to_string_lossy()
         )));
 
-    // verifying prepare-commit-msg githook exists
-    let hook_path = hooks_dir.join("prepare-commit-msg");
+    let hook_path = if hooks_dir.starts_with("~") {
+        let mut expanded_hooks_dir = ctx.home_dir.path().to_path_buf();
+        expanded_hooks_dir.extend(hooks_dir.components().skip(1));
+        expanded_hooks_dir.join("prepare-commit-msg")
+    } else {
+        hooks_dir.join("prepare-commit-msg")
+    };
 
+    // verifying prepare-commit-msg githook exists
     assert!(hook_path.exists());
 
     let metadata = fs::metadata(&hook_path)?;

@@ -48,9 +48,10 @@ impl<Cmd: CommandRunner> CoauthorRepo for GitConfigCoauthorRepo<Cmd> {
             Some(Self::EXIT_CODE_SUCCESS) => String::from_utf8(output.stdout)?
                 .lines()
                 .map(|x| {
-                    let delimiter = match show_keys {
-                        true => format!("{section}."),
-                        false => " ".to_owned(),
+                    let delimiter = if show_keys {
+                        format!("{section}.")
+                    } else {
+                        " ".to_owned()
                     };
                     x.split_once(&delimiter)
                         .ok_or(format!("Failed to split string: '{x}'").into())

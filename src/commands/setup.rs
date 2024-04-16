@@ -101,12 +101,18 @@ impl Setup {
             .args(["config", scope, "core.hooksPath"])
             .output()?;
 
-        match output.status.success() {
-            true => Ok(Some(PathBuf::from(
-                String::from_utf8(output.stdout)?.trim(),
-            ))),
-            false => Ok(None),
+        if !output.status.success() {
+            return Ok(None);
         }
+
+        let hooks_dir = PathBuf::from(String::from_utf8(output.stdout)?.trim());
+        if !hooks_dir.starts_with("~") {
+            return Ok(Some(hooks_dir));
+        }
+
+        let mut expanded_hooks_dir = home_dir().ok_or("Failed to get home directory")?;
+        expanded_hooks_dir.extend(hooks_dir.components().skip(1));
+        Ok(Some(expanded_hooks_dir))
     }
 
     fn set_hooks_dir(out: &mut impl Write, path: &Path, scope: &str) -> Result<(), Box<dyn Error>> {
