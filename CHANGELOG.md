@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/Mubashwer/git-mob/compare/v1.6.0...v1.6.1) (2024-04-16)
+
+
+### Bug Fixes
+
+* **setup:** create githook in correct path when hooks dir starts with ~ ([a741e2f](https://github.com/Mubashwer/git-mob/commit/a741e2fb0c6f7609ac7cf2b17d664f8cd598bf24))
+
 ## [1.6.0](https://github.com/Mubashwer/git-mob/compare/v1.5.4...v1.6.0) (2024-04-07)
 
 
