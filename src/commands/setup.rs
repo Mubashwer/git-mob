@@ -102,9 +102,9 @@ impl Setup {
             .output()?;
 
         match output.status.success() {
-            true => Ok(Some(
-                Path::new(String::from_utf8(output.stdout)?.trim()).to_path_buf(),
-            )),
+            true => Ok(Some(PathBuf::from(
+                String::from_utf8(output.stdout)?.trim(),
+            ))),
             false => Ok(None),
         }
     }
