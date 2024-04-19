@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.2](https://github.com/Mubashwer/git-mob/compare/v1.6.1...v1.6.2) (2024-04-19)
+
+
+### Bug Fixes
+
+* add support for release bin installation with cargo-binstall ([54f523b](https://github.com/Mubashwer/git-mob/commit/54f523bbc2fc258452ae249acfa6ce524cde545f))
+* **prepare-commit-msg.local:** fix error msg when git hooks dir doesn't exist ([28dac39](https://github.com/Mubashwer/git-mob/commit/28dac3950c3d6bb8edefa9c0505cf0580ba7a828))
+
 ## [1.6.1](https://github.com/Mubashwer/git-mob/compare/v1.6.0...v1.6.1) (2024-04-16)
 
 
