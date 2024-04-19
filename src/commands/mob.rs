@@ -208,7 +208,11 @@ mod tests {
         let mut out = Vec::new();
         mob_cmd.handle(&mock_coauthor_repo, &mut out)?;
 
-        assert_eq!(out, b"Co-authored-by: Leo Messi <leo.messi@example.com>\nCo-authored-by: Emi Martinez <emi.martinez@example.com>\n");
+        assert_eq!(
+            out,
+            b"Co-authored-by: Leo Messi <leo.messi@example.com>\n\
+              Co-authored-by: Emi Martinez <emi.martinez@example.com>\n"
+        );
 
         Ok(())
     }

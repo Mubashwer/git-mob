@@ -46,7 +46,8 @@ fn test_prepare_commit_msg(ctx: TestContextRepo) -> Result<(), Box<dyn Error>> {
         .assert()
         .success()
         .stdout(predicate::str::diff(
-            "Leo Messi <leo.messi@example.com>\nEmi Martinez <emi.martinez@example.com>\n",
+            "Leo Messi <leo.messi@example.com>\n\
+             Emi Martinez <emi.martinez@example.com>\n",
         ));
 
     // git commit prints Co-authored-by trailers and an empty line to stderr
@@ -55,7 +56,8 @@ fn test_prepare_commit_msg(ctx: TestContextRepo) -> Result<(), Box<dyn Error>> {
         .assert()
         .success()
         .stderr(predicate::str::diff(
-            "Co-authored-by: Leo Messi <leo.messi@example.com>\nCo-authored-by: Emi Martinez <emi.martinez@example.com>\n\n",
+            "Co-authored-by: Leo Messi <leo.messi@example.com>\n\
+             Co-authored-by: Emi Martinez <emi.martinez@example.com>\n\n",
         ));
 
     // the commit body has message with Co-authored-by trailers
@@ -64,7 +66,9 @@ fn test_prepare_commit_msg(ctx: TestContextRepo) -> Result<(), Box<dyn Error>> {
         .assert()
         .success()
         .stdout(predicate::str::diff(
-            "test: hello world!\n\nCo-authored-by: Leo Messi <leo.messi@example.com>\nCo-authored-by: Emi Martinez <emi.martinez@example.com>\n\n"
+            "test: hello world!\n\n\
+            Co-authored-by: Leo Messi <leo.messi@example.com>\n\
+            Co-authored-by: Emi Martinez <emi.martinez@example.com>\n\n",
         ));
 
     Ok(())
@@ -130,7 +134,8 @@ fn test_prepare_commit_msg_given_local_hooks_directory(
         .assert()
         .success()
         .stdout(predicate::str::diff(
-            "Leo Messi <leo.messi@example.com>\nEmi Martinez <emi.martinez@example.com>\n",
+            "Leo Messi <leo.messi@example.com>\n\
+             Emi Martinez <emi.martinez@example.com>\n",
         ));
 
     // git commit prints Co-authored-by trailers and an empty line to stderr
@@ -139,7 +144,8 @@ fn test_prepare_commit_msg_given_local_hooks_directory(
         .assert()
         .success()
         .stderr(predicate::str::diff(
-            "Co-authored-by: Leo Messi <leo.messi@example.com>\nCo-authored-by: Emi Martinez <emi.martinez@example.com>\n\n",
+            "Co-authored-by: Leo Messi <leo.messi@example.com>\n\
+             Co-authored-by: Emi Martinez <emi.martinez@example.com>\n\n",
         ));
 
     // the commit body has message with Co-authored-by trailers
@@ -148,7 +154,9 @@ fn test_prepare_commit_msg_given_local_hooks_directory(
         .assert()
         .success()
         .stdout(predicate::str::diff(
-            "test: hello world!\n\nCo-authored-by: Leo Messi <leo.messi@example.com>\nCo-authored-by: Emi Martinez <emi.martinez@example.com>\n\n"
+            "test: hello world!\n\n\
+            Co-authored-by: Leo Messi <leo.messi@example.com>\n\
+            Co-authored-by: Emi Martinez <emi.martinez@example.com>\n\n",
         ));
 
     Ok(())
