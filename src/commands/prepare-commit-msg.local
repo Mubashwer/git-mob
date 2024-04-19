@@ -11,6 +11,12 @@ if [ -z "$hooks_dir" ]; then
   exit 1
 fi
 
+# Check if the global hooks directory exists
+if [ ! -d "$hooks_dir" ]; then
+  printf "Error: Global hooks directory does not exist" >&2
+  exit 1
+fi
+
 # Invoke the prepare-commit-msg hook from the global hooks directory
 hook_path="$hooks_dir/prepare-commit-msg"
 if [ -x "$hook_path" ]; then
