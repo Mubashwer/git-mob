@@ -42,3 +42,7 @@ test-context = "0.3.0"
 
 [target.'cfg(unix)'.dev-dependencies]
 rexpect = "0.5.0"
+
+[package.metadata.binstall]
+pkg-url = "{ repo }/releases/download/v{ version }/git-mob-{ target }.tar.gz"
+pkg-fmt = "tgz"
