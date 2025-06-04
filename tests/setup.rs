@@ -103,7 +103,7 @@ Setup complete
 fn test_setup_global_given_hooks_dir_set_and_starts_with_tilde(
     ctx: TestContextRepo,
 ) -> Result<(), Box<dyn Error>> {
-    let hooks_dir = Path::new("~").join("my").join("githooks");
+    let hooks_dir = Path::new("~/my/githooks");
     let expanded_hooks_dir = ctx.home_dir.path().join("my").join("githooks");
 
     // setting global hooks directory
@@ -268,7 +268,7 @@ Setup complete
 fn test_setup_local_given_hooks_dir_set_and_starts_with_tilde(
     ctx: TestContextRepo,
 ) -> Result<(), Box<dyn Error>> {
-    let hooks_dir = Path::new("~").join("my").join("githooks");
+    let hooks_dir = Path::new("~/my/githooks");
     let expanded_hooks_dir = ctx.home_dir.path().join("my").join("githooks");
 
     // setting local hooks directory
