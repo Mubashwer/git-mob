@@ -28,7 +28,7 @@ name = "git-mob"
 path = "src/main.rs"
 
 [dependencies]
-clap = { version = "4.5.27", features = ["derive"] }
+clap = { version = "4.5.39", features = ["derive"] }
 home = "0.5.11"
 inquire = "0.7.5"
 
