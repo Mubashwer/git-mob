@@ -23,6 +23,7 @@ pub(crate) struct TestContextCli {
 }
 
 impl TestContextCli {
+    #[allow(dead_code)] // incorrectly detected as unused by rustc; used in tests
     pub fn git(&self) -> Command {
         let mut command = Command::new("git");
         command.env("GIT_CONFIG_GLOBAL", &self.git_config_global);
