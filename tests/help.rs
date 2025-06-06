@@ -22,16 +22,16 @@ Usage example:
 
 git mob setup --global
 
-git mob coauthor --add lm "Leo Messi" leo.messi@example.com
+git mob team-member --add lm "Leo Messi" leo.messi@example.com
 
 git mob --with lm
 
 Usage: git mob [COMMAND] [OPTIONS]
 
 Commands:
-  setup     Create prepare-commit-msg githook which append Co-authored-by trailers to commit message
-  coauthor  Add/delete/list co-author(s) from co-author repository
-  help      Print this message or the help of the given subcommand(s)
+  setup        Create prepare-commit-msg githook which append Co-authored-by trailers to commit message
+  team-member  Add/delete/list team member(s) from team member repository
+  help         Print this message or the help of the given subcommand(s)
 
 Options:
   -w, --with [<COAUTHOR_KEY>...]
@@ -42,7 +42,7 @@ Options:
   -c, --clear
           Clears mob/pair programming session. Going solo!
           
-          Usage example: git mob co-author --list
+          Usage example: git mob --clear
 
   -l, --list
           Lists co-author(s) in current mob/pair programming session
@@ -78,9 +78,9 @@ r#"A CLI app which can help users automatically add co-author(s) to git commits 
 Usage: git mob [COMMAND] [OPTIONS]
 
 Commands:
-  setup     Create prepare-commit-msg githook which append Co-authored-by trailers to commit message
-  coauthor  Add/delete/list co-author(s) from co-author repository
-  help      Print this message or the help of the given subcommand(s)
+  setup        Create prepare-commit-msg githook which append Co-authored-by trailers to commit message
+  team-member  Add/delete/list team member(s) from team member repository
+  help         Print this message or the help of the given subcommand(s)
 
 Options:
   -w, --with [<COAUTHOR_KEY>...]  Sets active co-author(s) for pair/mob programming session
@@ -97,33 +97,33 @@ Options:
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_coauthor_help(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+fn test_team_member_help(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     ctx.git()
-        .args(["mob", "help", "coauthor"])
+        .args(["mob", "help", "team-member"])
         .assert()
         .success()
         .stdout(predicate::str::diff(
-r#"Add/delete/list co-author(s) from co-author repository
+r#"Add/delete/list team member(s) from team member repository
 
-User must store co-author(s) to co-author repository by using keys before starting pair/mob programming session(s).
+User must store team member(s) to team member repository by using keys before starting pair/mob programming session(s).
 
-Usage: git mob coauthor [OPTIONS]
+Usage: git mob team-member [OPTIONS]
 
 Options:
-  -a, --add <COAUTHOR_KEY> <COAUTHOR_NAME> <COAUTHOR_EMAIL>
-          Adds co-author to co-author repository
+  -a, --add <TEAM_MEMBER_KEY> <TEAM_MEMBER_NAME> <TEAM_MEMBER_EMAIL>
+          Adds team member to team member repository
           
-          Usage example: git mob coauthor --add lm "Leo Messi" leo.messi@example.com
+          Usage example: git mob team-member --add lm "Leo Messi" leo.messi@example.com
 
-  -d, --delete <COAUTHOR_KEY>
-          Remove co-author from co-author repository
+  -d, --delete <TEAM_MEMBER_KEY>
+          Remove team member from team member repository
           
-          Usage example: git mob coauthor --delete lm
+          Usage example: git mob team-member --delete lm
 
   -l, --list
-          Lists co-author(s) with keys(s) from co-author repository
+          Lists team member(s) with keys(s) from team member repository
           
-          Usage example: git mob coauthor --list
+          Usage example: git mob team-member --list
 
   -h, --help
           Print help (see a summary with '-h')
@@ -138,23 +138,23 @@ Options:
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_coauthor_help_summary(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+fn test_team_member_help_summary(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     ctx.git()
-        .args(["mob", "coauthor", "-h"])
+        .args(["mob", "team-member", "-h"])
         .assert()
         .success()
         .stdout(predicate::str::diff(
-            r#"Add/delete/list co-author(s) from co-author repository
+            r#"Add/delete/list team member(s) from team member repository
 
-Usage: git mob coauthor [OPTIONS]
+Usage: git mob team-member [OPTIONS]
 
 Options:
-  -a, --add <COAUTHOR_KEY> <COAUTHOR_NAME> <COAUTHOR_EMAIL>
-          Adds co-author to co-author repository
-  -d, --delete <COAUTHOR_KEY>
-          Remove co-author from co-author repository
+  -a, --add <TEAM_MEMBER_KEY> <TEAM_MEMBER_NAME> <TEAM_MEMBER_EMAIL>
+          Adds team member to team member repository
+  -d, --delete <TEAM_MEMBER_KEY>
+          Remove team member from team member repository
   -l, --list
-          Lists co-author(s) with keys(s) from co-author repository
+          Lists team member(s) with keys(s) from team member repository
   -h, --help
           Print help (see more with '--help')
   -V, --version

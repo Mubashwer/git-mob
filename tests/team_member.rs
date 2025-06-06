@@ -8,12 +8,12 @@ use test_context::test_context;
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_add_and_list_coauthors(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
-    // adding 2 co-authors
+fn test_add_and_list_team_members(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+    // adding 2 team members
     ctx.git()
         .args([
             "mob",
-            "coauthor",
+            "team-member",
             "--add",
             "lm",
             "Leo Messi",
@@ -26,7 +26,7 @@ fn test_add_and_list_coauthors(ctx: TestContextCli) -> Result<(), Box<dyn Error>
     ctx.git()
         .args([
             "mob",
-            "coauthor",
+            "team-member",
             "--add",
             "em",
             "Emi Martinez",
@@ -38,9 +38,9 @@ fn test_add_and_list_coauthors(ctx: TestContextCli) -> Result<(), Box<dyn Error>
             "Emi Martinez <emi.martinez@example.com>\n",
         ));
 
-    // co-authors list shows the 2 co-authors that were added
+    // team members list shows the 2 team members that were added
     ctx.git()
-        .args(["mob", "coauthor", "--list"])
+        .args(["mob", "team-member", "--list"])
         .assert()
         .success()
         .stdout(predicate::str::diff(
@@ -52,11 +52,11 @@ fn test_add_and_list_coauthors(ctx: TestContextCli) -> Result<(), Box<dyn Error>
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_add_coauthor_with_invalid_key(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+fn test_add_member_with_invalid_key(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     ctx.git()
         .args([
             "mob",
-            "coauthor",
+            "team-member",
             "--add",
             "invalid_key_with_underscore",
             "Leo Messi",
@@ -73,9 +73,11 @@ fn test_add_coauthor_with_invalid_key(ctx: TestContextCli) -> Result<(), Box<dyn
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_list_coauthors_given_no_coauthors_added(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+fn test_list_team_members_given_no_team_members_added(
+    ctx: TestContextCli,
+) -> Result<(), Box<dyn Error>> {
     ctx.git()
-        .args(["mob", "coauthor", "--list"])
+        .args(["mob", "team-member", "--list"])
         .assert()
         .success()
         .stdout(predicate::str::diff(""));
@@ -85,12 +87,12 @@ fn test_list_coauthors_given_no_coauthors_added(ctx: TestContextCli) -> Result<(
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_delete_coauthor(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
-    // adding 2 co-authors
+fn test_delete_team_members(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+    // adding 2 team members
     ctx.git()
         .args([
             "mob",
-            "coauthor",
+            "team-member",
             "--add",
             "lm",
             "Leo Messi",
@@ -102,7 +104,7 @@ fn test_delete_coauthor(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     ctx.git()
         .args([
             "mob",
-            "coauthor",
+            "team-member",
             "--add",
             "em",
             "Emi Martinez",
@@ -111,15 +113,15 @@ fn test_delete_coauthor(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
         .assert()
         .success();
 
-    // deleting one co-author
+    // deleting one team member
     ctx.git()
-        .args(["mob", "coauthor", "--delete", "lm"])
+        .args(["mob", "team-member", "--delete", "lm"])
         .assert()
         .success();
 
-    // co-authors list excludes the deleted co-author
+    // team members list excludes the deleted team member
     ctx.git()
-        .args(["mob", "coauthor", "--list"])
+        .args(["mob", "team-member", "--list"])
         .assert()
         .success()
         .stdout(predicate::str::diff(
@@ -131,13 +133,13 @@ fn test_delete_coauthor(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
-fn test_delete_coauthor_when_coauthor_not_found(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+fn test_delete_member_when_member_not_found(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     ctx.git()
-        .args(["mob", "coauthor", "--delete", "lm"])
+        .args(["mob", "team-member", "--delete", "lm"])
         .assert()
         .failure()
         .stderr(predicate::str::diff(
-            "Error: \"No co-author found with key: lm\"\n",
+            "Error: \"No team member found with key: lm\"\n",
         ));
 
     Ok(())

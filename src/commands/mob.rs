@@ -13,7 +13,7 @@ pub(crate) struct Mob {
     pub(crate) with: Option<Vec<String>>,
     /// Clears mob/pair programming session. Going solo!
     ///
-    /// Usage example: git mob co-author --list
+    /// Usage example: git mob --clear
     #[arg(short = 'c', long = "clear")]
     pub(crate) clear: bool,
     /// Lists co-author(s) in current mob/pair programming session
@@ -64,7 +64,7 @@ impl Mob {
                 let coauthors = coauthor_repo.list(false)?;
                 if coauthors.is_empty() {
                     return Err(
-                        "No co-author(s) found. At least one co-author must be added".into(),
+                        "No team member(s) found. At least one team member must be added".into(),
                     );
                 }
 
@@ -91,7 +91,7 @@ impl Mob {
                             coauthor_repo.add_to_mob(&coauthor)?;
                             coauthors.push(coauthor);
                         }
-                        None => return Err(format!("No co-author found with key: {key}").into()),
+                        None => return Err(format!("No team member found with key: {key}").into()),
                     }
                 }
 
@@ -241,7 +241,7 @@ mod tests {
     }
 
     #[test]
-    fn test_mob_with_given_no_coauthors_added() -> Result<(), Box<dyn Error>> {
+    fn test_mob_with_given_no_team_members_added() -> Result<(), Box<dyn Error>> {
         let coauthors = vec![];
 
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
@@ -261,9 +261,8 @@ mod tests {
         let mut out = Vec::new();
         let result = mob_cmd.handle(&mock_coauthor_repo, &mut out);
 
-        assert!(result
-            .is_err_and(|err| err.to_string()
-                == *"No co-author(s) found. At least one co-author must be added"));
+        assert!(result.is_err_and(|err| err.to_string()
+            == *"No team member(s) found. At least one team member must be added"));
 
         Ok(())
     }
@@ -318,7 +317,7 @@ mod tests {
     }
 
     #[test]
-    fn test_mob_with_by_key_when_coauthor_not_found() -> Result<(), Box<dyn Error>> {
+    fn test_mob_with_by_key_when_team_member_not_found() -> Result<(), Box<dyn Error>> {
         let key = "lm";
 
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
@@ -343,7 +342,7 @@ mod tests {
         let result = mob_cmd.handle(&mock_coauthor_repo, &mut out);
 
         assert!(result
-            .is_err_and(|err| err.to_string() == format!("No co-author found with key: {key}")));
+            .is_err_and(|err| err.to_string() == format!("No team member found with key: {key}")));
 
         Ok(())
     }
