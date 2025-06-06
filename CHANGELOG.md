@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/Mubashwer/git-mob/compare/v1.6.2...v1.7.0) (2025-06-06)
+
+
+### Features
+
+* rename coauthor command to team-member for improved clarity ([#98](https://github.com/Mubashwer/git-mob/issues/98)) ([9a3c4a8](https://github.com/Mubashwer/git-mob/commit/9a3c4a826b26e6ce8b47496d53244528bfe35551))
+
 ## [1.6.2](https://github.com/Mubashwer/git-mob/compare/v1.6.1...v1.6.2) (2024-04-19)
 
 
