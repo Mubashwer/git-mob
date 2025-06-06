@@ -59,9 +59,9 @@ $ cargo install git-mob-tool
 - Store your team members' details with keys
 
   ```console
-  $ git mob coauthor --add lm "Leo Messi" leo.messi@example.com
-  $ git mob coauthor --add em "Emi Martinez" emi.martinez@example.com
-  $ git mob coauthor --add sa "Sergio Aguero" sergio.aguero@example.com
+  $ git mob team-member --add lm "Leo Messi" leo.messi@example.com
+  $ git mob team-member --add em "Emi Martinez" emi.martinez@example.com
+  $ git mob team-member --add sa "Sergio Aguero" sergio.aguero@example.com
   ```
 
 ## Usage
@@ -77,7 +77,7 @@ $ cargo install git-mob-tool
   [↑↓ to move, space to select one, → to all, ← to none, type to filter ]
   ```
 
-  Alternatively, if you remember the co-author keys, you may bypass the multi-select menu by running:
+  Alternatively, if you remember the team member keys, you may bypass the multi-select menu by running:
 
   ```console
   $ git mob --with lm em

@@ -15,11 +15,11 @@ fn test_prepare_commit_msg(ctx: TestContextRepo) -> Result<(), Box<dyn Error>> {
         .assert()
         .success();
 
-    // adding 2 co-authors
+    // adding 2 team members
     ctx.git()
         .args([
             "mob",
-            "coauthor",
+            "team-member",
             "--add",
             "lm",
             "Leo Messi",
@@ -31,7 +31,7 @@ fn test_prepare_commit_msg(ctx: TestContextRepo) -> Result<(), Box<dyn Error>> {
     ctx.git()
         .args([
             "mob",
-            "coauthor",
+            "team-member",
             "--add",
             "em",
             "Emi Martinez",
@@ -40,7 +40,7 @@ fn test_prepare_commit_msg(ctx: TestContextRepo) -> Result<(), Box<dyn Error>> {
         .assert()
         .success();
 
-    // mobbing with both of the co-authors
+    // mobbing with both of the team members
     ctx.git()
         .args(["mob", "--with", "lm", "em"])
         .assert()
@@ -103,11 +103,11 @@ fn test_prepare_commit_msg_given_local_hooks_directory(
         .assert()
         .success();
 
-    // adding 2 co-authors
+    // adding 2 team members
     ctx.git()
         .args([
             "mob",
-            "coauthor",
+            "team-member",
             "--add",
             "lm",
             "Leo Messi",
@@ -119,7 +119,7 @@ fn test_prepare_commit_msg_given_local_hooks_directory(
     ctx.git()
         .args([
             "mob",
-            "coauthor",
+            "team-member",
             "--add",
             "em",
             "Emi Martinez",
@@ -128,7 +128,7 @@ fn test_prepare_commit_msg_given_local_hooks_directory(
         .assert()
         .success();
 
-    // mobbing with both of the co-authors
+    // mobbing with both of the team members
     ctx.git()
         .args(["mob", "--with", "lm", "em"])
         .assert()

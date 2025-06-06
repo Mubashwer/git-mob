@@ -1,5 +1,5 @@
 use crate::coauthor_repo::CoauthorRepo;
-use crate::commands::{coauthor::Coauthor, mob::Mob, setup::Setup};
+use crate::commands::{mob::Mob, setup::Setup, team_member::TeamMember};
 use clap::{Parser, Subcommand};
 use std::error::Error;
 use std::io::Write;
@@ -28,7 +28,7 @@ use std::str;
 ///
 /// git mob setup --global
 ///
-/// git mob coauthor --add lm "Leo Messi" leo.messi@example.com
+/// git mob team-member --add lm "Leo Messi" leo.messi@example.com
 ///
 /// git mob --with lm
 struct Cli {
@@ -42,11 +42,12 @@ struct Cli {
 enum Commands {
     /// Create prepare-commit-msg githook which append Co-authored-by trailers to commit message
     Setup(Setup),
-    /// Add/delete/list co-author(s) from co-author repository
+    /// Add/delete/list team member(s) from team member repository
     ///
-    /// User must store co-author(s) to co-author repository by using keys
+    /// User must store team member(s) to team member repository by using keys
     /// before starting pair/mob programming session(s).
-    Coauthor(Coauthor),
+    #[clap(alias = "coauthor")] // alias for backward compatibility
+    TeamMember(TeamMember),
 }
 
 pub fn run(coauthor_repo: &impl CoauthorRepo, out: &mut impl Write) -> Result<(), Box<dyn Error>> {
@@ -62,7 +63,7 @@ fn run_inner(
     match &cli.command {
         None => cli.mob.handle(coauthor_repo, out)?,
         Some(Commands::Setup(setup)) => setup.handle(out)?,
-        Some(Commands::Coauthor(coauthor)) => coauthor.handle(coauthor_repo, out)?,
+        Some(Commands::TeamMember(team_member)) => team_member.handle(coauthor_repo, out)?,
     }
     Ok(())
 }
@@ -100,7 +101,7 @@ mod tests {
     }
 
     #[test]
-    fn test_delete_coauthor() -> Result<(), Box<dyn Error>> {
+    fn test_delete_team_member() -> Result<(), Box<dyn Error>> {
         let key = "lm";
         let mut mock_coauthor_repo = MockCoauthorRepo::new();
         mock_coauthor_repo
@@ -115,7 +116,7 @@ mod tests {
             .returning(|_| Ok(()));
 
         let cli = Cli {
-            command: Some(Commands::Coauthor(Coauthor {
+            command: Some(Commands::TeamMember(TeamMember {
                 delete: Some(key.to_owned()),
                 add: None,
                 list: false,
