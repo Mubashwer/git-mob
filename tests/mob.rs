@@ -11,7 +11,7 @@ use test_context::test_context;
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
 fn test_mob_with_by_keys(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
-    add_two_team_team_members(&ctx)?;
+    add_two_team_members(&ctx)?;
 
     // mobbing with both of the co-authors
     ctx.git()
@@ -72,7 +72,7 @@ fn test_mob_with_multiselect_given_no_team_members_added(
 #[test]
 fn test_mob_with_multiselect_when_select_none(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     // given a mob session with 2 co-authors
-    add_two_team_team_members(&ctx)?;
+    add_two_team_members(&ctx)?;
     ctx.git()
         .args(["mob", "--with", "lm", "em"])
         .assert()
@@ -111,7 +111,7 @@ fn test_mob_with_multiselect_when_select_none(ctx: TestContextCli) -> Result<(),
 fn test_mob_with_multiselect_when_select_coauthor(
     ctx: TestContextCli,
 ) -> Result<(), Box<dyn Error>> {
-    add_two_team_team_members(&ctx)?;
+    add_two_team_members(&ctx)?;
 
     // running command to display mob session multiselect prompt
     let mut command = ctx.git();
@@ -145,7 +145,7 @@ fn test_mob_with_multiselect_when_select_coauthor(
 #[test]
 fn test_mob_with_multiselect_when_press_escape(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     // given a mob session with 2 co-authors
-    add_two_team_team_members(&ctx)?;
+    add_two_team_members(&ctx)?;
     ctx.git()
         .args(["mob", "--with", "lm", "em"])
         .assert()
@@ -183,7 +183,7 @@ fn test_mob_with_multiselect_when_press_escape(ctx: TestContextCli) -> Result<()
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
 fn test_clear_mob(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
-    add_two_team_team_members(&ctx)?;
+    add_two_team_members(&ctx)?;
 
     // mobbing with both of the team members
     ctx.git()
@@ -234,7 +234,7 @@ fn test_clear_mob_given_empty_mob_session(ctx: TestContextCli) -> Result<(), Box
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
 fn test_mob_coauthor_trailers(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
-    add_two_team_team_members(&ctx)?;
+    add_two_team_members(&ctx)?;
 
     // mobbing with both of the team members
     ctx.git()
@@ -285,7 +285,7 @@ fn test_list_mob_given_empty_mob_session(ctx: TestContextCli) -> Result<(), Box<
     Ok(())
 }
 
-fn add_two_team_team_members(ctx: &TestContextCli) -> Result<(), Box<dyn Error>> {
+fn add_two_team_members(ctx: &TestContextCli) -> Result<(), Box<dyn Error>> {
     ctx.git()
         .args([
             "mob",
