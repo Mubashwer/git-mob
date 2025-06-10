@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/Mubashwer/git-mob/compare/v1.7.0...v1.8.0) (2025-06-10)
+
+
+### Features
+
+* make --global the default behavior for setup command ([#100](https://github.com/Mubashwer/git-mob/issues/100)) ([72a41b9](https://github.com/Mubashwer/git-mob/commit/72a41b9e96217a96effc555fd16a48a710337f27))
+
 ## [1.7.0](https://github.com/Mubashwer/git-mob/compare/v1.6.2...v1.7.0) (2025-06-06)
 
 
