@@ -29,7 +29,7 @@ git mob --with lm
 Usage: git mob [COMMAND] [OPTIONS]
 
 Commands:
-  setup        Create global prepare-commit-msg githook which append Co-authored-by trailers to commit message
+  setup        Create global prepare-commit-msg githook which appends Co-authored-by trailers to commit message
   team-member  Add/delete/list team member(s) from team member repository
   help         Print this message or the help of the given subcommand(s)
 
@@ -78,7 +78,7 @@ r#"A CLI app which can help users automatically add co-author(s) to git commits 
 Usage: git mob [COMMAND] [OPTIONS]
 
 Commands:
-  setup        Create global prepare-commit-msg githook which append Co-authored-by trailers to commit message
+  setup        Create global prepare-commit-msg githook which appends Co-authored-by trailers to commit message
   team-member  Add/delete/list team member(s) from team member repository
   help         Print this message or the help of the given subcommand(s)
 
@@ -173,7 +173,7 @@ fn test_setup_help(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
         .assert()
         .success()
         .stdout(predicate::str::diff(
-r#"Create global prepare-commit-msg githook which append Co-authored-by trailers to commit message
+r#"Create global prepare-commit-msg githook which appends Co-authored-by trailers to commit message
 
 Usage: git mob setup [OPTIONS]
 
@@ -204,7 +204,7 @@ fn test_setup_help_summary(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
         .assert()
         .success()
         .stdout(predicate::str::diff(
-            r#"Create global prepare-commit-msg githook which append Co-authored-by trailers to commit message
+            r#"Create global prepare-commit-msg githook which appends Co-authored-by trailers to commit message
 
 Usage: git mob setup [OPTIONS]
 

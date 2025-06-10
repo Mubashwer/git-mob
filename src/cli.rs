@@ -40,7 +40,7 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Create global prepare-commit-msg githook which append Co-authored-by trailers to commit message
+    /// Create global prepare-commit-msg githook which appends Co-authored-by trailers to commit message
     Setup(Setup),
     /// Add/delete/list team member(s) from team member repository
     ///
