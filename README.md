@@ -49,7 +49,7 @@ $ cargo install git-mob-tool
 - Set up a global [`prepare-commit-msg`](https://git-scm.com/docs/githooks#_prepare_commit_msg) githook which appends the `Co-authored-by` trailers to the commit message.
 
   ```console
-  $ git mob setup --global
+  $ git mob setup
   ```
 
   If a repository overrides `core.hooksPath` git configuration variable (e.g when using husky), then you will additionally need to run `git mob setup --local` for each such repository. This will set up a local (repository-specific) `prepare-commit-msg` githook which invokes the global one.

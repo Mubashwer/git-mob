@@ -10,12 +10,12 @@ use clap::Parser;
 use home::home_dir;
 
 #[derive(Parser)]
-#[command(arg_required_else_help = true)]
 pub(crate) struct Setup {
-    /// Set up global prepare-commit-msg githook
+    /// Set up global prepare-commit-msg githook (deprecated, now default)
     ///
     /// Usage example: git mob setup --global
-    #[arg(short = 'g', long = "global")]
+    #[arg(short = 'g', long = "global", hide = true)]
+    // This option exists only for backward compatibility as global is now the default behavior
     pub(crate) global: bool,
     /// Set up local prepare-commit-msg githook which invokes the global one
     ///
@@ -28,12 +28,10 @@ pub(crate) struct Setup {
 
 impl Setup {
     pub(crate) fn handle(&self, out: &mut impl Write) -> Result<(), Box<dyn Error>> {
-        if self.global {
-            self.handle_global(out)?;
-        }
-
         if self.local {
             self.handle_local(out)?;
+        } else {
+            self.handle_global(out)?;
         }
 
         Ok(())
