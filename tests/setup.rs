@@ -9,11 +9,11 @@ use test_context::test_context;
 
 #[test_context(TestContextRepo, skip_teardown)]
 #[test]
-fn test_setup_global_given_hooks_dir_not_set(ctx: TestContextRepo) -> Result<(), Box<dyn Error>> {
+fn test_setup_given_hooks_dir_not_set(ctx: TestContextRepo) -> Result<(), Box<dyn Error>> {
     let hooks_dir = ctx.home_dir.path().join(".git").join("hooks");
 
     ctx.git()
-        .args(["mob", "setup", "--global"])
+        .args(["mob", "setup"])
         .assert()
         .success()
         .stdout(predicate::str::diff(format!(
@@ -30,9 +30,7 @@ Setup complete
 
 #[test_context(TestContextRepo, skip_teardown)]
 #[test]
-fn test_setup_global_given_hooks_dir_set_and_exists(
-    ctx: TestContextRepo,
-) -> Result<(), Box<dyn Error>> {
+fn test_setup_given_hooks_dir_set_and_exists(ctx: TestContextRepo) -> Result<(), Box<dyn Error>> {
     let temp_dir = TempDir::new()?;
     let hooks_dir = temp_dir.path().to_path_buf();
 
@@ -48,7 +46,7 @@ fn test_setup_global_given_hooks_dir_set_and_exists(
         .success();
 
     ctx.git()
-        .args(["mob", "setup", "--global"])
+        .args(["mob", "setup"])
         .assert()
         .success()
         .stdout(predicate::str::diff(format!(
@@ -63,7 +61,7 @@ Setup complete
 
 #[test_context(TestContextRepo, skip_teardown)]
 #[test]
-fn test_setup_global_given_hooks_dir_set_but_does_not_exist(
+fn test_setup_given_hooks_dir_set_but_does_not_exist(
     ctx: TestContextRepo,
 ) -> Result<(), Box<dyn Error>> {
     let temp_dir = TempDir::new()?;
@@ -85,7 +83,7 @@ fn test_setup_global_given_hooks_dir_set_but_does_not_exist(
     assert!(!hooks_dir.exists());
 
     ctx.git()
-        .args(["mob", "setup", "--global"])
+        .args(["mob", "setup"])
         .assert()
         .success()
         .stdout(predicate::str::diff(format!(
@@ -100,7 +98,7 @@ Setup complete
 
 #[test_context(TestContextRepo, skip_teardown)]
 #[test]
-fn test_setup_global_given_hooks_dir_set_and_starts_with_tilde(
+fn test_setup_given_hooks_dir_set_and_starts_with_tilde(
     ctx: TestContextRepo,
 ) -> Result<(), Box<dyn Error>> {
     let hooks_dir = Path::new("~/my/githooks");
@@ -118,7 +116,7 @@ fn test_setup_global_given_hooks_dir_set_and_starts_with_tilde(
         .success();
 
     ctx.git()
-        .args(["mob", "setup", "--global"])
+        .args(["mob", "setup"])
         .assert()
         .success()
         .stdout(predicate::str::diff(format!(
@@ -135,7 +133,7 @@ Setup complete
 
 #[test_context(TestContextRepo, skip_teardown)]
 #[test]
-fn test_setup_global_given_prepare_commit_msg_hook_already_exists(
+fn test_setup_given_prepare_commit_msg_hook_already_exists(
     ctx: TestContextRepo,
 ) -> Result<(), Box<dyn Error>> {
     let temp_dir = TempDir::new()?;
@@ -159,7 +157,7 @@ fn test_setup_global_given_prepare_commit_msg_hook_already_exists(
         .success();
 
     ctx.git()
-        .args(["mob", "setup", "--global"])
+        .args(["mob", "setup"])
         .assert()
         .success()
         .stdout(predicate::str::diff(format!(

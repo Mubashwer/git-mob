@@ -26,7 +26,7 @@ use std::str;
 ///
 /// Usage example:
 ///
-/// git mob setup --global
+/// git mob setup
 ///
 /// git mob team-member --add lm "Leo Messi" leo.messi@example.com
 ///
@@ -40,7 +40,7 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Create prepare-commit-msg githook which append Co-authored-by trailers to commit message
+    /// Create global prepare-commit-msg githook which append Co-authored-by trailers to commit message
     Setup(Setup),
     /// Add/delete/list team member(s) from team member repository
     ///
