@@ -2,8 +2,10 @@
 
 > **CLI app to help you automatically add Co-authored-by trailers to git commits during pair/mob programming**
 
-[![crates.io](https://img.shields.io/crates/v/git-mob-tool?style=round)](https://crates.io/crates/git-mob-tool)
-[![license](https://img.shields.io/badge/license-MIT-blue?style=round)](LICENSE)
+[![crate](https://img.shields.io/crates/v/git-mob-tool?style=round)](https://crates.io/crates/git-mob-tool)
+[![crate downloads](https://img.shields.io/crates/d/git-mob-tool?style=round)](https://crates.io/crates/git-mob-tool)
+[![github release](https://img.shields.io/github/v/release/mubashwer/git-mob?style=round)](https://github.com/Mubashwer/git-mob/releases/latest)
+[![github release downloads](https://img.shields.io/github/downloads/mubashwer/git-mob/total?style=round)](https://github.com/Mubashwer/git-mob/releases)
 [![build status](https://github.com/mubashwer/git-mob/actions/workflows/build.yml/badge.svg)](https://github.com/Mubashwer/git-mob/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/Mubashwer/git-mob/branch/main/graph/badge.svg?token=R522R7NZH4)](https://codecov.io/gh/Mubashwer/git-mob)
 
