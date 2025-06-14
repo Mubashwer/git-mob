@@ -94,13 +94,19 @@ $ cargo install git-mob-tool
   Co-authored-by: Emi Martinez <emi.martinez@example.com>
   ```
 
+- To add a non-team member to the mob session:
+
+  ```console
+  $ git mob --add "Diego Maradona" diego.maradona@example.com
+  ```
+
 - To clear the mob session:
 
   ```console
   $ git mob --clear
   ```
 
-- To view the co-authors in the current mob session:
+- To view the co-authors in the mob session:
 
   ```console
   $ git mob --list

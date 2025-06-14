@@ -35,22 +35,29 @@ Commands:
 
 Options:
   -w, --with [<COAUTHOR_KEY>...]
-          Sets active co-author(s) for pair/mob programming session
+          Sets co-author(s) from team member(s) in the mob/pair programming session
+          
+          This will clear any existing co-author(s) in current session
           
           Usage example: git mob pair --with lm mj
 
+  -a, --add <COAUTHOR_NAME> <COAUTHOR_EMAIL>
+          Adds co-author to the mob/pair programming session (usually non-team member)
+          
+          Usage example: git mob --add "Leo Messi" leo.messi@example.com
+
   -c, --clear
-          Clears mob/pair programming session. Going solo!
+          Clears the mob/pair programming session. Going solo!
           
           Usage example: git mob --clear
 
   -l, --list
-          Lists co-author(s) in current mob/pair programming session
+          Lists co-author(s) in the mob/pair programming session
           
           Usage example: git mob --list
 
   -t, --trailers
-          Lists Co-authored-by trailers in current mob/pair programming session
+          Lists Co-authored-by trailers in the mob/pair programming session
           
           Usage example: git mob --trailers
 
@@ -83,12 +90,20 @@ Commands:
   help         Print this message or the help of the given subcommand(s)
 
 Options:
-  -w, --with [<COAUTHOR_KEY>...]  Sets active co-author(s) for pair/mob programming session
-  -c, --clear                     Clears mob/pair programming session. Going solo!
-  -l, --list                      Lists co-author(s) in current mob/pair programming session
-  -t, --trailers                  Lists Co-authored-by trailers in current mob/pair programming session
-  -h, --help                      Print help (see more with '--help')
-  -V, --version                   Print version
+  -w, --with [<COAUTHOR_KEY>...]
+          Sets co-author(s) from team member(s) in the mob/pair programming session
+  -a, --add <COAUTHOR_NAME> <COAUTHOR_EMAIL>
+          Adds co-author to the mob/pair programming session (usually non-team member)
+  -c, --clear
+          Clears the mob/pair programming session. Going solo!
+  -l, --list
+          Lists co-author(s) in the mob/pair programming session
+  -t, --trailers
+          Lists Co-authored-by trailers in the mob/pair programming session
+  -h, --help
+          Print help (see more with '--help')
+  -V, --version
+          Print version
 "#
         ));
 

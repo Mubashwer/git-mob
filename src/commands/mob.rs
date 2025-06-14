@@ -6,22 +6,29 @@ use std::{error::Error, io::Write};
 #[derive(Parser)]
 #[command(arg_required_else_help = true)]
 pub(crate) struct Mob {
-    /// Sets active co-author(s) for pair/mob programming session
+    /// Sets co-author(s) from team member(s) in the mob/pair programming session
+    ///
+    /// This will clear any existing co-author(s) in current session
     ///
     /// Usage example: git mob pair --with lm mj
     #[arg(short='w', long="with", num_args=0.., value_name="COAUTHOR_KEY")]
     pub(crate) with: Option<Vec<String>>,
-    /// Clears mob/pair programming session. Going solo!
+    /// Adds co-author to the mob/pair programming session (usually non-team member)
+    ///
+    /// Usage example: git mob --add "Leo Messi" leo.messi@example.com
+    #[arg(short = 'a', long = "add", num_args=2, value_names=["COAUTHOR_NAME", "COAUTHOR_EMAIL"])]
+    pub(crate) add: Option<Vec<String>>,
+    /// Clears the mob/pair programming session. Going solo!
     ///
     /// Usage example: git mob --clear
     #[arg(short = 'c', long = "clear")]
     pub(crate) clear: bool,
-    /// Lists co-author(s) in current mob/pair programming session
+    /// Lists co-author(s) in the mob/pair programming session
     ///
     /// Usage example: git mob --list
     #[arg(short = 'l', long = "list")]
     pub(crate) list: bool,
-    /// Lists Co-authored-by trailers in current mob/pair programming session
+    /// Lists Co-authored-by trailers in the mob/pair programming session
     ///
     /// Usage example: git mob --trailers
     #[arg(short = 't', long = "trailers")]
@@ -99,6 +106,12 @@ impl Mob {
             }
         }
 
+        if let Some([name, email]) = self.add.as_deref() {
+            let coauthor = format!("{name} <{email}>");
+            coauthor_repo.add_to_mob(&coauthor)?;
+            writeln!(out, "{coauthor}")?
+        }
+
         Ok(())
     }
 }
@@ -124,6 +137,7 @@ mod tests {
             with: None,
             list: false,
             trailers: false,
+            add: None,
         };
 
         let mut out = Vec::new();
@@ -152,6 +166,7 @@ mod tests {
             clear: false,
             with: None,
             trailers: false,
+            add: None,
         };
 
         let mut out = Vec::new();
@@ -175,6 +190,7 @@ mod tests {
             clear: false,
             with: None,
             trailers: false,
+            add: None,
         };
 
         let mut out = Vec::new();
@@ -203,6 +219,7 @@ mod tests {
             clear: false,
             with: None,
             trailers: true,
+            add: None,
         };
 
         let mut out = Vec::new();
@@ -230,6 +247,7 @@ mod tests {
             clear: false,
             with: None,
             trailers: true,
+            add: None,
         };
 
         let mut out = Vec::new();
@@ -256,6 +274,7 @@ mod tests {
             clear: false,
             list: false,
             trailers: false,
+            add: None,
         };
 
         let mut out = Vec::new();
@@ -306,6 +325,7 @@ mod tests {
             clear: false,
             list: false,
             trailers: false,
+            add: None,
         };
 
         let mut out = Vec::new();
@@ -336,6 +356,7 @@ mod tests {
             clear: false,
             list: false,
             trailers: false,
+            add: None,
         };
 
         let mut out = Vec::new();
@@ -343,6 +364,34 @@ mod tests {
 
         assert!(result
             .is_err_and(|err| err.to_string() == format!("No team member found with key: {key}")));
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_add_to_mob() -> Result<(), Box<dyn std::error::Error>> {
+        let name = "Leo Messi";
+        let email = "leo.messi@example.com";
+
+        let mut mock_coauthor_repo = MockCoauthorRepo::new();
+        mock_coauthor_repo
+            .expect_add_to_mob()
+            .with(predicate::eq(format!("{name} <{email}>")))
+            .once()
+            .returning(|_| Ok(()));
+
+        let mob_cmd = Mob {
+            add: Some(vec![name.to_owned(), email.to_owned()]),
+            with: None,
+            clear: false,
+            list: false,
+            trailers: false,
+        };
+
+        let mut out = Vec::new();
+        mob_cmd.handle(&mock_coauthor_repo, &mut out)?;
+
+        assert_eq!(out, format!("{name} <{email}>\n").as_bytes());
 
         Ok(())
     }

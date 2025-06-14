@@ -182,6 +182,26 @@ fn test_mob_with_multiselect_when_press_escape(ctx: TestContextCli) -> Result<()
 
 #[test_context(TestContextCli, skip_teardown)]
 #[test]
+fn test_add_to_mob(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
+    // adding a team member
+    ctx.git()
+        .args(["mob", "--add", "Leo Messi", "leo.messi@example.com"])
+        .assert()
+        .success()
+        .stdout(predicate::str::diff("Leo Messi <leo.messi@example.com>\n"));
+
+    // mob list shows the added team member
+    ctx.git()
+        .args(["mob", "--list"])
+        .assert()
+        .success()
+        .stdout(predicate::str::diff("Leo Messi <leo.messi@example.com>\n"));
+
+    Ok(())
+}
+
+#[test_context(TestContextCli, skip_teardown)]
+#[test]
 fn test_clear_mob(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
     add_two_team_members(&ctx)?;
 
