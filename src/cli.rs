@@ -15,13 +15,13 @@ use std::str;
     override_usage = "git mob [COMMAND] [OPTIONS]"
 )]
 #[command(propagate_version = true)]
-/// A CLI app which can help users automatically add co-author(s) to git commits
+/// A CLI tool which can help users automatically add co-author(s) to git commits
 /// for pair/mob programming.
 ///
 /// A user can attribute a git commit to more than one author by adding one or more
 /// Co-authored-by trailers to the commit's message.
 /// Co-authored commits are visible on GitHub.
-/// This CLI app will helper users do the this automatically and also help them
+/// This CLI tool will helper users do the this automatically and also help them
 /// store and manage co-authors for pair/mob programming sessions.
 ///
 /// Usage example:

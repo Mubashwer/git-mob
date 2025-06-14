@@ -14,9 +14,9 @@ fn test_mob_help(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
         .assert()
         .success()
         .stdout(predicate::str::diff(
-r#"A CLI app which can help users automatically add co-author(s) to git commits for pair/mob programming.
+r#"A CLI tool which can help users automatically add co-author(s) to git commits for pair/mob programming.
 
-A user can attribute a git commit to more than one author by adding one or more Co-authored-by trailers to the commit's message. Co-authored commits are visible on GitHub. This CLI app will helper users do the this automatically and also help them store and manage co-authors for pair/mob programming sessions.
+A user can attribute a git commit to more than one author by adding one or more Co-authored-by trailers to the commit's message. Co-authored commits are visible on GitHub. This CLI tool will helper users do the this automatically and also help them store and manage co-authors for pair/mob programming sessions.
 
 Usage example:
 
@@ -73,7 +73,7 @@ fn test_mob_help_summary(ctx: TestContextCli) -> Result<(), Box<dyn Error>> {
         .assert()
         .success()
         .stdout(predicate::str::diff(
-r#"A CLI app which can help users automatically add co-author(s) to git commits for pair/mob programming
+r#"A CLI tool which can help users automatically add co-author(s) to git commits for pair/mob programming
 
 Usage: git mob [COMMAND] [OPTIONS]
 
