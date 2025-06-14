@@ -20,7 +20,7 @@ jobs:
       tag_name: ${{ steps.release-please.outputs.tag_name }}
 
     steps:
-      - uses: google-github-actions/release-please-action@v4
+      - uses: googleapis/release-please-action@v4
         id: release-please
         with:
           release-type: rust
@@ -55,7 +55,7 @@ jobs:
             artifact_name: git-mob
             command: cargo
     runs-on: ${{ matrix.os }}
-    # https://github.com/google-github-actions/release-please-action/issues/912
+    # https://github.com/googleapis/release-please-action/issues/912
     if: ${{ needs.release-please.outputs.releases_created == true || needs.release-please.outputs.releases_created == 'true' }}
     needs: [release-please]
 
@@ -106,7 +106,7 @@ jobs:
 
   publish-cargo:
     runs-on: ubuntu-latest
-    # https://github.com/google-github-actions/release-please-action/issues/912
+    # https://github.com/googleapis/release-please-action/issues/912
     if: ${{ needs.release-please.outputs.releases_created == true || needs.release-please.outputs.releases_created == 'true' }}
     needs: [release-please]
 
