@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0](https://github.com/Mubashwer/git-mob/compare/v1.8.0...v1.9.0) (2025-06-14)
+
+
+### Features
+
+* **mob:** add functionality to include non-team members in the mob session ([845ec2c](https://github.com/Mubashwer/git-mob/commit/845ec2c4694835c5b94a2a08e1978667d0d2016d))
+
 ## [1.8.1](https://github.com/Mubashwer/git-mob/compare/v1.8.0...v1.8.1) (2025-06-14)
 
 
