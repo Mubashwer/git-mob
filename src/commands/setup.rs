@@ -46,7 +46,7 @@ impl Setup {
                     .join(".git")
                     .join("hooks");
 
-                Self::set_hooks_dir(out, &new_hooks_dir, "--global")?;
+                Self::set_global_hooks_dir(out, &new_hooks_dir)?;
 
                 new_hooks_dir
             }
@@ -113,13 +113,15 @@ impl Setup {
         Ok(Some(expanded_hooks_dir))
     }
 
-    fn set_hooks_dir(out: &mut impl Write, path: &Path, scope: &str) -> Result<(), Box<dyn Error>> {
+    fn set_global_hooks_dir(out: &mut impl Write, path: &Path) -> Result<(), Box<dyn Error>> {
         let path_str = &path.to_string_lossy();
         let status = Command::new("git")
-            .args(["config", scope, "core.hooksPath", path_str])
+            .args(["config", "--global", "core.hooksPath", path_str])
             .status()?;
 
-        assert!(status.success());
+        if !status.success() {
+            return Err(format!("Failed to set global githooks directory to {}", path_str).into());
+        }
 
         writeln!(out, "Set global githooks directory: {}", path_str)?;
 

@@ -181,6 +181,23 @@ Setup complete
 
 #[test_context(TestContextRepo, skip_teardown)]
 #[test]
+fn test_setup_given_invalid_git_config_global_path(
+    ctx: TestContextRepo,
+) -> Result<(), Box<dyn Error>> {
+    ctx.git()
+        .env("GIT_CONFIG_GLOBAL", "")
+        .args(["mob", "setup"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains(
+            "Error: \"Failed to set global githooks directory to",
+        ));
+
+    Ok(())
+}
+
+#[test_context(TestContextRepo, skip_teardown)]
+#[test]
 fn test_setup_local_given_hooks_dir_not_set(ctx: TestContextRepo) -> Result<(), Box<dyn Error>> {
     ctx.git()
         .args(["mob", "setup", "--local"])
