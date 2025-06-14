@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.1](https://github.com/Mubashwer/git-mob/compare/v1.8.0...v1.8.1) (2025-06-14)
+
+
+### Bug Fixes
+
+* improve error messages in local prepare-commit-msg hook ([bb5eefa](https://github.com/Mubashwer/git-mob/commit/bb5eefaaad2b3718c3226857dd336c420002314c))
+* update terminology from "CLI app" to "CLI tool" ([6c968cb](https://github.com/Mubashwer/git-mob/commit/6c968cb56ef64a5a9697aad359d6c2d98a92441c))
+
 ## [1.8.0](https://github.com/Mubashwer/git-mob/compare/v1.7.0...v1.8.0) (2025-06-10)
 
 
