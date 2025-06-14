@@ -1,6 +1,6 @@
 # `git mob`
 
-> **CLI app to help you automatically add Co-authored-by trailers to git commits during pair/mob programming**
+> **CLI tool to help you automatically add Co-authored-by trailers to git commits during pair/mob programming**
 
 [![crate](https://img.shields.io/crates/v/git-mob-tool?style=round)](https://crates.io/crates/git-mob-tool)
 [![crate downloads](https://img.shields.io/crates/d/git-mob-tool?style=round)](https://crates.io/crates/git-mob-tool)
@@ -11,7 +11,7 @@
 
 You can attribute a git commit to more than one author by adding one or more `Co-authored-by` trailers to the commit's message. Co-authored commits are visible on GitHub. For more information, see [here](https://docs.github.com/en/pull-requests/committing-changes-to-your-project/creating-and-editing-commits/creating-a-commit-with-multiple-authors).
 
-This CLI app will help you add them automatically and also help you store and manage co-authors for pair/mob programming sessions.
+This CLI tool will help you add them automatically and also help you store and manage co-authors for pair/mob programming sessions.
 
 ## Features
 
@@ -110,7 +110,7 @@ $ cargo install git-mob-tool
 
   ```console
   $ git mob help
-  $ git mob help coauthor
+  $ git mob help team-member
   ```
 
 ## Troubleshooting
