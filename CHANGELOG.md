@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.9.0](https://github.com/Mubashwer/git-mob/compare/v1.8.0...v1.9.0) (2025-06-14)
+
+
+### Features
+
+* **mob:** add functionality to include non-team members in the mob session ([845ec2c](https://github.com/Mubashwer/git-mob/commit/845ec2c4694835c5b94a2a08e1978667d0d2016d))
+
+
+### Bug Fixes
+
+* improve error messages in local prepare-commit-msg hook ([bb5eefa](https://github.com/Mubashwer/git-mob/commit/bb5eefaaad2b3718c3226857dd336c420002314c))
+* update terminology from "CLI app" to "CLI tool" ([6c968cb](https://github.com/Mubashwer/git-mob/commit/6c968cb56ef64a5a9697aad359d6c2d98a92441c))
+
 ## [1.8.1](https://github.com/Mubashwer/git-mob/compare/v1.8.0...v1.8.1) (2025-06-14)
 
 
