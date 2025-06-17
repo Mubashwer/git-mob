@@ -1,6 +1,6 @@
 on:
   workflow_run:
-    workflows: [ci]
+    workflows: [CI]
     types:
       - completed
     branches: [main]
@@ -9,7 +9,7 @@ permissions:
   contents: write
   pull-requests: write
 
-name: release
+name: Release
 
 jobs:
   release-please:
