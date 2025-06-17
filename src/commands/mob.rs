@@ -1,4 +1,5 @@
-use crate::coauthor_repo::CoauthorRepo;
+use crate::mob_session_repo::MobSessionRepo;
+use crate::team_member_repo::TeamMemberRepo;
 use clap::{arg, Parser};
 use inquire::MultiSelect;
 use std::{error::Error, io::Write};
@@ -38,22 +39,23 @@ pub(crate) struct Mob {
 impl Mob {
     pub(crate) fn handle(
         &self,
-        coauthor_repo: &impl CoauthorRepo,
+        team_member_repo: &impl TeamMemberRepo,
+        mob_repo: &impl MobSessionRepo,
         out: &mut impl Write,
     ) -> Result<(), Box<dyn Error>> {
         if self.clear {
-            coauthor_repo.clear_mob()?;
+            mob_repo.clear()?;
         }
 
         if self.list {
-            let coauthors = coauthor_repo.list_mob()?;
+            let coauthors = mob_repo.list_coauthors()?;
             if !coauthors.is_empty() {
                 writeln!(out, "{}", coauthors.join("\n"))?
             }
         }
 
         if self.trailers {
-            let coauthors = coauthor_repo.list_mob()?;
+            let coauthors = mob_repo.list_coauthors()?;
             let trailers = coauthors
                 .iter()
                 .map(|x| format!("Co-authored-by: {x}"))
@@ -68,19 +70,19 @@ impl Mob {
         match self.with.as_deref() {
             None => {}
             Some([]) => {
-                let coauthors = coauthor_repo.list(false)?;
-                if coauthors.is_empty() {
+                let team_members = team_member_repo.list(false)?;
+                if team_members.is_empty() {
                     return Err(
                         "No team member(s) found. At least one team member must be added".into(),
                     );
                 }
 
-                let result = MultiSelect::new("Select active co-author(s):", coauthors)
+                let result = MultiSelect::new("Select active co-author(s):", team_members)
                     .prompt_skippable()?;
                 if let Some(selected) = result {
-                    coauthor_repo.clear_mob()?;
-                    for coauthor in selected.iter() {
-                        coauthor_repo.add_to_mob(coauthor)?;
+                    mob_repo.clear()?;
+                    for team_member in selected.iter() {
+                        mob_repo.add_coauthor(team_member)?;
                     }
 
                     if selected.is_empty() {
@@ -88,15 +90,15 @@ impl Mob {
                     }
                 }
             }
-            Some(coauthor_keys) => {
+            Some(team_member_keys) => {
                 let mut coauthors: Vec<String> = Vec::new();
-                coauthor_repo.clear_mob()?;
+                mob_repo.clear()?;
 
-                for key in coauthor_keys {
-                    match coauthor_repo.get(key)? {
-                        Some(coauthor) => {
-                            coauthor_repo.add_to_mob(&coauthor)?;
-                            coauthors.push(coauthor);
+                for key in team_member_keys {
+                    match team_member_repo.get(key)? {
+                        Some(team_member) => {
+                            mob_repo.add_coauthor(&team_member)?;
+                            coauthors.push(team_member);
                         }
                         None => return Err(format!("No team member found with key: {key}").into()),
                     }
@@ -108,7 +110,7 @@ impl Mob {
 
         if let Some([name, email]) = self.add.as_deref() {
             let coauthor = format!("{name} <{email}>");
-            coauthor_repo.add_to_mob(&coauthor)?;
+            mob_repo.add_coauthor(&coauthor)?;
             writeln!(out, "{coauthor}")?
         }
 
@@ -121,16 +123,15 @@ mod tests {
     use std::error::Error;
 
     use super::*;
-    use crate::coauthor_repo::MockCoauthorRepo;
+    use crate::mob_session_repo::MockMobSessionRepo;
+    use crate::team_member_repo::MockTeamMemberRepo;
     use mockall::predicate;
 
     #[test]
     fn test_clear_mob() -> Result<(), Box<dyn Error>> {
-        let mut mock_coauthor_repo = MockCoauthorRepo::new();
-        mock_coauthor_repo
-            .expect_clear_mob()
-            .once()
-            .returning(|| Ok(()));
+        let mock_team_member_repo = MockTeamMemberRepo::new();
+        let mut mock_mob_repo = MockMobSessionRepo::new();
+        mock_mob_repo.expect_clear().once().returning(|| Ok(()));
 
         let mob_cmd = Mob {
             clear: true,
@@ -141,7 +142,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out)?;
+        mob_cmd.handle(&mock_team_member_repo, &mock_mob_repo, &mut out)?;
 
         Ok(())
     }
@@ -155,9 +156,10 @@ mod tests {
 
         let expected_output = format!("{}\n", coauthors.join("\n"));
 
-        let mut mock_coauthor_repo = MockCoauthorRepo::new();
-        mock_coauthor_repo
-            .expect_list_mob()
+        let mock_team_member_repo = MockTeamMemberRepo::new();
+        let mut mock_mob_repo = MockMobSessionRepo::new();
+        mock_mob_repo
+            .expect_list_coauthors()
             .once()
             .returning(move || Ok(coauthors.to_owned()));
 
@@ -170,7 +172,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out)?;
+        mob_cmd.handle(&mock_team_member_repo, &mock_mob_repo, &mut out)?;
 
         assert_eq!(out, expected_output.as_bytes());
 
@@ -179,9 +181,10 @@ mod tests {
 
     #[test]
     fn test_list_mob_when_mob_session_is_empty() -> Result<(), Box<dyn Error>> {
-        let mut mock_coauthor_repo = MockCoauthorRepo::new();
-        mock_coauthor_repo
-            .expect_list_mob()
+        let mock_team_member_repo = MockTeamMemberRepo::new();
+        let mut mock_mob_repo = MockMobSessionRepo::new();
+        mock_mob_repo
+            .expect_list_coauthors()
             .once()
             .returning(move || Ok(vec![]));
 
@@ -194,7 +197,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out)?;
+        mob_cmd.handle(&mock_team_member_repo, &mock_mob_repo, &mut out)?;
 
         assert_eq!(out, b"");
 
@@ -208,9 +211,10 @@ mod tests {
             "Emi Martinez <emi.martinez@example.com>".to_owned(),
         ];
 
-        let mut mock_coauthor_repo = MockCoauthorRepo::new();
-        mock_coauthor_repo
-            .expect_list_mob()
+        let mock_team_member_repo = MockTeamMemberRepo::new();
+        let mut mock_mob_repo = MockMobSessionRepo::new();
+        mock_mob_repo
+            .expect_list_coauthors()
             .once()
             .returning(move || Ok(coauthors.to_owned()));
 
@@ -223,7 +227,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out)?;
+        mob_cmd.handle(&mock_team_member_repo, &mock_mob_repo, &mut out)?;
 
         assert_eq!(
             out,
@@ -236,9 +240,10 @@ mod tests {
 
     #[test]
     fn test_mob_coauthor_trailers_when_mob_session_is_empty() -> Result<(), Box<dyn Error>> {
-        let mut mock_coauthor_repo = MockCoauthorRepo::new();
-        mock_coauthor_repo
-            .expect_list_mob()
+        let mock_team_member_repo = MockTeamMemberRepo::new();
+        let mut mock_mob_repo = MockMobSessionRepo::new();
+        mock_mob_repo
+            .expect_list_coauthors()
             .once()
             .returning(move || Ok(vec![]));
 
@@ -251,7 +256,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out)?;
+        mob_cmd.handle(&mock_team_member_repo, &mock_mob_repo, &mut out)?;
 
         assert_eq!(out, b"");
 
@@ -262,8 +267,9 @@ mod tests {
     fn test_mob_with_given_no_team_members_added() -> Result<(), Box<dyn Error>> {
         let coauthors = vec![];
 
-        let mut mock_coauthor_repo = MockCoauthorRepo::new();
-        mock_coauthor_repo
+        let mut mock_team_member_repo = MockTeamMemberRepo::new();
+        let mock_mob_repo = MockMobSessionRepo::new();
+        mock_team_member_repo
             .expect_list()
             .with(predicate::eq(false))
             .once()
@@ -278,7 +284,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let result = mob_cmd.handle(&mock_coauthor_repo, &mut out);
+        let result = mob_cmd.handle(&mock_team_member_repo, &mock_mob_repo, &mut out);
 
         assert!(result.is_err_and(|err| err.to_string()
             == *"No team member(s) found. At least one team member must be added"));
@@ -294,28 +300,26 @@ mod tests {
             "Emi Martinez <emi.martinez@example.com>",
         ];
 
-        let mut mock_coauthor_repo = MockCoauthorRepo::new();
-        mock_coauthor_repo
-            .expect_clear_mob()
-            .once()
-            .returning(|| Ok(()));
-        mock_coauthor_repo
+        let mut mock_team_member_repo = MockTeamMemberRepo::new();
+        let mut mock_mob_repo = MockMobSessionRepo::new();
+        mock_mob_repo.expect_clear().once().returning(|| Ok(()));
+        mock_team_member_repo
             .expect_get()
             .with(predicate::eq(keys[0].to_owned()))
             .once()
             .returning(move |_| Ok(Some(coauthors[0].to_owned())));
-        mock_coauthor_repo
-            .expect_add_to_mob()
+        mock_mob_repo
+            .expect_add_coauthor()
             .with(predicate::eq(coauthors[0].to_owned()))
             .once()
             .returning(|_| Ok(()));
-        mock_coauthor_repo
+        mock_team_member_repo
             .expect_get()
             .with(predicate::eq(keys[1].to_owned()))
             .once()
             .returning(move |_| Ok(Some(coauthors[1].to_owned())));
-        mock_coauthor_repo
-            .expect_add_to_mob()
+        mock_mob_repo
+            .expect_add_coauthor()
             .with(predicate::eq(coauthors[1].to_owned()))
             .once()
             .returning(|_| Ok(()));
@@ -329,7 +333,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out)?;
+        mob_cmd.handle(&mock_team_member_repo, &mock_mob_repo, &mut out)?;
 
         assert_eq!(out, format!("{}\n", coauthors.join("\n")).as_bytes());
 
@@ -340,12 +344,10 @@ mod tests {
     fn test_mob_with_by_key_when_team_member_not_found() -> Result<(), Box<dyn Error>> {
         let key = "lm";
 
-        let mut mock_coauthor_repo = MockCoauthorRepo::new();
-        mock_coauthor_repo
-            .expect_clear_mob()
-            .once()
-            .returning(|| Ok(()));
-        mock_coauthor_repo
+        let mut mock_team_member_repo = MockTeamMemberRepo::new();
+        let mut mock_mob_repo = MockMobSessionRepo::new();
+        mock_mob_repo.expect_clear().once().returning(|| Ok(()));
+        mock_team_member_repo
             .expect_get()
             .with(predicate::eq(key))
             .once()
@@ -360,7 +362,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let result = mob_cmd.handle(&mock_coauthor_repo, &mut out);
+        let result = mob_cmd.handle(&mock_team_member_repo, &mock_mob_repo, &mut out);
 
         assert!(result
             .is_err_and(|err| err.to_string() == format!("No team member found with key: {key}")));
@@ -369,13 +371,14 @@ mod tests {
     }
 
     #[test]
-    fn test_add_to_mob() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_add_coauthor() -> Result<(), Box<dyn std::error::Error>> {
         let name = "Leo Messi";
         let email = "leo.messi@example.com";
 
-        let mut mock_coauthor_repo = MockCoauthorRepo::new();
-        mock_coauthor_repo
-            .expect_add_to_mob()
+        let mock_team_member_repo = MockTeamMemberRepo::new();
+        let mut mock_mob_repo = MockMobSessionRepo::new();
+        mock_mob_repo
+            .expect_add_coauthor()
             .with(predicate::eq(format!("{name} <{email}>")))
             .once()
             .returning(|_| Ok(()));
@@ -389,7 +392,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        mob_cmd.handle(&mock_coauthor_repo, &mut out)?;
+        mob_cmd.handle(&mock_team_member_repo, &mock_mob_repo, &mut out)?;
 
         assert_eq!(out, format!("{name} <{email}>\n").as_bytes());
 

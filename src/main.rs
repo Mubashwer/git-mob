@@ -1,10 +1,17 @@
-use git_mob_tool::{cli, coauthor_repo::GitConfigCoauthorRepo, helpers::StdCommandRunner};
+use git_mob_tool::{
+    cli, helpers::StdCommandRunner, mob_session_repo::GitConfigMobRepo,
+    team_member_repo::GitConfigTeamMemberRepo,
+};
 use std::{error::Error, io::stdout};
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let command_runner = StdCommandRunner;
-    let coauthor_repo = GitConfigCoauthorRepo { command_runner };
+    let team_member_repo = GitConfigTeamMemberRepo {
+        command_runner: StdCommandRunner,
+    };
+    let mob_repo = GitConfigMobRepo {
+        command_runner: StdCommandRunner,
+    };
     let out = &mut stdout();
-    cli::run(&coauthor_repo, out)?;
+    cli::run(&team_member_repo, &mob_repo, out)?;
     Ok(())
 }

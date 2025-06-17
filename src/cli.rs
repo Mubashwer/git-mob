@@ -1,5 +1,6 @@
-use crate::coauthor_repo::CoauthorRepo;
 use crate::commands::{mob::Mob, setup::Setup, team_member::TeamMember};
+use crate::mob_session_repo::MobSessionRepo;
+use crate::team_member_repo::TeamMemberRepo;
 use clap::{Parser, Subcommand};
 use std::error::Error;
 use std::io::Write;
@@ -50,20 +51,25 @@ enum Commands {
     TeamMember(TeamMember),
 }
 
-pub fn run(coauthor_repo: &impl CoauthorRepo, out: &mut impl Write) -> Result<(), Box<dyn Error>> {
+pub fn run(
+    team_member_repo: &impl TeamMemberRepo,
+    mob_repo: &impl MobSessionRepo,
+    out: &mut impl Write,
+) -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
-    run_inner(&cli, coauthor_repo, out)
+    run_inner(&cli, team_member_repo, mob_repo, out)
 }
 
 fn run_inner(
     cli: &Cli,
-    coauthor_repo: &impl CoauthorRepo,
+    team_member_repo: &impl TeamMemberRepo,
+    mob_repo: &impl MobSessionRepo,
     out: &mut impl Write,
 ) -> Result<(), Box<dyn Error>> {
     match &cli.command {
-        None => cli.mob.handle(coauthor_repo, out)?,
+        None => cli.mob.handle(team_member_repo, mob_repo, out)?,
         Some(Commands::Setup(setup)) => setup.handle(out)?,
-        Some(Commands::TeamMember(team_member)) => team_member.handle(coauthor_repo, out)?,
+        Some(Commands::TeamMember(team_member)) => team_member.handle(team_member_repo, out)?,
     }
     Ok(())
 }
@@ -73,16 +79,15 @@ mod tests {
     use std::error::Error;
 
     use super::*;
-    use crate::coauthor_repo::MockCoauthorRepo;
+    use crate::mob_session_repo::MockMobSessionRepo;
+    use crate::team_member_repo::MockTeamMemberRepo;
     use mockall::predicate;
 
     #[test]
     fn test_clear_mob_session() -> Result<(), Box<dyn Error>> {
-        let mut mock_coauthor_repo = MockCoauthorRepo::new();
-        mock_coauthor_repo
-            .expect_clear_mob()
-            .once()
-            .returning(|| Ok(()));
+        let mock_team_member_repo = MockTeamMemberRepo::new();
+        let mut mock_mob_repo = MockMobSessionRepo::new();
+        mock_mob_repo.expect_clear().once().returning(|| Ok(()));
 
         let cli = Cli {
             command: None,
@@ -96,7 +101,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        run_inner(&cli, &mock_coauthor_repo, &mut out)?;
+        run_inner(&cli, &mock_team_member_repo, &mock_mob_repo, &mut out)?;
 
         Ok(())
     }
@@ -104,13 +109,14 @@ mod tests {
     #[test]
     fn test_delete_team_member() -> Result<(), Box<dyn Error>> {
         let key = "lm";
-        let mut mock_coauthor_repo = MockCoauthorRepo::new();
-        mock_coauthor_repo
+        let mut mock_team_member_repo = MockTeamMemberRepo::new();
+        let mock_mob_repo = MockMobSessionRepo::new();
+        mock_team_member_repo
             .expect_get()
             .with(predicate::eq(key))
             .once()
             .returning(|_| Ok(Some("Leo Messi <leo.messi@example.com>".to_owned())));
-        mock_coauthor_repo
+        mock_team_member_repo
             .expect_remove()
             .with(predicate::eq(key))
             .once()
@@ -132,7 +138,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        run_inner(&cli, &mock_coauthor_repo, &mut out)?;
+        run_inner(&cli, &mock_team_member_repo, &mock_mob_repo, &mut out)?;
 
         Ok(())
     }

@@ -1,4 +1,4 @@
-use crate::coauthor_repo::CoauthorRepo;
+use crate::team_member_repo::TeamMemberRepo;
 use clap::{arg, Parser};
 use std::io::Write;
 
@@ -25,25 +25,25 @@ pub(crate) struct TeamMember {
 impl TeamMember {
     pub(crate) fn handle(
         &self,
-        coauthor_repo: &impl CoauthorRepo,
+        team_member_repo: &impl TeamMemberRepo,
         out: &mut impl Write,
     ) -> Result<(), Box<dyn std::error::Error>> {
         if let Some(key) = self.delete.as_deref() {
-            match coauthor_repo.get(key)? {
-                Some(_) => coauthor_repo.remove(key)?,
+            match team_member_repo.get(key)? {
+                Some(_) => team_member_repo.remove(key)?,
                 None => return Err(format!("No team member found with key: {key}").into()),
             }
         }
         if self.list {
-            let coauthors = coauthor_repo.list(true)?;
-            if !coauthors.is_empty() {
-                writeln!(out, "{}", coauthors.join("\n"))?
+            let team_members = team_member_repo.list(true)?;
+            if !team_members.is_empty() {
+                writeln!(out, "{}", team_members.join("\n"))?
             }
         }
         if let Some([key, name, email]) = self.add.as_deref() {
-            let coauthor = format!("{name} <{email}>");
-            coauthor_repo.add(key, &coauthor)?;
-            writeln!(out, "{coauthor}")?
+            let team_member = format!("{name} <{email}>");
+            team_member_repo.add(key, &team_member)?;
+            writeln!(out, "{team_member}")?
         }
 
         Ok(())
@@ -53,19 +53,19 @@ impl TeamMember {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::coauthor_repo::MockCoauthorRepo;
+    use crate::team_member_repo::MockTeamMemberRepo;
     use mockall::predicate;
 
     #[test]
     fn test_delete_team_member() -> Result<(), Box<dyn std::error::Error>> {
         let key = "lm";
-        let mut mock_coauthor_repo = MockCoauthorRepo::new();
-        mock_coauthor_repo
+        let mut mock_team_member_repo = MockTeamMemberRepo::new();
+        mock_team_member_repo
             .expect_get()
             .with(predicate::eq(key))
             .once()
             .returning(|_| Ok(Some("Leo Messi <leo.messi@example.com>".to_owned())));
-        mock_coauthor_repo
+        mock_team_member_repo
             .expect_remove()
             .with(predicate::eq(key))
             .once()
@@ -78,7 +78,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        team_member_cmd.handle(&mock_coauthor_repo, &mut out)?;
+        team_member_cmd.handle(&mock_team_member_repo, &mut out)?;
 
         assert!(out.is_empty());
 
@@ -89,8 +89,8 @@ mod tests {
     fn test_delete_team_member_when_team_member_not_found() -> Result<(), Box<dyn std::error::Error>>
     {
         let key = "em";
-        let mut mock_coauthor_repo = MockCoauthorRepo::new();
-        mock_coauthor_repo
+        let mut mock_team_member_repo = MockTeamMemberRepo::new();
+        mock_team_member_repo
             .expect_get()
             .with(predicate::eq(key))
             .once()
@@ -103,7 +103,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        let result = team_member_cmd.handle(&mock_coauthor_repo, &mut out);
+        let result = team_member_cmd.handle(&mock_team_member_repo, &mut out);
 
         assert!(result
             .is_err_and(|err| err.to_string() == format!("No team member found with key: {key}")));
@@ -117,8 +117,8 @@ mod tests {
         let name = "Leo Messi";
         let email = "leo.messi@example.com";
 
-        let mut mock_coauthor_repo = MockCoauthorRepo::new();
-        mock_coauthor_repo
+        let mut mock_team_member_repo = MockTeamMemberRepo::new();
+        mock_team_member_repo
             .expect_add()
             .with(
                 predicate::eq(key),
@@ -134,7 +134,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        team_member_cmd.handle(&mock_coauthor_repo, &mut out)?;
+        team_member_cmd.handle(&mock_team_member_repo, &mut out)?;
 
         assert_eq!(out, format!("{name} <{email}>\n").as_bytes());
 
@@ -143,18 +143,18 @@ mod tests {
 
     #[test]
     fn test_list_team_members() -> Result<(), Box<dyn std::error::Error>> {
-        let coauthors = vec![
+        let team_members = vec![
             "lm Leo Messi <leo.messi@example.com>".to_owned(),
             "em Emi Martinez <emi.martinez@example.com>".to_owned(),
         ];
 
-        let expected_output = format!("{}\n", coauthors.join("\n"));
+        let expected_output = format!("{}\n", team_members.join("\n"));
 
-        let mut mock_coauthor_repo = MockCoauthorRepo::new();
-        mock_coauthor_repo
+        let mut mock_team_member_repo = MockTeamMemberRepo::new();
+        mock_team_member_repo
             .expect_list()
             .once()
-            .returning(move |_| Ok(coauthors.to_owned()));
+            .returning(move |_| Ok(team_members.to_owned()));
 
         let team_member_cmd = TeamMember {
             list: true,
@@ -163,7 +163,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        team_member_cmd.handle(&mock_coauthor_repo, &mut out)?;
+        team_member_cmd.handle(&mock_team_member_repo, &mut out)?;
 
         assert_eq!(out, expected_output.as_bytes());
 
@@ -173,8 +173,8 @@ mod tests {
     #[test]
     fn test_list_team_members_when_no_team_members_added() -> Result<(), Box<dyn std::error::Error>>
     {
-        let mut mock_coauthor_repo = MockCoauthorRepo::new();
-        mock_coauthor_repo
+        let mut mock_team_member_repo = MockTeamMemberRepo::new();
+        mock_team_member_repo
             .expect_list()
             .once()
             .returning(move |_| Ok(vec![]));
@@ -186,7 +186,7 @@ mod tests {
         };
 
         let mut out = Vec::new();
-        team_member_cmd.handle(&mock_coauthor_repo, &mut out)?;
+        team_member_cmd.handle(&mock_team_member_repo, &mut out)?;
 
         assert_eq!(out, b"");
 
