@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.1](https://github.com/Mubashwer/git-mob/compare/v1.9.0...v1.9.1) (2025-06-17)
+
+
+### Bug Fixes
+
+* update dependencies to resolve yanked futures-util security warning ([ebb739b](https://github.com/Mubashwer/git-mob/commit/ebb739b10919b5e89edec7aac59d2cfcc26905f5))
+
 ## [1.9.0](https://github.com/Mubashwer/git-mob/compare/v1.8.0...v1.9.0) (2025-06-14)
 
 
