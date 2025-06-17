@@ -1,5 +1,4 @@
-use crate::mob_session_repo::MobSessionRepo;
-use crate::team_member_repo::TeamMemberRepo;
+use crate::repositories::{MobSessionRepo, TeamMemberRepo};
 use clap::{arg, Parser};
 use inquire::MultiSelect;
 use std::{error::Error, io::Write};
@@ -123,8 +122,7 @@ mod tests {
     use std::error::Error;
 
     use super::*;
-    use crate::mob_session_repo::MockMobSessionRepo;
-    use crate::team_member_repo::MockTeamMemberRepo;
+    use crate::repositories::{MockMobSessionRepo, MockTeamMemberRepo};
     use mockall::predicate;
 
     #[test]

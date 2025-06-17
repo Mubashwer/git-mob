@@ -1,6 +1,5 @@
-use crate::commands::{mob::Mob, setup::Setup, team_member::TeamMember};
-use crate::mob_session_repo::MobSessionRepo;
-use crate::team_member_repo::TeamMemberRepo;
+use crate::commands::{Mob, Setup, TeamMember};
+use crate::repositories::{MobSessionRepo, TeamMemberRepo};
 use clap::{Parser, Subcommand};
 use std::error::Error;
 use std::io::Write;
@@ -79,8 +78,7 @@ mod tests {
     use std::error::Error;
 
     use super::*;
-    use crate::mob_session_repo::MockMobSessionRepo;
-    use crate::team_member_repo::MockTeamMemberRepo;
+    use crate::repositories::{MockMobSessionRepo, MockTeamMemberRepo};
     use mockall::predicate;
 
     #[test]

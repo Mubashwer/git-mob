@@ -1,4 +1,4 @@
-use crate::team_member_repo::TeamMemberRepo;
+use crate::repositories::TeamMemberRepo;
 use clap::{arg, Parser};
 use std::io::Write;
 
@@ -53,7 +53,7 @@ impl TeamMember {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::team_member_repo::MockTeamMemberRepo;
+    use crate::repositories::MockTeamMemberRepo;
     use mockall::predicate;
 
     #[test]

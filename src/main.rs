@@ -1,6 +1,7 @@
 use git_mob_tool::{
-    cli, helpers::StdCommandRunner, mob_session_repo::GitConfigMobRepo,
-    team_member_repo::GitConfigTeamMemberRepo,
+    cli,
+    helpers::StdCommandRunner,
+    repositories::{GitConfigMobRepo, GitConfigTeamMemberRepo},
 };
 use std::{error::Error, io::stdout};
 
