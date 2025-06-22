@@ -1,4 +1,5 @@
 use std::{
+    env,
     error::Error,
     fs,
     io::Write,
@@ -7,7 +8,6 @@ use std::{
 };
 
 use clap::Parser;
-use home::home_dir;
 
 #[derive(Parser)]
 pub(crate) struct Setup {
@@ -41,7 +41,7 @@ impl Setup {
         let hooks_dir = match Self::get_hooks_dir("--global")? {
             Some(hooks_dir) => hooks_dir,
             None => {
-                let new_hooks_dir = home_dir()
+                let new_hooks_dir = env::home_dir()
                     .ok_or("Failed to get home directory")?
                     .join(".git")
                     .join("hooks");
@@ -108,7 +108,7 @@ impl Setup {
             return Ok(Some(hooks_dir));
         }
 
-        let mut expanded_hooks_dir = home_dir().ok_or("Failed to get home directory")?;
+        let mut expanded_hooks_dir = env::home_dir().ok_or("Failed to get home directory")?;
         expanded_hooks_dir.extend(hooks_dir.components().skip(1));
         Ok(Some(expanded_hooks_dir))
     }
