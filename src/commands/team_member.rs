@@ -1,4 +1,5 @@
 use crate::repositories::TeamMemberRepo;
+use crate::Result;
 use clap::{arg, Parser};
 use std::io::Write;
 
@@ -27,7 +28,7 @@ impl TeamMember {
         &self,
         team_member_repo: &impl TeamMemberRepo,
         out: &mut impl Write,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    ) -> Result<()> {
         if let Some(key) = self.delete.as_deref() {
             match team_member_repo.get(key)? {
                 Some(_) => team_member_repo.remove(key)?,
@@ -57,7 +58,7 @@ mod tests {
     use mockall::predicate;
 
     #[test]
-    fn test_delete_team_member() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_delete_team_member() -> Result<()> {
         let key = "lm";
         let mut mock_team_member_repo = MockTeamMemberRepo::new();
         mock_team_member_repo
@@ -86,8 +87,7 @@ mod tests {
     }
 
     #[test]
-    fn test_delete_team_member_when_team_member_not_found() -> Result<(), Box<dyn std::error::Error>>
-    {
+    fn test_delete_team_member_when_team_member_not_found() -> Result<()> {
         let key = "em";
         let mut mock_team_member_repo = MockTeamMemberRepo::new();
         mock_team_member_repo
@@ -112,7 +112,7 @@ mod tests {
     }
 
     #[test]
-    fn test_add_team_member() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_add_team_member() -> Result<()> {
         let key = "lm";
         let name = "Leo Messi";
         let email = "leo.messi@example.com";
@@ -142,7 +142,7 @@ mod tests {
     }
 
     #[test]
-    fn test_list_team_members() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_list_team_members() -> Result<()> {
         let team_members = vec![
             "lm Leo Messi <leo.messi@example.com>".to_owned(),
             "em Emi Martinez <emi.martinez@example.com>".to_owned(),
@@ -171,8 +171,7 @@ mod tests {
     }
 
     #[test]
-    fn test_list_team_members_when_no_team_members_added() -> Result<(), Box<dyn std::error::Error>>
-    {
+    fn test_list_team_members_when_no_team_members_added() -> Result<()> {
         let mut mock_team_member_repo = MockTeamMemberRepo::new();
         mock_team_member_repo
             .expect_list()

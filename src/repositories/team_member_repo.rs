@@ -1,14 +1,14 @@
 use crate::helpers::{CmdOutput, CommandRunner};
-use std::error::Error;
+use crate::Result;
 
 #[cfg(test)]
 use mockall::{automock, predicate::*};
 #[cfg_attr(test, automock)]
 pub trait TeamMemberRepo {
-    fn list(&self, show_keys: bool) -> Result<Vec<String>, Box<dyn Error>>;
-    fn get(&self, key: &str) -> Result<Option<String>, Box<dyn Error>>;
-    fn remove(&self, key: &str) -> Result<(), Box<dyn Error>>;
-    fn add(&self, key: &str, team_member: &str) -> Result<(), Box<dyn Error>>;
+    fn list(&self, show_keys: bool) -> Result<Vec<String>>;
+    fn get(&self, key: &str) -> Result<Option<String>>;
+    fn remove(&self, key: &str) -> Result<()>;
+    fn add(&self, key: &str, team_member: &str) -> Result<()>;
 }
 
 pub struct GitConfigTeamMemberRepo<Cmd> {
@@ -22,7 +22,7 @@ impl<Cmd: CommandRunner> GitConfigTeamMemberRepo<Cmd> {
     const EXIT_CODE_SUCCESS: i32 = 0;
     const EXIT_CODE_CONFIG_INVALID_KEY: i32 = 1;
 
-    fn git_config_error<T>(output: &CmdOutput) -> Result<T, Box<dyn Error>> {
+    fn git_config_error<T>(output: &CmdOutput) -> Result<T> {
         match output.status_code {
             Some(code) => Err(format!("Git config command exited with status code: {code}").into()),
             None => Err("Git config command terminated by signal".into()),
@@ -31,7 +31,7 @@ impl<Cmd: CommandRunner> GitConfigTeamMemberRepo<Cmd> {
 }
 
 impl<Cmd: CommandRunner> TeamMemberRepo for GitConfigTeamMemberRepo<Cmd> {
-    fn list(&self, show_keys: bool) -> Result<Vec<String>, Box<dyn Error>> {
+    fn list(&self, show_keys: bool) -> Result<Vec<String>> {
         let section = Self::COAUTHORS_SECTION;
         let search_regex = format!("^{section}\\.");
 
@@ -60,7 +60,7 @@ impl<Cmd: CommandRunner> TeamMemberRepo for GitConfigTeamMemberRepo<Cmd> {
         }
     }
 
-    fn get(&self, key: &str) -> Result<Option<String>, Box<dyn Error>> {
+    fn get(&self, key: &str) -> Result<Option<String>> {
         let full_key = format!("{}.{key}", Self::COAUTHORS_SECTION);
 
         let output = self
@@ -76,7 +76,7 @@ impl<Cmd: CommandRunner> TeamMemberRepo for GitConfigTeamMemberRepo<Cmd> {
         }
     }
 
-    fn remove(&self, key: &str) -> Result<(), Box<dyn Error>> {
+    fn remove(&self, key: &str) -> Result<()> {
         let full_key = format!("{}.{key}", Self::COAUTHORS_SECTION);
 
         let output = self
@@ -89,7 +89,7 @@ impl<Cmd: CommandRunner> TeamMemberRepo for GitConfigTeamMemberRepo<Cmd> {
         }
     }
 
-    fn add(&self, key: &str, team_member: &str) -> Result<(), Box<dyn Error>> {
+    fn add(&self, key: &str, team_member: &str) -> Result<()> {
         let full_key = format!("{}.{key}", Self::COAUTHORS_SECTION);
 
         let output = self
@@ -137,7 +137,7 @@ mod tests {
     }
 
     #[test]
-    fn test_list_without_keys() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_list_without_keys() -> Result<()> {
         let args = &["config", "--global", "--get-regexp", "^coauthors\\."];
         let stdout = b"coauthors.lm Leo Messi <leo.messi@example.com>\ncoauthors.em Emi Martinez <emi.martinez@example.com>\n".into();
         let stderr = vec![];
@@ -159,7 +159,7 @@ mod tests {
     }
 
     #[test]
-    fn test_list_with_keys() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_list_with_keys() -> Result<()> {
         let args = &["config", "--global", "--get-regexp", "^coauthors\\."];
         let stdout = b"coauthors.lm Leo Messi <leo.messi@example.com>\ncoauthors.em Emi Martinez <emi.martinez@example.com>\n".into();
         let stderr = vec![];
@@ -181,7 +181,7 @@ mod tests {
     }
 
     #[test]
-    fn test_list_when_no_team_members_added() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_list_when_no_team_members_added() -> Result<()> {
         let args = &["config", "--global", "--get-regexp", "^coauthors\\."];
         let stdout = vec![];
         let stderr = vec![];
@@ -197,7 +197,7 @@ mod tests {
     }
 
     #[test]
-    fn test_list_when_unexpected_error() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_list_when_unexpected_error() -> Result<()> {
         let args = &["config", "--global", "--get-regexp", "^coauthors\\."];
         let stdout = vec![];
         let stderr = b"uh-oh!".into();
@@ -214,7 +214,7 @@ mod tests {
     }
 
     #[test]
-    fn test_list_when_terminated_by_signal() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_list_when_terminated_by_signal() -> Result<()> {
         let args = &["config", "--global", "--get-regexp", "^coauthors\\."];
         let stdout = vec![];
         let stderr = vec![];
@@ -230,7 +230,7 @@ mod tests {
     }
 
     #[test]
-    fn test_get() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_get() -> Result<()> {
         let key = "lm";
         let args = &["config", "--global", &format!("coauthors.{key}")];
         let stdout = b"Leo Messi <leo.messi@example.com>\n".into();
@@ -247,7 +247,7 @@ mod tests {
     }
 
     #[test]
-    fn test_get_when_team_member_not_found() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_get_when_team_member_not_found() -> Result<()> {
         let key = "lm";
         let args = &["config", "--global", &format!("coauthors.{key}")];
         let stdout = vec![];
@@ -264,7 +264,7 @@ mod tests {
     }
 
     #[test]
-    fn test_get_when_unexpected_error() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_get_when_unexpected_error() -> Result<()> {
         let key = "lm";
         let args = &["config", "--global", &format!("coauthors.{key}")];
         let stdout = vec![];
@@ -282,7 +282,7 @@ mod tests {
     }
 
     #[test]
-    fn test_get_when_terminated_by_signal() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_get_when_terminated_by_signal() -> Result<()> {
         let key = "lm";
         let args = &["config", "--global", &format!("coauthors.{key}")];
         let stdout = vec![];
@@ -299,7 +299,7 @@ mod tests {
     }
 
     #[test]
-    fn test_remove() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_remove() -> Result<()> {
         let key = "lm";
         let args = &[
             "config",
@@ -319,7 +319,7 @@ mod tests {
     }
 
     #[test]
-    fn test_remove_when_team_member_not_found() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_remove_when_team_member_not_found() -> Result<()> {
         let key = "lm";
         let args = &[
             "config",
@@ -343,7 +343,7 @@ mod tests {
     }
 
     #[test]
-    fn test_remove_when_terminated_by_signal() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_remove_when_terminated_by_signal() -> Result<()> {
         let key = "lm";
         let args = &[
             "config",
@@ -365,7 +365,7 @@ mod tests {
     }
 
     #[test]
-    fn test_add() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_add() -> Result<()> {
         let key = "lm";
         let team_member = "Leo Messi <leo.messi@example.com>";
         let args = &[
@@ -386,7 +386,7 @@ mod tests {
     }
 
     #[test]
-    fn test_add_when_invalid_key() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_add_when_invalid_key() -> Result<()> {
         let key = "l_m";
         let team_member = "Leo Messi <leo.messi@example.com>";
         let args = &[
@@ -409,7 +409,7 @@ mod tests {
     }
 
     #[test]
-    fn test_add_when_unexpected_error() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_add_when_unexpected_error() -> Result<()> {
         let key = "lm";
         let team_member = "Leo Messi <leo.messi@example.com>";
         let args = &[
@@ -433,7 +433,7 @@ mod tests {
     }
 
     #[test]
-    fn test_add_when_terminated_by_signal() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_add_when_terminated_by_signal() -> Result<()> {
         let key = "lm";
         let team_member = "Leo Messi <leo.messi@example.com>";
         let args = &[

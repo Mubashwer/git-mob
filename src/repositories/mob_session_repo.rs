@@ -1,13 +1,13 @@
 use crate::helpers::{CmdOutput, CommandRunner};
-use std::error::Error;
+use crate::Result;
 
 #[cfg(test)]
 use mockall::{automock, predicate::*};
 #[cfg_attr(test, automock)]
 pub trait MobSessionRepo {
-    fn list_coauthors(&self) -> Result<Vec<String>, Box<dyn Error>>;
-    fn add_coauthor(&self, coauthor: &str) -> Result<(), Box<dyn Error>>;
-    fn clear(&self) -> Result<(), Box<dyn Error>>;
+    fn list_coauthors(&self) -> Result<Vec<String>>;
+    fn add_coauthor(&self, coauthor: &str) -> Result<()>;
+    fn clear(&self) -> Result<()>;
 }
 
 pub struct GitConfigMobRepo<Cmd> {
@@ -21,7 +21,7 @@ impl<Cmd: CommandRunner> GitConfigMobRepo<Cmd> {
     const EXIT_CODE_SUCCESS: i32 = 0;
     const EXIT_CODE_CONFIG_INVALID_KEY: i32 = 1;
 
-    fn git_config_error<T>(output: &CmdOutput) -> Result<T, Box<dyn Error>> {
+    fn git_config_error<T>(output: &CmdOutput) -> Result<T> {
         match output.status_code {
             Some(code) => Err(format!("Git config command exited with status code: {code}").into()),
             None => Err("Git config command terminated by signal".into()),
@@ -30,7 +30,7 @@ impl<Cmd: CommandRunner> GitConfigMobRepo<Cmd> {
 }
 
 impl<Cmd: CommandRunner> MobSessionRepo for GitConfigMobRepo<Cmd> {
-    fn list_coauthors(&self) -> Result<Vec<String>, Box<dyn Error>> {
+    fn list_coauthors(&self) -> Result<Vec<String>> {
         let full_key = format!("{}.{}", Self::COAUTHORS_MOB_SECTION, Self::COAUTHOR_MOB_KEY);
 
         let output = self
@@ -47,7 +47,7 @@ impl<Cmd: CommandRunner> MobSessionRepo for GitConfigMobRepo<Cmd> {
             _ => Self::git_config_error(&output),
         }
     }
-    fn add_coauthor(&self, coauthor: &str) -> Result<(), Box<dyn Error>> {
+    fn add_coauthor(&self, coauthor: &str) -> Result<()> {
         let full_key = format!("{}.{}", Self::COAUTHORS_MOB_SECTION, Self::COAUTHOR_MOB_KEY);
 
         let output = self
@@ -59,7 +59,7 @@ impl<Cmd: CommandRunner> MobSessionRepo for GitConfigMobRepo<Cmd> {
             _ => Self::git_config_error(&output),
         }
     }
-    fn clear(&self) -> Result<(), Box<dyn Error>> {
+    fn clear(&self) -> Result<()> {
         if self.list_coauthors()?.is_empty() {
             return Ok(());
         }
@@ -109,7 +109,7 @@ mod tests {
     }
 
     #[test]
-    fn test_list_coauthors() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_list_coauthors() -> Result<()> {
         let args = &["config", "--global", "--get-all", "coauthors-mob.entry"];
         let stdout =
             b"Leo Messi <leo.messi@example.com>\nEmi Martinez <emi.martinez@example.com>\n".into();
@@ -132,7 +132,7 @@ mod tests {
     }
 
     #[test]
-    fn test_list_coauthors_when_mob_session_empty() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_list_coauthors_when_mob_session_empty() -> Result<()> {
         let args = &["config", "--global", "--get-all", "coauthors-mob.entry"];
         let stdout = vec![];
         let stderr = vec![];
@@ -148,7 +148,7 @@ mod tests {
     }
 
     #[test]
-    fn test_list_coauthors_when_unexpected_error() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_list_coauthors_when_unexpected_error() -> Result<()> {
         let args = &["config", "--global", "--get-all", "coauthors-mob.entry"];
         let stdout = vec![];
         let stderr = b"uh-oh!".into();
@@ -165,7 +165,7 @@ mod tests {
     }
 
     #[test]
-    fn test_list_coauthors_when_terminated_by_signal() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_list_coauthors_when_terminated_by_signal() -> Result<()> {
         let args = &["config", "--global", "--get-all", "coauthors-mob.entry"];
         let stdout = vec![];
         let stderr = vec![];
@@ -181,7 +181,7 @@ mod tests {
     }
 
     #[test]
-    fn test_add_coauthor() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_add_coauthor() -> Result<()> {
         let coauthor = "Leo Messi <leo.messi@example.com>";
         let args = &[
             "config",
@@ -202,7 +202,7 @@ mod tests {
     }
 
     #[test]
-    fn test_add_coauthor_when_unexpected_error() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_add_coauthor_when_unexpected_error() -> Result<()> {
         let coauthor = "Leo Messi <leo.messi@example.com>";
         let args = &[
             "config",
@@ -226,7 +226,7 @@ mod tests {
     }
 
     #[test]
-    fn test_add_coauthor_when_terminated_by_signal() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_add_coauthor_when_terminated_by_signal() -> Result<()> {
         let coauthor = "Leo Messi <leo.messi@example.com>";
         let args = &[
             "config",
@@ -249,7 +249,7 @@ mod tests {
     }
 
     #[test]
-    fn test_clear() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_clear() -> Result<()> {
         let mut command_runner = MockCommandRunner::new();
         command_runner
             .expect_execute()
@@ -284,7 +284,7 @@ mod tests {
     }
 
     #[test]
-    fn test_clear_when_mob_session_empty() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_clear_when_mob_session_empty() -> Result<()> {
         let args = &["config", "--global", "--get-all", "coauthors-mob.entry"];
         let stdout = vec![];
         let stderr = vec![];
@@ -298,7 +298,7 @@ mod tests {
     }
 
     #[test]
-    fn test_clear_when_unexpected_error() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_clear_when_unexpected_error() -> Result<()> {
         let mut command_runner = MockCommandRunner::new();
         command_runner
             .expect_execute()
@@ -336,7 +336,7 @@ mod tests {
     }
 
     #[test]
-    fn test_clear_when_terminated_by_signal() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_clear_when_terminated_by_signal() -> Result<()> {
         let mut command_runner = MockCommandRunner::new();
         command_runner
             .expect_execute()

@@ -1,13 +1,11 @@
+use crate::Result;
+use clap::Parser;
 use std::{
-    env,
-    error::Error,
-    fs,
+    env, fs,
     io::Write,
     path::{Path, PathBuf},
     process::Command,
 };
-
-use clap::Parser;
 
 #[derive(Parser)]
 pub(crate) struct Setup {
@@ -27,7 +25,7 @@ pub(crate) struct Setup {
 }
 
 impl Setup {
-    pub(crate) fn handle(&self, out: &mut impl Write) -> Result<(), Box<dyn Error>> {
+    pub(crate) fn handle(&self, out: &mut impl Write) -> Result<()> {
         if self.local {
             self.handle_local(out)?;
         } else {
@@ -37,7 +35,7 @@ impl Setup {
         Ok(())
     }
 
-    fn handle_global(&self, out: &mut impl Write) -> Result<(), Box<dyn Error>> {
+    fn handle_global(&self, out: &mut impl Write) -> Result<()> {
         let hooks_dir = match Self::get_hooks_dir("--global")? {
             Some(hooks_dir) => hooks_dir,
             None => {
@@ -70,7 +68,7 @@ impl Setup {
         Ok(())
     }
 
-    fn handle_local(&self, out: &mut impl Write) -> Result<(), Box<dyn Error>> {
+    fn handle_local(&self, out: &mut impl Write) -> Result<()> {
         let hooks_dir = match Self::get_hooks_dir("--local")? {
             Some(hooks_dir) => hooks_dir,
             None => return Err("Local githooks directory is not set".into()),
@@ -94,7 +92,7 @@ impl Setup {
         Ok(())
     }
 
-    fn get_hooks_dir(scope: &str) -> Result<Option<PathBuf>, Box<dyn Error>> {
+    fn get_hooks_dir(scope: &str) -> Result<Option<PathBuf>> {
         let output = Command::new("git")
             .args(["config", scope, "core.hooksPath"])
             .output()?;
@@ -113,7 +111,7 @@ impl Setup {
         Ok(Some(expanded_hooks_dir))
     }
 
-    fn set_global_hooks_dir(out: &mut impl Write, path: &Path) -> Result<(), Box<dyn Error>> {
+    fn set_global_hooks_dir(out: &mut impl Write, path: &Path) -> Result<()> {
         let path_str = &path.to_string_lossy();
         let status = Command::new("git")
             .args(["config", "--global", "core.hooksPath", path_str])
@@ -132,7 +130,7 @@ impl Setup {
         out: &mut impl Write,
         path: &Path,
         contents: &str,
-    ) -> Result<(), Box<dyn Error>> {
+    ) -> Result<()> {
         fs::write(path, contents)?;
 
         #[cfg(unix)]
@@ -151,10 +149,7 @@ impl Setup {
         Ok(())
     }
 
-    fn backup_prepare_commit_msg_hook(
-        out: &mut impl Write,
-        path: &Path,
-    ) -> Result<(), Box<dyn Error>> {
+    fn backup_prepare_commit_msg_hook(out: &mut impl Write, path: &Path) -> Result<()> {
         let backup_path = path.with_extension("bak");
         fs::rename(path, &backup_path)?;
 

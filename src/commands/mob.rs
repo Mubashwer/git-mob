@@ -1,7 +1,8 @@
 use crate::repositories::{MobSessionRepo, TeamMemberRepo};
+use crate::Result;
 use clap::{arg, Parser};
 use inquire::MultiSelect;
-use std::{error::Error, io::Write};
+use std::io::Write;
 
 #[derive(Parser)]
 #[command(arg_required_else_help = true)]
@@ -41,7 +42,7 @@ impl Mob {
         team_member_repo: &impl TeamMemberRepo,
         mob_repo: &impl MobSessionRepo,
         out: &mut impl Write,
-    ) -> Result<(), Box<dyn Error>> {
+    ) -> Result<()> {
         if self.clear {
             mob_repo.clear()?;
         }
@@ -119,14 +120,12 @@ impl Mob {
 
 #[cfg(test)]
 mod tests {
-    use std::error::Error;
-
     use super::*;
     use crate::repositories::{MockMobSessionRepo, MockTeamMemberRepo};
     use mockall::predicate;
 
     #[test]
-    fn test_clear_mob() -> Result<(), Box<dyn Error>> {
+    fn test_clear_mob() -> Result<()> {
         let mock_team_member_repo = MockTeamMemberRepo::new();
         let mut mock_mob_repo = MockMobSessionRepo::new();
         mock_mob_repo.expect_clear().once().returning(|| Ok(()));
@@ -146,7 +145,7 @@ mod tests {
     }
 
     #[test]
-    fn test_list_mob() -> Result<(), Box<dyn Error>> {
+    fn test_list_mob() -> Result<()> {
         let coauthors = vec![
             "Leo Messi <leo.messi@example.com>".to_owned(),
             "Emi Martinez <emi.martinez@example.com>".to_owned(),
@@ -178,7 +177,7 @@ mod tests {
     }
 
     #[test]
-    fn test_list_mob_when_mob_session_is_empty() -> Result<(), Box<dyn Error>> {
+    fn test_list_mob_when_mob_session_is_empty() -> Result<()> {
         let mock_team_member_repo = MockTeamMemberRepo::new();
         let mut mock_mob_repo = MockMobSessionRepo::new();
         mock_mob_repo
@@ -203,7 +202,7 @@ mod tests {
     }
 
     #[test]
-    fn test_mob_coauthor_trailers() -> Result<(), Box<dyn Error>> {
+    fn test_mob_coauthor_trailers() -> Result<()> {
         let coauthors = vec![
             "Leo Messi <leo.messi@example.com>".to_owned(),
             "Emi Martinez <emi.martinez@example.com>".to_owned(),
@@ -237,7 +236,7 @@ mod tests {
     }
 
     #[test]
-    fn test_mob_coauthor_trailers_when_mob_session_is_empty() -> Result<(), Box<dyn Error>> {
+    fn test_mob_coauthor_trailers_when_mob_session_is_empty() -> Result<()> {
         let mock_team_member_repo = MockTeamMemberRepo::new();
         let mut mock_mob_repo = MockMobSessionRepo::new();
         mock_mob_repo
@@ -262,7 +261,7 @@ mod tests {
     }
 
     #[test]
-    fn test_mob_with_given_no_team_members_added() -> Result<(), Box<dyn Error>> {
+    fn test_mob_with_given_no_team_members_added() -> Result<()> {
         let coauthors = vec![];
 
         let mut mock_team_member_repo = MockTeamMemberRepo::new();
@@ -291,7 +290,7 @@ mod tests {
     }
 
     #[test]
-    fn test_mob_with_by_keys() -> Result<(), Box<dyn Error>> {
+    fn test_mob_with_by_keys() -> Result<()> {
         let keys = vec!["lm".to_owned(), "em".to_owned()];
         let coauthors = [
             "Leo Messi <leo.messi@example.com>",
@@ -339,7 +338,7 @@ mod tests {
     }
 
     #[test]
-    fn test_mob_with_by_key_when_team_member_not_found() -> Result<(), Box<dyn Error>> {
+    fn test_mob_with_by_key_when_team_member_not_found() -> Result<()> {
         let key = "lm";
 
         let mut mock_team_member_repo = MockTeamMemberRepo::new();
@@ -369,7 +368,7 @@ mod tests {
     }
 
     #[test]
-    fn test_add_coauthor() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_add_coauthor() -> Result<()> {
         let name = "Leo Messi";
         let email = "leo.messi@example.com";
 

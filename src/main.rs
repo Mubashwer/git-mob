@@ -2,10 +2,11 @@ use git_mob_tool::{
     cli,
     helpers::StdCommandRunner,
     repositories::{GitConfigMobRepo, GitConfigTeamMemberRepo},
+    Result,
 };
-use std::{error::Error, io::stdout};
+use std::io::stdout;
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<()> {
     let team_member_repo = GitConfigTeamMemberRepo {
         command_runner: StdCommandRunner,
     };

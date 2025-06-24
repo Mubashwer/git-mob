@@ -1,7 +1,7 @@
 use crate::commands::{Mob, Setup, TeamMember};
 use crate::repositories::{MobSessionRepo, TeamMemberRepo};
+use crate::Result;
 use clap::{Parser, Subcommand};
-use std::error::Error;
 use std::io::Write;
 use std::str;
 
@@ -54,7 +54,7 @@ pub fn run(
     team_member_repo: &impl TeamMemberRepo,
     mob_repo: &impl MobSessionRepo,
     out: &mut impl Write,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<()> {
     let cli = Cli::parse();
     run_inner(&cli, team_member_repo, mob_repo, out)
 }
@@ -64,7 +64,7 @@ fn run_inner(
     team_member_repo: &impl TeamMemberRepo,
     mob_repo: &impl MobSessionRepo,
     out: &mut impl Write,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<()> {
     match &cli.command {
         None => cli.mob.handle(team_member_repo, mob_repo, out)?,
         Some(Commands::Setup(setup)) => setup.handle(out)?,
@@ -75,14 +75,12 @@ fn run_inner(
 
 #[cfg(test)]
 mod tests {
-    use std::error::Error;
-
     use super::*;
     use crate::repositories::{MockMobSessionRepo, MockTeamMemberRepo};
     use mockall::predicate;
 
     #[test]
-    fn test_clear_mob_session() -> Result<(), Box<dyn Error>> {
+    fn test_clear_mob_session() -> Result<()> {
         let mock_team_member_repo = MockTeamMemberRepo::new();
         let mut mock_mob_repo = MockMobSessionRepo::new();
         mock_mob_repo.expect_clear().once().returning(|| Ok(()));
@@ -105,7 +103,7 @@ mod tests {
     }
 
     #[test]
-    fn test_delete_team_member() -> Result<(), Box<dyn Error>> {
+    fn test_delete_team_member() -> Result<()> {
         let key = "lm";
         let mut mock_team_member_repo = MockTeamMemberRepo::new();
         let mock_mob_repo = MockMobSessionRepo::new();

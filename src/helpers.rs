@@ -1,4 +1,5 @@
-use std::{error::Error, process::Command};
+use crate::Result;
+use std::process::Command;
 
 pub struct CmdOutput {
     pub stdout: Vec<u8>,
@@ -11,13 +12,13 @@ use mockall::{automock, predicate::*};
 #[cfg_attr(test, automock)]
 pub trait CommandRunner {
     #[allow(clippy::needless_lifetimes)] // explicit lifetime is needed for automock
-    fn execute<'a>(&self, program: &str, args: &[&'a str]) -> Result<CmdOutput, Box<dyn Error>>;
+    fn execute<'a>(&self, program: &str, args: &[&'a str]) -> Result<CmdOutput>;
 }
 
 pub struct StdCommandRunner;
 
 impl CommandRunner for StdCommandRunner {
-    fn execute(&self, program: &str, args: &[&str]) -> Result<CmdOutput, Box<dyn Error>> {
+    fn execute(&self, program: &str, args: &[&str]) -> Result<CmdOutput> {
         let output = Command::new(program).args(args).output()?;
 
         Ok(CmdOutput {
@@ -33,7 +34,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_execute_success() -> Result<(), Box<dyn Error>> {
+    fn test_execute_success() -> Result<()> {
         let result = StdCommandRunner.execute("git", &["--version"])?;
 
         assert_eq!(result.status_code, Some(0));
@@ -44,7 +45,7 @@ mod tests {
     }
 
     #[test]
-    fn test_execute_failure() -> Result<(), Box<dyn Error>> {
+    fn test_execute_failure() -> Result<()> {
         let result = StdCommandRunner.execute("git", &["--invalid_option"])?;
 
         assert!(result.status_code.is_some_and(|x| x != 0));
@@ -57,7 +58,7 @@ mod tests {
     }
 
     #[test]
-    fn test_execute_error() -> Result<(), Box<dyn Error>> {
+    fn test_execute_error() -> Result<()> {
         let result = StdCommandRunner.execute("non_existent_program", &[]);
 
         assert!(result.is_err());
