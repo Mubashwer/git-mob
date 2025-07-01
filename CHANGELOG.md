@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.2](https://github.com/Mubashwer/git-mob/compare/v1.9.1...v1.9.2) (2025-07-01)
+
+
+### Bug Fixes
+
+* resolve path injection vulnerabilities in setup command ([3acf7a9](https://github.com/Mubashwer/git-mob/commit/3acf7a9f50a8071dd35579cac1e2983245a209d8))
+
 ## [1.9.1](https://github.com/Mubashwer/git-mob/compare/v1.9.0...v1.9.1) (2025-06-17)
 
 
