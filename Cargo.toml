@@ -7,12 +7,7 @@ description = "A CLI tool which can help users automatically add co-author(s) to
 readme = "README.md"
 repository = "https://github.com/Mubashwer/git-mob"
 license = "MIT"
-keywords = [
-  "git",
-  "cli",
-  "pair-programming",
-  "mob-programming"
-]
+keywords = ["git", "cli", "pair-programming", "mob-programming"]
 categories = ["command-line-interface", "command-line-utilities"]
 include = [
   "src/**/*",
@@ -20,7 +15,7 @@ include = [
   "Cargo.toml",
   "LICENSE",
   "prepare-commit-msg",
-  "README.md"
+  "README.md",
 ]
 
 [[bin]]
@@ -30,7 +25,7 @@ path = "src/main.rs"
 [dependencies]
 clap = { version = "4.5.39", features = ["derive"] }
 inquire = "0.7.5"
-path-clean = "1.0"
+path-clean = "1.0.1"
 
 [dev-dependencies]
 assert_cmd = "2.0.16"
