@@ -8,6 +8,7 @@
 [![github release downloads](https://img.shields.io/github/downloads/mubashwer/git-mob/total?style=round)](https://github.com/Mubashwer/git-mob/releases)
 [![CI status](https://github.com/mubashwer/git-mob/actions/workflows/ci.yml/badge.svg)](https://github.com/Mubashwer/git-mob/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/Mubashwer/git-mob/branch/main/graph/badge.svg?token=R522R7NZH4)](https://codecov.io/gh/Mubashwer/git-mob)
+[![CodeQL](https://github.com/Mubashwer/git-mob/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/Mubashwer/git-mob/actions/workflows/github-code-scanning/codeql)
 
 You can attribute a git commit to more than one author by adding one or more `Co-authored-by` trailers to the commit's message. Co-authored commits are visible on GitHub. For more information, see [here](https://docs.github.com/en/pull-requests/committing-changes-to-your-project/creating-and-editing-commits/creating-a-commit-with-multiple-authors).
 
