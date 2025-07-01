@@ -1,5 +1,6 @@
 use crate::Result;
 use clap::Parser;
+use path_clean::PathClean;
 use std::{
     env, fs,
     io::Write,
@@ -42,7 +43,8 @@ impl Setup {
                 let new_hooks_dir = env::home_dir()
                     .ok_or("Failed to get home directory")?
                     .join(".git")
-                    .join("hooks");
+                    .join("hooks")
+                    .clean();
 
                 Self::set_global_hooks_dir(out, &new_hooks_dir)?;
 
@@ -50,7 +52,7 @@ impl Setup {
             }
         };
 
-        let prepare_commit_msg_path = hooks_dir.join("prepare-commit-msg");
+        let prepare_commit_msg_path = hooks_dir.join("prepare-commit-msg").clean();
 
         if !hooks_dir.exists() {
             fs::create_dir_all(&hooks_dir)?;
@@ -74,7 +76,7 @@ impl Setup {
             None => return Err("Local githooks directory is not set".into()),
         };
 
-        let prepare_commit_msg_path = hooks_dir.join("prepare-commit-msg");
+        let prepare_commit_msg_path = hooks_dir.join("prepare-commit-msg").clean();
 
         if !hooks_dir.exists() {
             fs::create_dir_all(&hooks_dir)?;
@@ -101,14 +103,14 @@ impl Setup {
             return Ok(None);
         }
 
-        let hooks_dir = PathBuf::from(String::from_utf8(output.stdout)?.trim());
+        let hooks_dir = PathBuf::from(String::from_utf8(output.stdout)?.trim()).clean();
         if !hooks_dir.starts_with("~") {
             return Ok(Some(hooks_dir));
         }
 
         let mut expanded_hooks_dir = env::home_dir().ok_or("Failed to get home directory")?;
         expanded_hooks_dir.extend(hooks_dir.components().skip(1));
-        Ok(Some(expanded_hooks_dir))
+        Ok(Some(expanded_hooks_dir.clean()))
     }
 
     fn set_global_hooks_dir(out: &mut impl Write, path: &Path) -> Result<()> {
@@ -131,27 +133,29 @@ impl Setup {
         path: &Path,
         contents: &str,
     ) -> Result<()> {
-        fs::write(path, contents)?;
+        let clean_path = path.to_path_buf().clean();
+        fs::write(&clean_path, contents)?;
 
         #[cfg(unix)]
         {
             use std::fs::Permissions;
             use std::os::unix::fs::PermissionsExt;
-            fs::set_permissions(path, Permissions::from_mode(0o755))?; // Sets rwxr-xr-x permissions
+            fs::set_permissions(&clean_path, Permissions::from_mode(0o755))?; // Sets rwxr-xr-x permissions
         }
 
         writeln!(
             out,
             "Created new prepare-commit-msg githook: {}",
-            &path.to_string_lossy()
+            &clean_path.to_string_lossy()
         )?;
 
         Ok(())
     }
 
     fn backup_prepare_commit_msg_hook(out: &mut impl Write, path: &Path) -> Result<()> {
-        let backup_path = path.with_extension("bak");
-        fs::rename(path, &backup_path)?;
+        let clean_path = path.to_path_buf().clean();
+        let backup_path = clean_path.with_extension("bak").clean();
+        fs::rename(&clean_path, &backup_path)?;
 
         writeln!(
             out,
