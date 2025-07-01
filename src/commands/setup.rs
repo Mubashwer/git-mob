@@ -118,10 +118,10 @@ impl Setup {
             .status()?;
 
         if !status.success() {
-            return Err(format!("Failed to set global githooks directory to {}", path_str).into());
+            return Err(format!("Failed to set global githooks directory to {path_str}").into());
         }
 
-        writeln!(out, "Set global githooks directory: {}", path_str)?;
+        writeln!(out, "Set global githooks directory: {path_str}")?;
 
         Ok(())
     }

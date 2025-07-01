@@ -63,7 +63,7 @@ impl Mob {
                 .join("\n");
 
             if !coauthors.is_empty() {
-                writeln!(out, "{}", trailers)?
+                writeln!(out, "{trailers}")?
             }
         }
 
