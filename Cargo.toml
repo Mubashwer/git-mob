@@ -36,7 +36,7 @@ tempfile = "3.18.0"
 test-context = "0.4.1"
 
 [target.'cfg(unix)'.dev-dependencies]
-rexpect = "0.6.0"
+rexpect = "0.6.2"
 
 [package.metadata.binstall]
 pkg-url = "{ repo }/releases/download/v{ version }/git-mob-{ target }.tar.gz"
