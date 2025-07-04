@@ -60,7 +60,7 @@ impl TestContextRepo {
         }
         #[cfg(windows)]
         {
-            command.env("USERPROFILE", &self.home_dir.path());
+            command.env("USERPROFILE", self.home_dir.path());
         }
 
         command

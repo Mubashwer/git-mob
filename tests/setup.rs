@@ -128,7 +128,7 @@ Setup complete
                 .to_string_lossy()
         )));
 
-    verify_prepare_commit_msg_global_hook(&ctx, &hooks_dir)
+    verify_prepare_commit_msg_global_hook(&ctx, hooks_dir)
 }
 
 #[test_context(TestContextRepo, skip_teardown)]
@@ -310,7 +310,7 @@ Setup complete
                 .to_string_lossy()
         )));
 
-    verify_prepare_commit_msg_local_hook(&ctx, &hooks_dir)
+    verify_prepare_commit_msg_local_hook(&ctx, hooks_dir)
 }
 
 #[test_context(TestContextRepo, skip_teardown)]
