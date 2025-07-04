@@ -26,6 +26,7 @@ If applicable, add screenshots to help explain your problem.
 **Environment (please complete the following information):**
 - OS: [e.g. Windows, macOS, Linux]
 - Version [e.g. 1.0.0]
+- Git version [e.g 2.3.2]
 - How did you install git-mob? [e.g. cargo, binary, other]
 
 **Additional context**

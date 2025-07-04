@@ -122,6 +122,52 @@ $ cargo install git-mob-tool
   $ git mob help team-member
   ```
 
+## Development
+
+### Prerequisites
+
+- [Rust](https://www.rust-lang.org/tools/install) (latest stable)
+- [Git](https://git-scm.com/downloads) v2.32 or later
+- On Windows: [Microsoft C++ Build Tools](https://learn.microsoft.com/en-us/windows/dev-environment/rust/setup#install-visual-studio-recommended-or-the-microsoft-c-build-tools)
+
+### Building from Source
+
+```console
+$ git clone https://github.com/Mubashwer/git-mob.git
+$ cd git-mob
+$ cargo build --release
+```
+
+### Running Tests
+
+```console
+$ cargo test
+```
+
+### Code Quality
+
+Format code:
+
+```console
+$ cargo fmt --all
+```
+
+Run linting:
+
+```console
+$ cargo clippy --all-targets --all-features -- -D warnings
+```
+
+### Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
+
+- Setting up your development environment
+- Code style and conventions
+- Commit message format (Conventional Commits)
+- Testing guidelines
+- Pull request process
+
 ## Troubleshooting
 
 - When using `git mob --help`, an error may occur because Git looks for man pages for subcommands. To avoid this error, use one of the following alternatives:
