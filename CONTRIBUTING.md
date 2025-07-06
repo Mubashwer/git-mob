@@ -91,7 +91,7 @@ This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDU
 ### Code Style
 
 - **Formatting**: Use `cargo fmt --all` to format your code
-- **Linting**: Run `cargo clippy --all-targets --all-features -- -D warnings` to check for lints
+- **Linting**: Run `cargo clippy --all-targets -- -D warnings` to check for lints
 - **Documentation**: Add doc comments for public APIs using `///`
 - **Testing**: Write tests for new functionality and bug fixes
 - **Backwards Compatibility**: Strive to maintain backwards compatibility whenever possible. If breaking changes are necessary, clearly document them and provide migration guidance
@@ -158,7 +158,7 @@ Run these commands to ensure your code meets the project standards:
 cargo fmt --all
 
 # Check for lints
-cargo clippy --all-targets --all-features -- -D warnings
+cargo clippy --all-targets -- -D warnings
 
 # Run tests
 cargo test

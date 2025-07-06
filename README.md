@@ -155,7 +155,7 @@ $ cargo fmt --all
 Run linting:
 
 ```console
-$ cargo clippy --all-targets --all-features -- -D warnings
+$ cargo clippy --all-targets -- -D warnings
 ```
 
 ### Contributing
