@@ -2,7 +2,7 @@
 name = "git-mob-tool"
 version = "1.9.2"
 authors = ["Mubashwer Salman Khurshid"]
-edition = "2021"
+edition = "2024"
 description = "A CLI tool which can help users automatically add co-author(s) to git commits for pair/mob programming"
 readme = "README.md"
 repository = "https://github.com/Mubashwer/git-mob"

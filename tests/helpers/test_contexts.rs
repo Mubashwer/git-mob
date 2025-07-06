@@ -2,10 +2,10 @@ use std::{env, ffi::OsString, path::PathBuf, process::Command};
 
 use assert_cmd::{assert::OutputAssertExt, cargo::cargo_bin};
 use once_cell::sync::Lazy;
-use tempfile::{tempdir, NamedTempFile, TempDir, TempPath};
+use tempfile::{NamedTempFile, TempDir, TempPath, tempdir};
 use test_context::TestContext;
 
-static PATH_ENV_VAR: Lazy<OsString> = Lazy::new(|| {
+static PATH_WITH_GIT_MOB: Lazy<OsString> = Lazy::new(|| {
     let path = &env::var_os("PATH").unwrap_or_default();
 
     // adding git-mob executable to the PATH so that it can be executed as "git mob"
@@ -26,6 +26,7 @@ impl TestContextCli {
     #[allow(dead_code)] // incorrectly detected as unused by rustc; used in tests
     pub fn git(&self) -> Command {
         let mut command = Command::new("git");
+        command.env("PATH", &*PATH_WITH_GIT_MOB);
         command.env("GIT_CONFIG_GLOBAL", &self.git_config_global);
         command
     }
@@ -33,8 +34,6 @@ impl TestContextCli {
 
 impl TestContext for TestContextCli {
     fn setup() -> TestContextCli {
-        env::set_var("PATH", &*PATH_ENV_VAR);
-
         TestContextCli {
             git_config_global: NamedTempFile::new().unwrap().into_temp_path(),
         }
@@ -52,6 +51,7 @@ impl TestContextRepo {
         let mut command = Command::new("git");
         command
             .current_dir(self.dir.path())
+            .env("PATH", &*PATH_WITH_GIT_MOB)
             .env("GIT_CONFIG_GLOBAL", &self.git_config_global);
 
         #[cfg(unix)]
@@ -69,8 +69,6 @@ impl TestContextRepo {
 
 impl TestContext for TestContextRepo {
     fn setup() -> TestContextRepo {
-        env::set_var("PATH", &*PATH_ENV_VAR);
-
         let ctx = TestContextRepo {
             git_config_global: NamedTempFile::new().unwrap().into_temp_path(),
             dir: tempdir().unwrap(),

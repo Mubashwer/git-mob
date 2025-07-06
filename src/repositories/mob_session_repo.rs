@@ -1,5 +1,5 @@
-use crate::helpers::{CmdOutput, CommandRunner};
 use crate::Result;
+use crate::helpers::{CmdOutput, CommandRunner};
 
 #[cfg(test)]
 use mockall::{automock, predicate::*};
@@ -158,8 +158,10 @@ mod tests {
 
         let result = mob_repo.list_coauthors();
 
-        assert!(result
-            .is_err_and(|x| x.to_string() == "Git config command exited with status code: 129"));
+        assert!(
+            result
+                .is_err_and(|x| x.to_string() == "Git config command exited with status code: 129")
+        );
 
         Ok(())
     }
@@ -219,8 +221,10 @@ mod tests {
 
         let result = mob_repo.add_coauthor(coauthor);
 
-        assert!(result
-            .is_err_and(|x| x.to_string() == "Git config command exited with status code: 129"));
+        assert!(
+            result
+                .is_err_and(|x| x.to_string() == "Git config command exited with status code: 129")
+        );
 
         Ok(())
     }
@@ -329,8 +333,10 @@ mod tests {
 
         let result = mob_repo.clear();
 
-        assert!(result
-            .is_err_and(|x| x.to_string() == "Git config command exited with status code: 129"));
+        assert!(
+            result
+                .is_err_and(|x| x.to_string() == "Git config command exited with status code: 129")
+        );
 
         Ok(())
     }

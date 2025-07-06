@@ -1,8 +1,7 @@
 use git_mob_tool::{
-    cli,
+    Result, cli,
     helpers::StdCommandRunner,
     repositories::{GitConfigMobRepo, GitConfigTeamMemberRepo},
-    Result,
 };
 use std::io::stdout;
 

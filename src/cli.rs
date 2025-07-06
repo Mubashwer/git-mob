@@ -1,6 +1,6 @@
+use crate::Result;
 use crate::commands::{Mob, Setup, TeamMember};
 use crate::repositories::{MobSessionRepo, TeamMemberRepo};
-use crate::Result;
 use clap::{Parser, Subcommand};
 use std::io::Write;
 use std::str;

@@ -1,6 +1,6 @@
-use crate::repositories::TeamMemberRepo;
 use crate::Result;
-use clap::{arg, Parser};
+use crate::repositories::TeamMemberRepo;
+use clap::{Parser, arg};
 use std::io::Write;
 
 #[derive(Parser)]
@@ -105,8 +105,11 @@ mod tests {
         let mut out = Vec::new();
         let result = team_member_cmd.handle(&mock_team_member_repo, &mut out);
 
-        assert!(result
-            .is_err_and(|err| err.to_string() == format!("No team member found with key: {key}")));
+        assert!(
+            result.is_err_and(
+                |err| err.to_string() == format!("No team member found with key: {key}")
+            )
+        );
 
         Ok(())
     }

@@ -1,5 +1,5 @@
-use crate::helpers::{CmdOutput, CommandRunner};
 use crate::Result;
+use crate::helpers::{CmdOutput, CommandRunner};
 
 #[cfg(test)]
 use mockall::{automock, predicate::*};
@@ -207,8 +207,10 @@ mod tests {
 
         let result = team_member_repo.list(true);
 
-        assert!(result
-            .is_err_and(|x| x.to_string() == "Git config command exited with status code: 129"));
+        assert!(
+            result
+                .is_err_and(|x| x.to_string() == "Git config command exited with status code: 129")
+        );
 
         Ok(())
     }
@@ -275,8 +277,10 @@ mod tests {
 
         let result = team_member_repo.get(key);
 
-        assert!(result
-            .is_err_and(|x| x.to_string() == "Git config command exited with status code: 129"));
+        assert!(
+            result
+                .is_err_and(|x| x.to_string() == "Git config command exited with status code: 129")
+        );
 
         Ok(())
     }
@@ -426,8 +430,10 @@ mod tests {
 
         let result = team_member_repo.add(key, team_member);
 
-        assert!(result
-            .is_err_and(|x| x.to_string() == "Git config command exited with status code: 129"));
+        assert!(
+            result
+                .is_err_and(|x| x.to_string() == "Git config command exited with status code: 129")
+        );
 
         Ok(())
     }

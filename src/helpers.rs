@@ -50,9 +50,11 @@ mod tests {
 
         assert!(result.status_code.is_some_and(|x| x != 0));
         assert!(result.stdout.is_empty());
-        assert!(result
-            .stderr
-            .starts_with(b"unknown option: --invalid_option"));
+        assert!(
+            result
+                .stderr
+                .starts_with(b"unknown option: --invalid_option")
+        );
 
         Ok(())
     }
