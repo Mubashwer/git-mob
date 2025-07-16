@@ -24,7 +24,7 @@ jobs:
         id: release-please
         with:
           release-type: rust
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   upload-binaries:
     strategy:
@@ -100,7 +100,7 @@ jobs:
       - name: Upload archived binary to release
         uses: svenstaro/upload-release-action@v2
         with:
-          repo_token: ${{ secrets.GH_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: target/${{ matrix.target }}/release/git-mob-${{ matrix.target }}.tar.gz
           tag: ${{ needs.release-please.outputs.tag_name }}
 
