@@ -1,5 +1,6 @@
 use crate::Result;
 use crate::helpers::{CmdOutput, CommandRunner};
+use anyhow::{Context, bail};
 
 #[cfg(test)]
 use mockall::{automock, predicate::*};
@@ -23,8 +24,8 @@ impl<Cmd: CommandRunner> GitConfigMobRepo<Cmd> {
 
     fn git_config_error<T>(output: &CmdOutput) -> Result<T> {
         match output.status_code {
-            Some(code) => Err(format!("Git config command exited with status code: {code}").into()),
-            None => Err("Git config command terminated by signal".into()),
+            Some(code) => bail!("Git config command exited with status code: {code}"),
+            None => bail!("Git config command terminated by signal"),
         }
     }
 }
@@ -35,10 +36,12 @@ impl<Cmd: CommandRunner> MobSessionRepo for GitConfigMobRepo<Cmd> {
 
         let output = self
             .command_runner
-            .execute("git", &["config", "--global", "--get-all", &full_key])?;
+            .execute("git", &["config", "--global", "--get-all", &full_key])
+            .context("Failed to list coauthors from git config")?;
 
         match output.status_code {
-            Some(Self::EXIT_CODE_SUCCESS) => Ok(String::from_utf8(output.stdout)?
+            Some(Self::EXIT_CODE_SUCCESS) => Ok(String::from_utf8(output.stdout)
+                .context("Failed to parse git config output as UTF-8")?
                 .lines()
                 .map(|x| x.into())
                 .collect()),
@@ -52,7 +55,8 @@ impl<Cmd: CommandRunner> MobSessionRepo for GitConfigMobRepo<Cmd> {
 
         let output = self
             .command_runner
-            .execute("git", &["config", "--global", "--add", &full_key, coauthor])?;
+            .execute("git", &["config", "--global", "--add", &full_key, coauthor])
+            .with_context(|| format!("Failed to add coauthor '{coauthor}' to git config"))?;
 
         match output.status_code {
             Some(Self::EXIT_CODE_SUCCESS) => Ok(()),
@@ -68,7 +72,8 @@ impl<Cmd: CommandRunner> MobSessionRepo for GitConfigMobRepo<Cmd> {
 
         let output = self
             .command_runner
-            .execute("git", &["config", "--global", "--remove-section", &section])?;
+            .execute("git", &["config", "--global", "--remove-section", &section])
+            .context("Failed to clear mob session from git config")?;
 
         match output.status_code {
             Some(Self::EXIT_CODE_SUCCESS) => Ok(()),

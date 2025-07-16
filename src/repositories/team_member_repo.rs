@@ -1,5 +1,6 @@
 use crate::Result;
 use crate::helpers::{CmdOutput, CommandRunner};
+use anyhow::{Context, anyhow, bail};
 
 #[cfg(test)]
 use mockall::{automock, predicate::*};
@@ -24,8 +25,8 @@ impl<Cmd: CommandRunner> GitConfigTeamMemberRepo<Cmd> {
 
     fn git_config_error<T>(output: &CmdOutput) -> Result<T> {
         match output.status_code {
-            Some(code) => Err(format!("Git config command exited with status code: {code}").into()),
-            None => Err("Git config command terminated by signal".into()),
+            Some(code) => bail!("Git config command exited with status code: {code}"),
+            None => bail!("Git config command terminated by signal"),
         }
     }
 }
@@ -35,10 +36,13 @@ impl<Cmd: CommandRunner> TeamMemberRepo for GitConfigTeamMemberRepo<Cmd> {
         let section = Self::COAUTHORS_SECTION;
         let search_regex = format!("^{section}\\.");
 
-        let output = self.command_runner.execute(
-            "git",
-            &["config", "--global", "--get-regexp", &search_regex],
-        )?;
+        let output = self
+            .command_runner
+            .execute(
+                "git",
+                &["config", "--global", "--get-regexp", &search_regex],
+            )
+            .context("Failed to list team members from git config")?;
 
         match output.status_code {
             Some(Self::EXIT_CODE_SUCCESS) => String::from_utf8(output.stdout)?
@@ -50,7 +54,7 @@ impl<Cmd: CommandRunner> TeamMemberRepo for GitConfigTeamMemberRepo<Cmd> {
                         " ".to_owned()
                     };
                     x.split_once(&delimiter)
-                        .ok_or(format!("Failed to split string: '{x}'").into())
+                        .ok_or_else(|| anyhow!("Failed to split string: '{x}'"))
                         .map(|(_, team_member)| team_member.to_owned())
                 })
                 .collect(),
@@ -65,12 +69,16 @@ impl<Cmd: CommandRunner> TeamMemberRepo for GitConfigTeamMemberRepo<Cmd> {
 
         let output = self
             .command_runner
-            .execute("git", &["config", "--global", &full_key])?;
+            .execute("git", &["config", "--global", &full_key])
+            .with_context(|| format!("Failed to get team member '{key}' from git config"))?;
 
         match output.status_code {
-            Some(Self::EXIT_CODE_SUCCESS) => {
-                Ok(Some(String::from_utf8(output.stdout)?.trim().into()))
-            }
+            Some(Self::EXIT_CODE_SUCCESS) => Ok(Some(
+                String::from_utf8(output.stdout)
+                    .context("Failed to parse git config output as UTF-8")?
+                    .trim()
+                    .into(),
+            )),
             Some(Self::EXIT_CODE_CONFIG_INVALID_KEY) => Ok(None),
             _ => Self::git_config_error(&output),
         }
@@ -81,7 +89,8 @@ impl<Cmd: CommandRunner> TeamMemberRepo for GitConfigTeamMemberRepo<Cmd> {
 
         let output = self
             .command_runner
-            .execute("git", &["config", "--global", "--unset-all", &full_key])?;
+            .execute("git", &["config", "--global", "--unset-all", &full_key])
+            .with_context(|| format!("Failed to remove team member '{key}' from git config"))?;
 
         match output.status_code {
             Some(Self::EXIT_CODE_SUCCESS) => Ok(()),
@@ -94,11 +103,14 @@ impl<Cmd: CommandRunner> TeamMemberRepo for GitConfigTeamMemberRepo<Cmd> {
 
         let output = self
             .command_runner
-            .execute("git", &["config", "--global", &full_key, team_member])?;
+            .execute("git", &["config", "--global", &full_key, team_member])
+            .with_context(|| format!("Failed to add team member '{key}' to git config"))?;
 
         match output.status_code {
             Some(Self::EXIT_CODE_SUCCESS) => Ok(()),
-            Some(Self::EXIT_CODE_CONFIG_INVALID_KEY) => Err(format!("Invalid key: {key}").into()),
+            Some(Self::EXIT_CODE_CONFIG_INVALID_KEY) => {
+                bail!("Invalid key: {key}")
+            }
             _ => Self::git_config_error(&output),
         }
     }

@@ -1,5 +1,6 @@
 use crate::Result;
 use crate::repositories::TeamMemberRepo;
+use anyhow::bail;
 use clap::{Parser, arg};
 use std::io::Write;
 
@@ -32,7 +33,7 @@ impl TeamMember {
         if let Some(key) = self.delete.as_deref() {
             match team_member_repo.get(key)? {
                 Some(_) => team_member_repo.remove(key)?,
-                None => return Err(format!("No team member found with key: {key}").into()),
+                None => bail!("No team member found with key: {key}"),
             }
         }
         if self.list {

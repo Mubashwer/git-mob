@@ -1,4 +1,5 @@
 use crate::Result;
+use anyhow::{anyhow, bail};
 use clap::Parser;
 use path_clean::PathClean;
 use std::{
@@ -41,7 +42,7 @@ impl Setup {
             Some(hooks_dir) => hooks_dir,
             None => {
                 let new_hooks_dir = env::home_dir()
-                    .ok_or("Failed to get home directory")?
+                    .ok_or_else(|| anyhow!("Failed to get home directory"))?
                     .join(".git")
                     .join("hooks")
                     .clean();
@@ -73,7 +74,7 @@ impl Setup {
     fn handle_local(&self, out: &mut impl Write) -> Result<()> {
         let hooks_dir = match Self::get_hooks_dir("--local")? {
             Some(hooks_dir) => hooks_dir,
-            None => return Err("Local githooks directory is not set".into()),
+            None => bail!("Local githooks directory is not set"),
         };
 
         let prepare_commit_msg_path = hooks_dir.join("prepare-commit-msg").clean();
@@ -108,7 +109,8 @@ impl Setup {
             return Ok(Some(hooks_dir));
         }
 
-        let mut expanded_hooks_dir = env::home_dir().ok_or("Failed to get home directory")?;
+        let mut expanded_hooks_dir =
+            env::home_dir().ok_or_else(|| anyhow!("Failed to get home directory"))?;
         expanded_hooks_dir.extend(hooks_dir.components().skip(1));
         Ok(Some(expanded_hooks_dir.clean()))
     }
@@ -120,7 +122,7 @@ impl Setup {
             .status()?;
 
         if !status.success() {
-            return Err(format!("Failed to set global githooks directory to {path_str}").into());
+            bail!("Failed to set global githooks directory to {path_str}");
         }
 
         writeln!(out, "Set global githooks directory: {path_str}")?;

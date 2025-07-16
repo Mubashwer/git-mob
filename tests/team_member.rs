@@ -65,7 +65,7 @@ fn test_add_member_with_invalid_key(ctx: TestContextCli) -> Result<(), Box<dyn E
         .assert()
         .failure()
         .stderr(predicate::str::diff(
-            "Error: \"Invalid key: invalid_key_with_underscore\"\n",
+            "Error: Invalid key: invalid_key_with_underscore\n",
         ));
 
     Ok(())
@@ -139,7 +139,7 @@ fn test_delete_member_when_member_not_found(ctx: TestContextCli) -> Result<(), B
         .assert()
         .failure()
         .stderr(predicate::str::diff(
-            "Error: \"No team member found with key: lm\"\n",
+            "Error: No team member found with key: lm\n",
         ));
 
     Ok(())

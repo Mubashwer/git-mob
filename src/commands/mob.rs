@@ -1,5 +1,6 @@
 use crate::Result;
 use crate::repositories::{MobSessionRepo, TeamMemberRepo};
+use anyhow::bail;
 use clap::{Parser, arg};
 use inquire::MultiSelect;
 use std::io::Write;
@@ -72,9 +73,7 @@ impl Mob {
             Some([]) => {
                 let team_members = team_member_repo.list(false)?;
                 if team_members.is_empty() {
-                    return Err(
-                        "No team member(s) found. At least one team member must be added".into(),
-                    );
+                    bail!("No team member(s) found. At least one team member must be added");
                 }
 
                 let result = MultiSelect::new("Select active co-author(s):", team_members)
@@ -100,7 +99,7 @@ impl Mob {
                             mob_repo.add_coauthor(&team_member)?;
                             coauthors.push(team_member);
                         }
-                        None => return Err(format!("No team member found with key: {key}").into()),
+                        None => bail!("No team member found with key: {key}"),
                     }
                 }
 

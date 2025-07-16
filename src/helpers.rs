@@ -1,4 +1,5 @@
 use crate::Result;
+use anyhow::Context;
 use std::process::Command;
 
 pub struct CmdOutput {
@@ -19,7 +20,9 @@ pub struct StdCommandRunner;
 
 impl CommandRunner for StdCommandRunner {
     fn execute(&self, program: &str, args: &[&str]) -> Result<CmdOutput> {
-        let output = Command::new(program).args(args).output()?;
+        let output = Command::new(program).args(args).output().with_context(|| {
+            format!("Failed to execute command: {} {}", program, args.join(" "))
+        })?;
 
         Ok(CmdOutput {
             stdout: output.stdout,
