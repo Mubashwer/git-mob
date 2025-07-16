@@ -190,7 +190,7 @@ fn test_setup_given_invalid_git_config_global_path(
         .assert()
         .failure()
         .stderr(predicate::str::contains(
-            "Error: \"Failed to set global githooks directory to",
+            "Error: Failed to set global githooks directory to",
         ));
 
     Ok(())
@@ -203,7 +203,7 @@ fn test_setup_local_given_hooks_dir_not_set(ctx: TestContextRepo) -> Result<(), 
         .args(["mob", "setup", "--local"])
         .assert()
         .failure()
-        .stderr("Error: \"Local githooks directory is not set\"\n");
+        .stderr("Error: Local githooks directory is not set\n");
 
     Ok(())
 }

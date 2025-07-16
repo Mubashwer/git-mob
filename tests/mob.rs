@@ -44,7 +44,7 @@ fn test_mob_with_by_key_when_team_member_not_found(
         .assert()
         .failure()
         .stderr(predicate::str::diff(
-            "Error: \"No team member found with key: jk\"\n",
+            "Error: No team member found with key: jk\n",
         ));
 
     Ok(())
@@ -61,7 +61,7 @@ fn test_mob_with_multiselect_given_no_team_members_added(
         .assert()
         .failure()
         .stderr(predicate::str::diff(
-            "Error: \"No team member(s) found. At least one team member must be added\"\n",
+            "Error: No team member(s) found. At least one team member must be added\n",
         ));
 
     Ok(())
