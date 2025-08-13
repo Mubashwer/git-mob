@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.3](https://github.com/Mubashwer/git-mob/compare/v1.9.2...v1.9.3) (2025-08-13)
+
+
+### Bug Fixes
+
+* skip jira issue id prefix for fixup and squash commits ([fe0c95f](https://github.com/Mubashwer/git-mob/commit/fe0c95ffeb3c363dd50bef54e1723808a64d2c67))
+
 ## [1.9.2](https://github.com/Mubashwer/git-mob/compare/v1.9.1...v1.9.2) (2025-07-01)
 
 
