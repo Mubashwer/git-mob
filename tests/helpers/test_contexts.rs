@@ -23,7 +23,7 @@ pub(crate) struct TestContextCli {
 }
 
 impl TestContextCli {
-    #[allow(dead_code)] // incorrectly detected as unused by rustc; used in tests
+    #[allow(dead_code)] // incorrectly detected as unused by clippy; used in tests
     pub fn git(&self) -> Command {
         let mut command = Command::new("git");
         command.env("PATH", &*PATH_WITH_GIT_MOB);
@@ -40,6 +40,7 @@ impl TestContext for TestContextCli {
     }
 }
 
+#[allow(dead_code)] // incorrectly detected as unused by clippy; used in tests
 pub(crate) struct TestContextRepo {
     git_config_global: TempPath,
     dir: TempDir,
@@ -47,6 +48,7 @@ pub(crate) struct TestContextRepo {
 }
 
 impl TestContextRepo {
+    #[allow(dead_code)] // incorrectly detected as unused by clippy; used in tests
     pub fn git(&self) -> Command {
         let mut command = Command::new("git");
         command
