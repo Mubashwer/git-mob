@@ -32,6 +32,11 @@ add_jira_issue_id_prefix() {
   commit_msg_file_text=$(cat "$1")
   commit_msg=$(echo "$commit_msg_file_text" | grep -v "^[[:space:]]*#" || true)
 
+  # Skip adding Jira issue ID for fixup and squash commits
+  if echo "$commit_msg" | grep -q "^fixup!\|^squash!"; then
+    return 0
+  fi
+
   # If the Jira Issue ID is identified and the commit message does not already start with it
   # then prepend the commit message with it
   if [ -n "$jira_issue_id" ] && echo "$commit_msg" | grep -q -i -v "^\[\?$jira_issue_id\]\?"; then
