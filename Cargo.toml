@@ -1,6 +1,6 @@
 [package]
 name = "git-mob-tool"
-version = "1.9.2"
+version = "1.9.3"
 authors = ["Mubashwer Salman Khurshid"]
 edition = "2024"
 description = "A CLI tool which can help users automatically add co-author(s) to git commits for pair/mob programming"
