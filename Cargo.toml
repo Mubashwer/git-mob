@@ -23,7 +23,7 @@ name = "git-mob"
 path = "src/main.rs"
 
 [dependencies]
-clap = { version = "4.5.42", features = ["derive"] }
+clap = { version = "4.5.46", features = ["derive"] }
 inquire = "0.7.5"
 path-clean = "1.0.1"
 
