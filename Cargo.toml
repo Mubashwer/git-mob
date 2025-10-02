@@ -24,7 +24,7 @@ path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4.5.46", features = ["derive"] }
-inquire = "0.7.5"
+inquire = "0.9.1"
 path-clean = "1.0.1"
 
 [dev-dependencies]
