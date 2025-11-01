@@ -33,7 +33,7 @@ mockall = "0.13.1"
 once_cell = "1.21.1"
 predicates = "3.1.2"
 tempfile = "3.23.0"
-test-context = "0.4.1"
+test-context = "0.5.0"
 
 [target.'cfg(unix)'.dev-dependencies]
 rexpect = "0.6.2"
